@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const User = require("../Models/user");
 const bcrypt = require("bcryptjs");
-
+const jwt = require("jsonwebtoken");
 router.post("/signup", async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -42,6 +42,33 @@ router.post("/signup", async (req, res) => {
 
     await newUser.save();
     res.status(201).json({ message: "User created successfully" });
+  } catch (err) {
+    console.error("Error occurred:", err); // Log the error details
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+//sign in
+router.post("/signin", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(401).json({ message: "user not found" });
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: "Invalid password" });
+    }
+    const authClaims = {
+      name: user.username,
+      role: user.role,
+    };
+    // Generate JWT token
+    const token = jwt.sign({ authClaims }, "secret", {
+      expiresIn: "30d",
+    });
+    res.status(200).json({ id: user._id, role: user.role, token: token });
   } catch (err) {
     console.error("Error occurred:", err); // Log the error details
     res.status(500).json({ message: "Internal server error" });
