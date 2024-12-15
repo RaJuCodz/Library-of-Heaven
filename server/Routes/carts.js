@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const { auth } = require("./userAuth");
 const Book = require("../Models/books");
 
-router.put("/add_to_cart", auth, async (req, res) => {
+router.post("/add_to_cart", auth, async (req, res) => {
   try {
     const { id, book_id } = req.headers;
     const user = await User.findById(id);
@@ -22,10 +22,9 @@ router.put("/add_to_cart", auth, async (req, res) => {
 
 // remove from cart
 
-router.put("/remove_from_cart/:book_id", auth, async (req, res) => {
+router.post("/remove_from_cart", auth, async (req, res) => {
   try {
-    const { book_id } = req.params;
-    const { id } = req.headers;
+    const { id, book_id } = req.headers;
     const user = await User.findById(id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
