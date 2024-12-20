@@ -9,6 +9,7 @@ const user = require("./Routes/user");
 const book = require("./Routes/book");
 const favourite = require("./Routes/favor");
 const cart = require("./Routes/carts");
+const order = require("./Routes/order");
 // Connect to Database
 connectDB();
 
@@ -18,6 +19,7 @@ app.use("/api/v1", user);
 app.use("/api/v1", book);
 app.use("/api/v1", favourite);
 app.use("/api/v1", cart);
+app.use("/api/v1", order);
 // Routes
 
 app.get("/", (req, res) => {
