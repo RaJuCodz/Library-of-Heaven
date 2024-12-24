@@ -14,10 +14,10 @@ router.post("/add_book", auth, async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    const role = user.role;
-    if (role !== "admin") {
-      return res.status(403).json({ message: "Unauthorized access" });
-    }
+    // const role = user.role;
+    // if (role !== "admin") {
+    //   return res.status(403).json({ message: "Unauthorized access" });
+    // }
 
     const { url, title, author, price, description, image } = req.body;
     const newBook = new Book({
@@ -95,7 +95,7 @@ router.get("/get_recent_books", async (req, res) => {
 });
 
 // get book by id
-router.get("/get_book_by_id", async (req, res) => {
+router.get("/get_book_by_id/:book_id", async (req, res) => {
   try {
     const { book_id } = req.params;
     if (!book_id) {
