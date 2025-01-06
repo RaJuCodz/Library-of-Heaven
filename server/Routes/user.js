@@ -7,7 +7,7 @@ const { auth } = require("./userAuth");
 // Sign-up route
 router.post("/signup", async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, email, password, address } = req.body;
     // console.log("gg");
     if (!username || username.length < 4) {
       return res
@@ -41,6 +41,7 @@ router.post("/signup", async (req, res) => {
       username,
       email,
       password: hashedPassword,
+      address: address,
     });
 
     await newUser.save();

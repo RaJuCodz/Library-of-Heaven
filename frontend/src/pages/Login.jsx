@@ -1,11 +1,16 @@
 import React, { useState } from "react";
-
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { authActions } from "../store/auth";
+import { useDispatch } from "react-redux";
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: "",
+    username: "",
     password: "",
   });
   const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -17,11 +22,8 @@ const Login = () => {
 
   const validateForm = () => {
     let formErrors = {};
-    if (!formData.email) formErrors.email = "Email is required";
+    if (!formData.username) formErrors.username = "Username is required";
     if (!formData.password) formErrors.password = "Password is required";
-    if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
-      formErrors.email = "Please enter a valid email address";
-    }
     return formErrors;
   };
 
@@ -30,6 +32,26 @@ const Login = () => {
     const formErrors = validateForm();
     if (Object.keys(formErrors).length === 0) {
       console.log("Form submitted successfully", formData);
+      axios
+        .post("http://localhost:4000/api/v1/signin", formData)
+        .then((response) => {
+          console.log(response);
+          if (response.data.token) {
+            dispatch(authActions.login());
+            dispatch(authActions.setRole(response.data.role));
+            localStorage.setItem("token", response.data.token);
+            localStorage.setItem("id", response.data.id);
+            localStorage.setItem("role", response.data.role);
+            navigate("/profile");
+          }
+        })
+        .catch((error) => {
+          console.error(
+            "Login error:",
+            error.response?.data.message || error.message
+          );
+          setErrors({ server: "Invalid username or password" });
+        });
     } else {
       setErrors(formErrors);
     }
@@ -42,22 +64,22 @@ const Login = () => {
           Login
         </h1>
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Email */}
+          {/* Username */}
           <div>
-            <label className="block text-sm font-semibold" htmlFor="email">
-              Email
+            <label className="block text-sm font-semibold" htmlFor="username">
+              Username
             </label>
             <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
+              type="text"
+              id="username"
+              name="username"
+              value={formData.username}
               onChange={handleChange}
               className="w-full p-3 mt-2 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
               required
             />
-            {errors.email && (
-              <p className="text-red-500 text-sm">{errors.email}</p>
+            {errors.username && (
+              <p className="text-red-500 text-sm">{errors.username}</p>
             )}
           </div>
 
@@ -79,6 +101,11 @@ const Login = () => {
               <p className="text-red-500 text-sm">{errors.password}</p>
             )}
           </div>
+
+          {/* Server Error */}
+          {errors.server && (
+            <p className="text-red-500 text-sm text-center">{errors.server}</p>
+          )}
 
           {/* Submit Button */}
           <div className="flex justify-center">

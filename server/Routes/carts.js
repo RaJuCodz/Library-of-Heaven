@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const { auth } = require("./userAuth");
 const Book = require("../Models/books");
 
-router.post("/add_to_cart", auth, async (req, res) => {
+router.put("/add_to_cart", auth, async (req, res) => {
   try {
     const { id, book_id } = req.headers;
     const user = await User.findById(id);

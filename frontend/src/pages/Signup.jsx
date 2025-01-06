@@ -1,5 +1,6 @@
+import axios from "axios";
 import React, { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 const Signup = () => {
   const [formData, setFormData] = useState({
     username: "",
@@ -8,7 +9,7 @@ const Signup = () => {
     address: "",
   });
   const [errors, setErrors] = useState({});
-
+  const navigate = useNavigate();
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -28,11 +29,23 @@ const Signup = () => {
     return formErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formErrors = validateForm();
     if (Object.keys(formErrors).length === 0) {
-      console.log("Form submitted successfully", formData);
+      try {
+        const response = await axios.post(
+          "http://localhost:4000/api/v1/signup",
+          formData
+        );
+        console.log("Response:", response.data);
+        navigate("/login");
+      } catch (error) {
+        console.error("Error response:", error.response.data.message);
+        setErrors({
+          server: error.response.data.message || "An error occurred",
+        });
+      }
     } else {
       setErrors(formErrors);
     }
