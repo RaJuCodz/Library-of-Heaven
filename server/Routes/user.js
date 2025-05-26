@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const User = require("../Models/user");
+const Book = require("../Models/books");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { auth } = require("./userAuth");
@@ -128,4 +129,100 @@ router.put("/update_address", auth, async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
+
+// Add to favorites route
+router.post("/add_to_fav", auth, async (req, res) => {
+  try {
+    const userId = req.headers.id;
+    const { book_id } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+
+    if (!book_id) {
+      return res.status(400).json({ message: "Book ID is required" });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const book = await Book.findById(book_id);
+    if (!book) {
+      return res.status(404).json({ message: "Book not found" });
+    }
+
+    // Check if book is already in favorites
+    if (user.fav && user.fav.includes(book_id)) {
+      return res.status(400).json({ message: "Book is already in favorites" });
+    }
+
+    // Add book to favorites
+    if (!user.fav) {
+      user.fav = [];
+    }
+    user.fav.push(book_id);
+    await user.save();
+
+    res.status(200).json({ message: "Book added to favorites successfully" });
+  } catch (err) {
+    console.error("Error adding to favorites:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// Get favorites route
+router.get("/get_favorites", auth, async (req, res) => {
+  try {
+    const userId = req.headers.id;
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+
+    const user = await User.findById(userId).populate("fav");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({ favorites: user.fav || [] });
+  } catch (err) {
+    console.error("Error getting favorites:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// Remove from favorites route
+router.delete("/remove_from_fav", auth, async (req, res) => {
+  try {
+    const userId = req.headers.id;
+    const { book_id } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+
+    if (!book_id) {
+      return res.status(400).json({ message: "Book ID is required" });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Remove book from favorites
+    user.fav = user.fav.filter((id) => id.toString() !== book_id);
+    await user.save();
+
+    res
+      .status(200)
+      .json({ message: "Book removed from favorites successfully" });
+  } catch (err) {
+    console.error("Error removing from favorites:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 module.exports = router;

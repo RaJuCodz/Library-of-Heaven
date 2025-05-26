@@ -3,6 +3,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Link } from "react-router-dom";
+import { FaTrash, FaShoppingCart, FaArrowRight, FaTruck } from "react-icons/fa";
 
 const Carts = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -22,7 +23,16 @@ const Carts = () => {
         "http://localhost:4000/api/v1/show_cart",
         { headers }
       );
-      setCartItems(response.data.data);
+      setCartItems(response.data.data || []);
+
+      // Calculate total price with proper type checking
+      const total = (response.data.data || []).reduce((sum, item) => {
+        const price = parseFloat(item.price) || 0;
+        return sum + price;
+      }, 0);
+
+      setTotalPrice(total);
+      setTotalItems((response.data.data || []).length);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching cart items:", error);
@@ -51,81 +61,146 @@ const Carts = () => {
     fetchCartItems();
   }, []);
 
+  // Format price with proper type checking
+  const formatPrice = (price) => {
+    const numPrice = parseFloat(price);
+    return isNaN(numPrice) ? "0.00" : numPrice.toFixed(2);
+  };
+
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64 bg-black text-white">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#ff7043]"></div>
+      <div className="min-h-screen bg-gray-50 pt-24 flex justify-center items-center">
+        <div className="w-16 h-16 border-4 border-red-600 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
 
   if (cartItems.length === 0) {
     return (
-      <div className="flex justify-center items-center h-64 bg-black text-white">
-        <p className="text-gray-500">Your cart is empty.</p>
+      <div className="min-h-screen bg-gray-50 pt-24">
+        <div className="container mx-auto px-4">
+          <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden p-8 text-center">
+            <FaShoppingCart className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">
+              Your Cart is Empty
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Looks like you haven't added any books to your cart yet.
+            </p>
+            <Link
+              to="/books"
+              className="inline-flex items-center px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all duration-300"
+            >
+              Browse Books
+              <FaArrowRight className="ml-2" />
+            </Link>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-gray-800 text-white py-8">
+    <div className="min-h-screen bg-gray-50 pt-24">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-extrabold mb-6 text-center text-[#ff7043]">
-          Your Cart
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {cartItems.map((book) => (
-            <div
-              key={book._id}
-              className="bg-gray-900 shadow-lg rounded-lg overflow-hidden hover:shadow-2xl hover:scale-105 transition-all duration-300 transform group"
-            >
-              {/* Book cover image container */}
-              <div className="relative w-full h-72 overflow-hidden">
-                <img
-                  src={book.image}
-                  alt={book.title}
-                  className="w-full h-full object-cover object-top transform group-hover:scale-110 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 bg-black bg-opacity-30 group-hover:bg-opacity-10 transition-all duration-300"></div>
-              </div>
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Cart Items */}
+          <div className="lg:w-2/3">
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">
+              Shopping Cart ({totalItems} items)
+            </h2>
+            <div className="space-y-4">
+              {cartItems.map((book) => (
+                <div
+                  key={book._id}
+                  className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300"
+                >
+                  <div className="flex flex-col md:flex-row">
+                    {/* Book Image */}
+                    <div className="md:w-1/4 relative">
+                      <img
+                        src={book.cover_image}
+                        alt={book.title}
+                        className="w-full h-48 md:h-full object-cover"
+                      />
+                    </div>
 
-              {/* Book details */}
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-white mb-2">
-                  {book.title}
-                </h3>
-                <p className="text-sm text-gray-400 mb-4">by {book.author}</p>
+                    {/* Book Details */}
+                    <div className="p-6 md:w-3/4">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="text-xl font-bold text-gray-900 mb-2">
+                            {book.title}
+                          </h3>
+                          <p className="text-gray-600 mb-2">by {book.author}</p>
+                          <p className="text-lg font-semibold text-red-600">
+                            ${formatPrice(book.price)}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => removeFromCart(book._id)}
+                          className="p-2 text-gray-400 hover:text-red-600 transition-colors duration-300"
+                        >
+                          <FaTrash className="w-5 h-5" />
+                        </button>
+                      </div>
 
-                {/* Price */}
-                <p className="text-lg font-semibold text-yellow-400 mb-4">
-                  ${book.price}
-                </p>
+                      <div className="mt-4">
+                        <Link
+                          to={`/view_detail/${book._id}`}
+                          className="text-red-600 hover:text-red-700 font-medium inline-flex items-center"
+                        >
+                          View Details
+                          <FaArrowRight className="ml-2 w-4 h-4" />
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
 
-                {/* Description */}
-                <p className="text-sm text-gray-300 mb-6 line-clamp-3">
-                  {book.description}
-                </p>
+          {/* Order Summary */}
+          <div className="lg:w-1/3">
+            <div className="bg-white rounded-xl shadow-md p-6 sticky top-24">
+              <h3 className="text-xl font-bold text-gray-900 mb-4">
+                Order Summary
+              </h3>
 
-                {/* Buttons */}
-                <div className="flex flex-col space-y-4">
-                  <Link
-                    to={`/view_detail/${book._id}`}
-                    className="inline-block w-full px-6 py-3 bg-yellow-500 text-white text-sm font-semibold rounded-lg hover:bg-yellow-600 hover:shadow-lg transition-all duration-300 text-center"
-                  >
-                    View Details
-                  </Link>
-
-                  {/* Remove from Cart button */}
-                  <button
-                    onClick={() => removeFromCart(book._id)}
-                    className="w-full px-6 py-3 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700 hover:shadow-lg transition-all duration-300"
-                  >
-                    Remove from Cart
-                  </button>
+              <div className="space-y-4">
+                <div className="flex justify-between text-gray-600">
+                  <span>Subtotal</span>
+                  <span>${formatPrice(totalPrice)}</span>
+                </div>
+                <div className="flex justify-between text-gray-600">
+                  <span>Shipping</span>
+                  <span className="text-green-600 flex items-center">
+                    <FaTruck className="mr-1" /> Free
+                  </span>
+                </div>
+                <div className="border-t pt-4">
+                  <div className="flex justify-between text-lg font-bold text-gray-900">
+                    <span>Total</span>
+                    <span>${formatPrice(totalPrice)}</span>
+                  </div>
                 </div>
               </div>
+
+              <button className="w-full mt-6 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all duration-300 font-medium">
+                Proceed to Checkout
+              </button>
+
+              {/* Ichigo Image */}
+              <div className="mt-8">
+                <img
+                  src="/images/ichigo.png"
+                  alt="Ichigo"
+                  className="w-full h-auto transform hover:scale-105 transition-transform duration-300"
+                />
+              </div>
             </div>
-          ))}
+          </div>
         </div>
       </div>
     </div>

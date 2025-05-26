@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { useEffect } from "react";
+import { Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -9,17 +9,18 @@ import Signup from "./pages/Signup";
 import Carts from "./pages/Carts";
 import Profile from "./pages/Profile";
 import ViewBook from "./components/ViewBook";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { authActions } from "./store/auth";
 import Favourites from "./pages/Favourites";
 import OrderHistory from "./pages/OrderHistory";
 import Settings from "./pages/Settings";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ContactUs from "./pages/ContactUs";
+import FloatingContact from "./components/FloatingContact";
 
 const App = () => {
   const dispatch = useDispatch();
-  const role = useSelector((state) => state.auth.role);
 
   useEffect(() => {
     if (
@@ -33,7 +34,7 @@ const App = () => {
   }, [dispatch]);
 
   return (
-    <div>
+    <div className="min-h-screen bg-gray-50">
       {/* ToastContainer for displaying notifications */}
       <ToastContainer
         position="top-right"
@@ -64,7 +65,9 @@ const App = () => {
         </Route>
 
         <Route path="/view_detail/:book_id" element={<ViewBook />} />
+        <Route path="/contact" element={<ContactUs />} />
       </Routes>
+      <FloatingContact />
       <Footer />
     </div>
   );

@@ -1,16 +1,18 @@
-const { urlencoded } = require("express");
 const mongoose = require("mongoose");
+
 const bookSchema = new mongoose.Schema(
   {
-    url: {
-      type: String,
-      required: true,
-    },
     title: {
       type: String,
       required: true,
+      trim: true,
     },
     author: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    cover_image: {
       type: String,
       required: true,
     },
@@ -21,10 +23,7 @@ const bookSchema = new mongoose.Schema(
     description: {
       type: String,
       required: true,
-    },
-    image: {
-      type: String,
-      required: true,
+      trim: true,
     },
   },
   {

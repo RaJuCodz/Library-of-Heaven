@@ -1,102 +1,230 @@
 import React, { useEffect, useState } from "react";
-import { Link, Routes, Route, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { FaBars, FaTimes } from "react-icons/fa"; // Icons for mobile menu toggle
+import {
+  FaHeart,
+  FaHistory,
+  FaCog,
+  FaUser,
+  FaSignOutAlt,
+  FaEnvelope,
+  FaCalendarAlt,
+  FaMapMarkerAlt,
+} from "react-icons/fa";
+import Button from "../components/ui/Button";
+import { useDispatch } from "react-redux";
+import { authActions } from "../store/auth";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // State for mobile sidebar
-  const headers = {
-    id: localStorage.getItem("id"),
-    authorization: `Bearer ${localStorage.getItem("token")}`,
-  };
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("id");
 
   useEffect(() => {
     const fetchUser = async () => {
+      if (!token || !userId) {
+        dispatch(authActions.logout());
+        navigate("/login");
+        return;
+      }
+
       try {
+        setLoading(true);
         const response = await axios.get(
           "http://localhost:4000/api/v1/get_user_info",
-          { headers }
+          {
+            headers: {
+              id: userId,
+              authorization: `Bearer ${token}`,
+            },
+          }
         );
-        setUser(response.data);
+
+        if (response.data) {
+          setUser(response.data);
+          setError(null);
+        } else {
+          setError("No user data received");
+        }
       } catch (error) {
         console.error("Error fetching user data:", error);
+        setError(error.response?.data?.message || "Failed to load profile");
+
+        if (error.response?.status === 401) {
+          dispatch(authActions.logout());
+          localStorage.removeItem("token");
+          localStorage.removeItem("id");
+          localStorage.removeItem("role");
+          navigate("/login");
+        }
+      } finally {
+        setLoading(false);
       }
     };
+
     fetchUser();
-  }, []);
+  }, [token, userId, dispatch, navigate]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 pt-24 flex justify-center items-center">
+        <div className="flex flex-col items-center">
+          <div className="w-16 h-16 border-4 border-red-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+          <p className="text-lg text-gray-600">Loading your profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 pt-24 flex justify-center items-center">
+        <div className="flex flex-col items-center">
+          <p className="text-lg text-red-600 mb-4">{error}</p>
+          <Button onClick={() => navigate("/login")}>Go to Login</Button>
+        </div>
+      </div>
+    );
+  }
 
   if (!user) {
     return (
-      <div className="flex justify-center items-center h-screen bg-gray-900 text-white">
-        <p>Loading profile...</p>
+      <div className="min-h-screen bg-gray-50 pt-24 flex justify-center items-center">
+        <div className="flex flex-col items-center">
+          <p className="text-lg text-gray-600 mb-4">No user data available</p>
+          <Button onClick={() => navigate("/login")}>Go to Login</Button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-gray-900 text-gray-100 min-h-screen">
-      {/* Mobile Menu Toggle Button */}
-      <button
-        className="md:hidden fixed top-4 left-4 z-50 p-2 bg-gray-800 rounded-lg text-white focus:outline-none"
-        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-      >
-        {isSidebarOpen ? (
-          <FaTimes className="w-6 h-6" />
-        ) : (
-          <FaBars className="w-6 h-6" />
-        )}
-      </button>
-
-      {/* Sidebar */}
-      <div
-        className={`fixed left-0 top-0 h-full w-80 bg-gray-800 shadow-lg transform transition-transform duration-300 ease-in-out ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } md:translate-x-0`}
-      >
-        <div className="p-8">
-          <img
-            src={user.avatar}
-            alt="User Avatar"
-            className="w-28 h-28 rounded-full border-4 border-gray-700 mb-6"
+    <div className="min-h-screen bg-gray-50 pt-24 px-4 md:px-8">
+      <div className="max-w-6xl mx-auto">
+        {/* Profile Header */}
+        <div className="bg-white rounded-2xl shadow-sm p-8 mb-8 relative overflow-hidden">
+          <div
+            className="absolute inset-0 opacity-10"
+            style={{
+              backgroundImage: 'url("/images/spidy.png")',
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
+            }}
           />
-          <h1 className="text-2xl font-bold">{user.username}</h1>
-          <p className="text-sm text-gray-400 mt-2">{user.email}</p>
-          <p className="text-sm text-gray-500 mt-2">
-            Member since: {new Date(user.createdAt).toLocaleDateString()}
-          </p>
+          <div className="relative z-10">
+            <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
+              <div className="relative">
+                <div className="w-32 h-32 rounded-full bg-gray-100 flex items-center justify-center border-4 border-red-50">
+                  <FaUser className="w-20 h-20 text-red-400" />
+                </div>
+              </div>
+              <div className="flex-1 text-center md:text-left">
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                  {user.username}
+                </h1>
+                <div className="flex flex-col md:flex-row gap-4 text-gray-600">
+                  <div className="flex items-center gap-2">
+                    <FaEnvelope className="text-red-500" />
+                    <span>{user.email}</span>
+                  </div>
+                  {user.address && (
+                    <div className="flex items-center gap-2">
+                      <FaMapMarkerAlt className="text-red-500" />
+                      <span>{user.address}</span>
+                    </div>
+                  )}
+                  {user.createdAt && (
+                    <div className="flex items-center gap-2">
+                      <FaCalendarAlt className="text-red-500" />
+                      <span>
+                        Member since{" "}
+                        {new Date(user.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <Button
+                variant="outline"
+                className="flex items-center gap-2"
+                onClick={() => {
+                  dispatch(authActions.logout());
+                  localStorage.removeItem("token");
+                  localStorage.removeItem("id");
+                  localStorage.removeItem("role");
+                  navigate("/login");
+                }}
+              >
+                <FaSignOutAlt /> Sign Out
+              </Button>
+            </div>
+          </div>
         </div>
 
-        {/* Navigation Links */}
-        <nav className="mt-8">
+        {/* Quick Actions */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Link
             to="/profile/favourites"
-            className="block px-8 py-4 text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-300"
-            onClick={() => setIsSidebarOpen(false)} // Close sidebar on link click
+            className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300 group"
           >
-            Favourites
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center group-hover:bg-red-100 transition-colors duration-300">
+                <FaHeart className="w-6 h-6 text-red-500" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Favourites
+                </h3>
+                <p className="text-gray-600">View your favorite books</p>
+              </div>
+            </div>
           </Link>
+
           <Link
             to="/profile/orderhistory"
-            className="block px-8 py-4 text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-300"
-            onClick={() => setIsSidebarOpen(false)} // Close sidebar on link click
+            className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300 group"
           >
-            Order History
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center group-hover:bg-red-100 transition-colors duration-300">
+                <FaHistory className="w-6 h-6 text-red-500" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Order History
+                </h3>
+                <p className="text-gray-600">Track your orders</p>
+              </div>
+            </div>
           </Link>
+
           <Link
             to="/profile/settings"
-            className="block px-8 py-4 text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-300"
-            onClick={() => setIsSidebarOpen(false)} // Close sidebar on link click
+            className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300 group"
           >
-            Settings
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center group-hover:bg-red-100 transition-colors duration-300">
+                <FaCog className="w-6 h-6 text-red-500" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Settings
+                </h3>
+                <p className="text-gray-600">Manage your account</p>
+              </div>
+            </div>
           </Link>
-        </nav>
-      </div>
+        </div>
 
-      {/* Main Content */}
-      <div className="md:ml-80 p-4 md:p-8">
-        {/* Render nested routes */}
-        <Outlet />
+        {/* Main Content */}
+        <div className="bg-white rounded-2xl shadow-sm p-8">
+          <Outlet />
+        </div>
       </div>
     </div>
   );

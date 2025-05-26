@@ -1,0 +1,340 @@
+{
+    "books": [
+ {
+      "title": "One Piece",
+      "author": "Eiichiro Oda",
+      "cover_image": "https://m.media-amazon.com/images/I/51BucomQlHL._SX342_.jpg",
+      "price": 11.99,
+      "description": "One Piece follows Monkey D. Luffy and his Straw Hat Pirate crew as they sail the Grand Line searching for the legendary treasure called the One Piece:contentReference[oaicite:0]{index=0}."
+    },
+    {
+      "title": "Naruto",
+      "author": "Masashi Kishimoto",
+      "cover_image": "https://m.media-amazon.com/images/I/51BucomQlHL._SX342_.jpg",
+      "price": 9.99,
+      "description": "Naruto is the story of a young ninja, Uzumaki Naruto, who seeks recognition from his peers and dreams of becoming the Hokage, the leader of his village:contentReference[oaicite:1]{index=1}:contentReference[oaicite:2]{index=2}."
+    },
+    {
+      "title": "Attack on Titan",
+      "author": "Hajime Isayama",
+      "cover_image": "https://m.media-amazon.com/images/I/61BAqWfoxgL.jpg",
+      "price": 9.99,
+      "description": "Attack on Titan (Shingeki no Kyojin) follows Eren Yeager and his friends in a world where humanity lives behind enormous walls to protect themselves from the man-eating Titans:contentReference[oaicite:3]{index=3}."
+    },
+    {
+      "title": "My Hero Academia",
+      "author": "Kohei Horikoshi",
+      "cover_image": "https://m.media-amazon.com/images/I/61z-P5GIKmL.jpg",
+      "price": 10.99,
+      "description": "My Hero Academia is set in a world where nearly everyone has superpowers (\"quirks\") and follows Izuku Midoriya, a powerless boy who inherits a quirk to attend U.A. High School and become a hero:contentReference[oaicite:4]{index=4}."
+    },
+    {
+      "title": "Death Note",
+      "author": "Tsugumi Ohba (writer), Takeshi Obata (artist)",
+      "cover_image": "https://m.media-amazon.com/images/I/51gWoe0lXPL._SX331_BO1,204,203,200_.jpg",
+      "price": 12.99,
+      "description": "Death Note is a psychological thriller about Light Yagami, a student who finds a notebook that allows him to kill anyone by writing their name in it, pitting him against detective L:contentReference[oaicite:5]{index=5}."
+    },
+    {
+      "title": "Fullmetal Alchemist",
+      "author": "Hiromu Arakawa",
+      "cover_image": "https://m.media-amazon.com/images/I/41x77G6A0BL._SX351_BO1,204,203,200_.jpg",
+      "price": 9.99,
+      "description": "Fullmetal Alchemist follows brothers Edward and Alphonse Elric, who use alchemy in their quest to find the Philosopher’s Stone to restore their bodies after a failed alchemical experiment:contentReference[oaicite:6]{index=6}."
+    },
+    {
+      "title": "Dragon Ball",
+      "author": "Akira Toriyama",
+      "cover_image": "https://m.media-amazon.com/images/I/51VDMwXCmjL._SX331_BO1,204,203,200_.jpg",
+      "price": 9.99,
+      "description": "Dragon Ball follows the adventures of young Goku who, after meeting the teenage girl Bulma, sets off to find the seven Dragon Balls that summon a wish-granting dragon:contentReference[oaicite:7]{index=7}."
+    },
+    {
+      "title": "Bleach",
+      "author": "Tite Kubo",
+      "cover_image": "https://m.media-amazon.com/images/I/51NU1cvPi4L._SX329_BO1,204,203,200_.jpg",
+      "price": 9.99,
+      "description": "Bleach centers on Ichigo Kurosaki, a teenager who obtains the powers of a Soul Reaper (a death personification similar to the Grim Reaper) and fights evil spirits known as Hollows:contentReference[oaicite:8]{index=8}."
+    },
+    {
+      "title": "Sailor Moon",
+      "author": "Naoko Takeuchi",
+      "cover_image": "https://m.media-amazon.com/images/I/51M16x-8BnL._SX331_BO1,204,203,200_.jpg",
+      "price": 11.99,
+      "description": "Sailor Moon follows the adventures of Usagi Tsukino, a girl who transforms into the Sailor Moon and fights to protect the Earth from various threats, alongside her sailor soldier friends:contentReference[oaicite:9]{index=9}."
+    },
+    {
+      "title": "Berserk",
+      "author": "Kentaro Miura",
+      "cover_image": "https://m.media-amazon.com/images/I/51WE+M6yp4L._SX325_BO1,204,203,200_.jpg",
+      "price": 9.99,
+      "description": "Berserk is a dark fantasy epic following Guts, a lone mercenary with a tragic past, as he battles demonic forces and seeks revenge against his former friend Griffith:contentReference[oaicite:10]{index=10}."
+    },
+    {
+      "title": "Vagabond",
+      "author": "Takehiko Inoue",
+      "cover_image": "https://m.media-amazon.com/images/I/51AnbeGzT0L._SX344_BO1,204,203,200_.jpg",
+      "price": 9.99,
+      "description": "Vagabond is a historical manga dramatization of the life of famed swordsman Miyamoto Musashi as he travels Japan seeking purpose and mastering the sword:contentReference[oaicite:11]{index=11}."
+    },
+    {
+      "title": "Monster",
+      "author": "Naoki Urasawa",
+      "cover_image": "https://m.media-amazon.com/images/I/51vskLe4C8L._SX331_BO1,204,203,200_.jpg",
+      "price": 10.99,
+      "description": "Monster is a thriller about Dr. Kenzo Tenma, a Japanese brain surgeon in Germany whose life becomes entangled with a serial killer he once saved, unraveling a dark conspiracy:contentReference[oaicite:12]{index=12}."
+    },
+    {
+      "title": "Pluto",
+      "author": "Naoki Urasawa (story), Osamu Tezuka (original concept)",
+      "cover_image": "https://m.media-amazon.com/images/I/51Mh5+KtoAL._SX329_BO1,204,203,200_.jpg",
+      "price": 10.99,
+      "description": "Pluto is a reimagining of an epic Astro Boy story arc; it follows detective Gesicht and other robots investigating mysterious robot murders in a futuristic world:contentReference[oaicite:13]{index=13}."
+    },
+    {
+      "title": "20th Century Boys",
+      "author": "Naoki Urasawa",
+      "cover_image": "https://m.media-amazon.com/images/I/51nGEmzVRGL._SX329_BO1,204,203,200_.jpg",
+      "price": 10.99,
+      "description": "20th Century Boys is a suspenseful mystery where childhood friends realize a sinister cult is acting out predictions from their own early writings, leading to a race against time:contentReference[oaicite:14]{index=14}."
+    },
+    {
+      "title": "Akira",
+      "author": "Katsuhiro Otomo",
+      "cover_image": "https://m.media-amazon.com/images/I/51FSDA0rY2L._SX325_BO1,204,203,200_.jpg",
+      "price": 12.99,
+      "description": "Akira is a groundbreaking cyberpunk manga set in post-apocalyptic Neo-Tokyo, focusing on biker gang member Kaneda and his psychic friend Tetsuo, whose powers threaten the city:contentReference[oaicite:15]{index=15}."
+    },
+    {
+      "title": "Ghost in the Shell",
+      "author": "Masamune Shirow",
+      "cover_image": "https://m.media-amazon.com/images/I/519cBOh9ZwL._SX324_BO1,204,203,200_.jpg",
+      "price": 9.99,
+      "description": "Ghost in the Shell is a sci-fi manga about Major Motoko Kusanagi, a cyborg in a special ops unit investigating cybercrime in a future world where minds can be connected to networks:contentReference[oaicite:16]{index=16}."
+    },
+    {
+      "title": "Vinland Saga",
+      "author": "Makoto Yukimura",
+      "cover_image": "https://m.media-amazon.com/images/I/510qJb9uobL._SX329_BO1,204,203,200_.jpg",
+      "price": 10.99,
+      "description": "Vinland Saga is a historical epic following Thorfinn, an Icelandic warrior on a quest for revenge during the era of Vikings, exploring themes of violence and redemption:contentReference[oaicite:17]{index=17}."
+    },
+    {
+      "title": "Demon Slayer: Kimetsu no Yaiba",
+      "author": "Koyoharu Gotouge",
+      "cover_image": "https://m.media-amazon.com/images/I/51o1Mlygw7L._SX330_BO1,204,203,200_.jpg",
+      "price": 9.99,
+      "description": "Demon Slayer follows Tanjiro Kamado, a kind-hearted boy who becomes a demon slayer after his family is slaughtered and his sister turned into a demon, as he searches for a cure:contentReference[oaicite:18]{index=18}."
+    },
+    {
+      "title": "Chainsaw Man",
+      "author": "Tatsuki Fujimoto",
+      "cover_image": "https://m.media-amazon.com/images/I/51PD1fWUv6L._SX331_BO1,204,203,200_.jpg",
+      "price": 9.99,
+      "description": "Chainsaw Man is a supernatural action series about Denji, a young man with the ability to become Chainsaw Man after merging with his demon pet, who fights devils and becomes embroiled in dark government schemes:contentReference[oaicite:19]{index=19}."
+    },
+    {
+      "title": "Tokyo Ghoul",
+      "author": "Sui Ishida",
+      "cover_image": "https://m.media-amazon.com/images/I/51S9V4KXcQL._SX329_BO1,204,203,200_.jpg",
+      "price": 9.99,
+      "description": "Tokyo Ghoul follows Ken Kaneki, a college student who survives a deadly encounter with a ghoul only to become half-ghoul himself, grappling with his new identity and hunger for human flesh:contentReference[oaicite:20]{index=20}."
+    },
+    {
+      "title": "Dorohedoro",
+      "author": "Q Hayashida",
+      "cover_image": "https://m.media-amazon.com/images/I/51SKUnRR03L._SX331_BO1,204,203,200_.jpg",
+      "price": 10.99,
+      "description": "Dorohedoro is a dark fantasy manga about Caiman, a man with a lizard head searching for the sorcerer who transformed him, set in a brutal city where sorcerers experiment on citizens:contentReference[oaicite:21]{index=21}."
+    },
+    {
+      "title": "Maus",
+      "author": "Art Spiegelman",
+      "cover_image": "https://m.media-amazon.com/images/I/51+p6V1N3zL._SX331_BO1,204,203,200_.jpg",
+      "price": 14.99,
+      "description": "Maus is a graphic novel memoir recounting Art Spiegelman’s father’s experiences as a Polish Jew and Holocaust survivor, depicted with Jews as mice and Nazis as cats:contentReference[oaicite:22]{index=22}."
+    },
+    {
+      "title": "Persepolis",
+      "author": "Marjane Satrapi",
+      "cover_image": "https://m.media-amazon.com/images/I/51DGGwykuLL._SX331_BO1,204,203,200_.jpg",
+      "price": 14.99,
+      "description": "Persepolis is a memoir in graphic novel form that tells the story of Marjane Satrapi’s childhood and early adult years in Iran during and after the Islamic Revolution:contentReference[oaicite:23]{index=23}."
+    },
+    {
+      "title": "Sandman, Vol. 1",
+      "author": "Neil Gaiman",
+      "cover_image": "https://m.media-amazon.com/images/I/51J7wVu46VL._SX331_BO1,204,203,200_.jpg",
+      "price": 19.99,
+      "description": "Sandman (Vol. 1) is the beginning of Neil Gaiman’s fantasy series about Dream (also known as Morpheus), one of the Endless who govern fundamental aspects of existence, blending mythology and horror:contentReference[oaicite:24]{index=24}."
+    },
+    {
+      "title": "Watchmen",
+      "author": "Alan Moore (writer), Dave Gibbons (artist)",
+      "cover_image": "https://m.media-amazon.com/images/I/514Mru1fMzL._SX331_BO1,204,203,200_.jpg",
+      "price": 19.99,
+      "description": "Watchmen is a deconstruction of superheroes, set in an alternate 1985 where costumed vigilantes exist. It follows a group of retired heroes investigating the murder of one of their own:contentReference[oaicite:25]{index=25}."
+    },
+    {
+      "title": "V for Vendetta",
+      "author": "Alan Moore (writer), David Lloyd (artist)",
+      "cover_image": "https://m.media-amazon.com/images/I/51T-X6naChL._SX330_BO1,204,203,200_.jpg",
+      "price": 19.99,
+      "description": "V for Vendetta is a graphic novel set in a dystopian future United Kingdom, focusing on the mysterious freedom fighter V and his efforts to overthrow a fascist government, and the young woman he inspires:contentReference[oaicite:26]{index=26}."
+    },
+    {
+      "title": "Saga, Vol. 1",
+      "author": "Brian K. Vaughan (writer), Fiona Staples (artist)",
+      "cover_image": "https://m.media-amazon.com/images/I/51s2qOZ6ltL._SX329_BO1,204,203,200_.jpg",
+      "price": 12.99,
+      "description": "Saga is an epic space fantasy series about star-crossed lovers Alana and Marko, from opposite sides of a galactic war, trying to care for their newborn daughter Hazel while pursued by enemies:contentReference[oaicite:27]{index=27}."
+    },
+    {
+      "title": "Fun Home",
+      "author": "Alison Bechdel",
+      "cover_image": "https://m.media-amazon.com/images/I/51FpzdSveDL._SX328_BO1,204,203,200_.jpg",
+      "price": 16.99,
+      "description": "Fun Home is a graphic memoir by Alison Bechdel about her childhood and her complex relationship with her closeted gay father, combining humor with the revelations of her family’s secrets:contentReference[oaicite:28]{index=28}."
+    },
+    {
+      "title": "Bone, Vol. 1",
+      "author": "Jeff Smith",
+      "cover_image": "https://m.media-amazon.com/images/I/5161CzrsyBL._SX331_BO1,204,203,200_.jpg",
+      "price": 9.99,
+      "description": "Bone is a humor-fantasy series following the Bone cousins as they’re run out of Boneville and drawn into a mysterious valley with strange creatures and an ancient secret:contentReference[oaicite:29]{index=29}."
+    },
+    {
+      "title": "Locke & Key, Vol. 1",
+      "author": "Joe Hill (writer), Gabriel Rodríguez (artist)",
+      "cover_image": "https://m.media-amazon.com/images/I/51IwQ0K+mwL._SX331_BO1,204,203,200_.jpg",
+      "price": 12.99,
+      "description": "Locke & Key is a horror/fantasy series about the Locke family moving into their ancestral home, Keyhouse, which contains mysterious magical keys that grant strange powers and attract dark forces:contentReference[oaicite:30]{index=30}."
+    },
+    {
+      "title": "Y: The Last Man, Vol. 1: Unmanned",
+      "author": "Brian K. Vaughan (writer), Pia Guerra (artist)",
+      "cover_image": "https://m.media-amazon.com/images/I/51Vk+JWlVhL._SX329_BO1,204,203,200_.jpg",
+      "price": 12.99,
+      "description": "Y: The Last Man starts with a cataclysmic event that wipes out every male mammal except for Yorick Brown and his pet monkey, and follows their struggle to survive in a world now ruled by women:contentReference[oaicite:31]{index=31}."
+    },
+    {
+      "title": "Blankets",
+      "author": "Craig Thompson",
+      "cover_image": "https://m.media-amazon.com/images/I/51inM-dEI8L._SX331_BO1,204,203,200_.jpg",
+      "price": 19.99,
+      "description": "Blankets is an autobiographical graphic novel recounting Craig Thompson’s youth, his first love, and his spiritual awakening in a tightly knit Midwestern family, told with poetic artwork:contentReference[oaicite:32]{index=32}."
+    },
+    {
+      "title": "Moomin, Vol. 1: Comet in Moominland",
+      "author": "Tove Jansson",
+      "cover_image": "https://m.media-amazon.com/images/I/51UfEQMnRdL._SX331_BO1,204,203,200_.jpg",
+      "price": 9.99,
+      "description": "Moomin: Comet in Moominland is a gentle fantasy/adventure following the Moomin family and friends as they learn a comet is heading to Earth and decide to keep a record of their lives:contentReference[oaicite:33]{index=33}."
+    },
+    {
+      "title": "The Walking Dead, Vol. 1: Days Gone Bye",
+      "author": "Robert Kirkman",
+      "cover_image": "https://m.media-amazon.com/images/I/51DQQjt0-SL._SX329_BO1,204,203,200_.jpg",
+      "price": 14.99,
+      "description": "The Walking Dead, Vol. 1 follows sheriff’s deputy Rick Grimes who wakes from a coma to find the world overrun by zombies (\"walkers\") and joins a group of survivors searching for safety:contentReference[oaicite:34]{index=34}."
+    },
+    {
+      "title": "Naruto: Hokage Dates",
+      "author": "Masashi Kishimoto (original concept) and other manga authors",
+      "cover_image": "https://m.media-amazon.com/images/I/51kO7kUV2hL._SX331_BO1,204,203,200_.jpg",
+      "price": 12.99,
+      "description": "Naruto: Hokage Dates is a lighthearted anthology series set in the Naruto universe, imagining comedic and romantic date scenarios involving its characters in non-canon stories:contentReference[oaicite:35]{index=35}."
+    },
+    {
+      "title": "One-Punch Man, Vol. 1",
+      "author": "ONE (writer), Yusuke Murata (artist)",
+      "cover_image": "https://m.media-amazon.com/images/I/51RkXK5psKL._SX329_BO1,204,203,200_.jpg",
+      "price": 9.99,
+      "description": "One-Punch Man is a superhero parody series about Saitama, a hero who can defeat any enemy with a single punch but struggles with boredom from the lack of challenge:contentReference[oaicite:36]{index=36}."
+    },
+    {
+      "title": "Haikyuu!!, Vol. 1",
+      "author": "Haruichi Furudate",
+      "cover_image": "https://m.media-amazon.com/images/I/51eLfUiFZhL._SX324_BO1,204,203,200_.jpg",
+      "price": 9.99,
+      "description": "Haikyuu!! is a sports manga focusing on high school volleyball. It follows Shoyo Hinata as he forms a team and competes to become a top player despite his short stature:contentReference[oaicite:37]{index=37}."
+    },
+    {
+      "title": "Slam Dunk, Vol. 1",
+      "author": "Takehiko Inoue",
+      "cover_image": "https://m.media-amazon.com/images/I/51r2jazVtIL._SX324_BO1,204,203,200_.jpg",
+      "price": 9.99,
+      "description": "Slam Dunk is a classic sports manga about Hanamichi Sakuragi, a delinquent who joins his high school basketball team to impress a girl, and discovers a passion and talent for the sport:contentReference[oaicite:38]{index=38}."
+    },
+    {
+      "title": "Fairy Tail, Vol. 1",
+      "author": "Hiro Mashima",
+      "cover_image": "https://m.media-amazon.com/images/I/51Tz+U6OC0L._SX330_BO1,204,203,200_.jpg",
+      "price": 9.99,
+      "description": "Fairy Tail follows a magical guild of wizards; Volume 1 introduces Lucy Heartfilia, a celestial wizard who joins the Fairy Tail guild, and her adventures with Natsu and Happy as they hunt a dragon:contentReference[oaicite:39]{index=39}."
+    },
+    {
+      "title": "Sword Art Online, Vol. 1: Aincrad (light novel)",
+      "author": "Reki Kawahara",
+      "cover_image": "https://m.media-amazon.com/images/I/51Vuz0F6UTL._SX324_BO1,204,203,200_.jpg",
+      "price": 10.99,
+      "description": "Sword Art Online Vol. 1 (light novel) is a sci-fi romance about Kirito, a player trapped in a virtual reality MMORPG where death in the game means death in reality, and his battle for survival:contentReference[oaicite:40]{index=40}."
+    },
+    {
+      "title": "Overlord, Vol. 1 (light novel)",
+      "author": "Kugane Maruyama",
+      "cover_image": "https://m.media-amazon.com/images/I/51qAIB6r-jL._SX329_BO1,204,203,200_.jpg",
+      "price": 10.99,
+      "description": "Overlord Vol. 1 follows Momonga, a player in a virtual reality game who is trapped as his character (an undead overlord) when the game’s servers shut down, and how he decides to conquer this new world:contentReference[oaicite:41]{index=41}."
+    },
+    {
+      "title": "Spice and Wolf, Vol. 1 (light novel)",
+      "author": "Isuna Hasekura",
+      "cover_image": "https://m.media-amazon.com/images/I/51D0MLGOH+L._SX331_BO1,204,203,200_.jpg",
+      "price": 9.99,
+      "description": "Spice and Wolf is a historical fantasy about Kraft Lawrence, a traveling merchant, and Holo, a wolf harvest deity in human form. They travel together and speculate on economics and love during medieval times:contentReference[oaicite:42]{index=42}."
+    },
+    {
+      "title": "The Rising of the Shield Hero, Vol. 1 (light novel)",
+      "author": "Aneko Yusagi",
+      "cover_image": "https://m.media-amazon.com/images/I/51axFX3uXoL._SX326_BO1,204,203,200_.jpg",
+      "price": 10.99,
+      "description": "Shield Hero Vol. 1 is an isekai fantasy about Naofumi Iwatani, who is summoned to another world as one of four legendary heroes. He must defend the world as the Shield Hero after being wrongfully accused and betrayed:contentReference[oaicite:43]{index=43}."
+    },
+    {
+      "title": "That Time I Got Reincarnated as a Slime, Vol. 1 (light novel)",
+      "author": "Fuse",
+      "cover_image": "https://m.media-amazon.com/images/I/51XwYlG4eHL._SX331_BO1,204,203,200_.jpg",
+      "price": 10.99,
+      "description": "That Time I Got Reincarnated as a Slime Vol. 1 follows Satoru Mikami, a man killed in a random stabbing who is reborn in a fantasy world as a powerful slime named Rimuru and gains various abilities:contentReference[oaicite:44]{index=44}."
+    },
+    {
+      "title": "Re:Zero − Starting Life in Another World, Vol. 1 (light novel)",
+      "author": "Tappei Nagatsuki",
+      "cover_image": "https://m.media-amazon.com/images/I/51O7tXGuAOL._SX327_BO1,204,203,200_.jpg",
+      "price": 10.99,
+      "description": "Re:Zero Vol. 1 introduces Subaru Natsuki, a young man transported to a fantasy world where he discovers he has the power to return to a \"save point\" every time he dies, used to protect Emilia, a silver-haired half-elf:contentReference[oaicite:45]{index=45}."
+    },
+    {
+      "title": "The Melancholy of Haruhi Suzumiya, Vol. 1 (light novel)",
+      "author": "Nagaru Tanigawa",
+      "cover_image": "https://m.media-amazon.com/images/I/51AcsvI2B8L._SX324_BO1,204,203,200_.jpg",
+      "price": 10.99,
+      "description": "Haruhi Suzumiya Vol. 1 is a light novel about Kyon and his eccentric classmate Haruhi, who unwittingly has supernatural powers. She forms the SOS Brigade to investigate aliens, time travelers, and espers, dragging Kyon into bizarre events:contentReference[oaicite:46]{index=46}."
+    },
+    {
+      "title": "Konosuba: God's Blessing on This Wonderful World!, Vol. 1 (light novel)",
+      "author": "Natsume Akatsuki",
+      "cover_image": "https://m.media-amazon.com/images/I/51ZEFtK7y+L._SX326_BO1,204,203,200_.jpg",
+      "price": 10.99,
+      "description": "Konosuba Vol. 1 follows Kazuma, a shut-in who is reincarnated into a fantasy world. He teams up with the goddess Aqua, the wizard Megumin, and knight Darkness on comedic misadventures while fighting monsters and absurd challenges:contentReference[oaicite:47]{index=47}."
+    },
+    {
+      "title": "Mushoku Tensei: Jobless Reincarnation, Vol. 1 (light novel)",
+      "author": "Rifujin na Magonote",
+      "cover_image": "https://m.media-amazon.com/images/I/51fQI9DnBGL._SX330_BO1,204,203,200_.jpg",
+      "price": 10.99,
+      "description": "Mushoku Tensei Vol. 1 follows an unemployed and hopeless man who is reincarnated in a magical world as Rudeus Greyrat. Retaining his memories, he is determined to live his new life to the fullest as a talented wizard’s apprentice:contentReference[oaicite:48]{index=48}."
+    }
+    ]
+  }
