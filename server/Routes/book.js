@@ -8,7 +8,7 @@ const Book = require("../Models/books");
 router.post("/add_book", auth, async (req, res) => {
   try {
     const { title, author, cover_image, price, description } = req.body;
-
+    const authorId = req.headers.id;
     // Validate required fields
     if (!title || !author || !cover_image || !price || !description) {
       return res.status(400).json({
@@ -16,17 +16,18 @@ router.post("/add_book", auth, async (req, res) => {
           "All fields are required: title, author, cover_image, price, description",
       });
     }
-
+    if (!authorId) {
+      return res.status(400).json({ message: "Author ID is required" });
+    }
     const newBook = new Book({
       title,
       author,
       cover_image,
       price,
       description,
+      authorId,
     });
-
     const savedBook = await newBook.save();
-
     res.status(200).json({
       message: "Book added successfully",
       book_id: savedBook._id,
@@ -105,14 +106,26 @@ router.put("/update_book", auth, async (req, res) => {
 module.exports = router;
 
 // delete the book
-
 router.delete("/delete_book", auth, async (req, res) => {
   try {
     const { book_id } = req.headers;
+    const authorId = req.headers.id;
     if (!book_id) {
       return res.status(400).json({ message: "Book ID is required" });
     }
-    const book = await Book.findByIdAndDelete(book_id);
+    if (!authorId) {
+      return res.status(400).json({ message: "Author ID is required" });
+    }
+    const book = await Book.findById(book_id);
+    if (!book) {
+      return res.status(404).json({ message: "Book not found" });
+    }
+    if (book.authorId.toString() !== authorId) {
+      return res
+        .status(403)
+        .json({ message: "You are not authorized to delete this book" });
+    }
+    await Book.findByIdAndDelete(book_id);
     res.status(200).json({ message: "Book deleted successfully" });
   } catch (err) {
     console.error("Error deleting book:", err);
@@ -153,6 +166,21 @@ router.get("/get_book_by_id/:book_id", async (req, res) => {
     res.status(200).json({ data: book });
   } catch (err) {
     console.error("Error getting book by ID:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// Get all books by the logged-in author
+router.get("/get_my_books", auth, async (req, res) => {
+  try {
+    const authorId = req.headers.id;
+    if (!authorId) {
+      return res.status(400).json({ message: "Author ID is required" });
+    }
+    const books = await Book.find({ authorId }).sort({ createdAt: -1 });
+    res.status(200).json({ data: books });
+  } catch (err) {
+    console.error("Error getting author's books:", err);
     res.status(500).json({ message: "Internal server error" });
   }
 });

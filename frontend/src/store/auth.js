@@ -9,16 +9,16 @@ const authSlice = createSlice({
   reducers: {
     login: (state) => {
       state.isLoggedIn = true;
-      //   state.role = action.payload.role;
     },
     logout: (state) => {
       state.isLoggedIn = false;
       state.role = "user";
     },
     setRole: (state, action) => {
-      state.role = action.payload.role;
+      state.role = action.payload;
     },
   },
 });
+
 export const authActions = authSlice.actions;
 export default authSlice.reducer;

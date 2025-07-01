@@ -47,6 +47,14 @@ const userSchema = new mongoose.Schema(
         ref: "Order",
       },
     ],
+    authorName: {
+      type: String,
+      trim: true,
+    },
+    bio: {
+      type: String,
+      trim: true,
+    },
   },
   { timestamps: true }
 );

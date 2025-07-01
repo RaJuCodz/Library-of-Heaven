@@ -18,6 +18,8 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ContactUs from "./pages/ContactUs";
 import FloatingContact from "./components/FloatingContact";
+import BecomeAuthor from "./pages/BecomeAuthor";
+import AuthorProfile from "./pages/AuthorProfile";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -66,6 +68,8 @@ const App = () => {
 
         <Route path="/view_detail/:book_id" element={<ViewBook />} />
         <Route path="/contact" element={<ContactUs />} />
+        <Route path="/become-author" element={<BecomeAuthor />} />
+        <Route path="/author-profile" element={<AuthorProfile />} />
       </Routes>
       <FloatingContact />
       <Footer />

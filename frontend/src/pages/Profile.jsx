@@ -14,6 +14,7 @@ import {
 import Button from "../components/ui/Button";
 import { useDispatch } from "react-redux";
 import { authActions } from "../store/auth";
+import AuthorProfile from "./AuthorProfile";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -101,6 +102,11 @@ const Profile = () => {
         </div>
       </div>
     );
+  }
+
+  // If user is an author (admin), show AuthorProfile
+  if (user.role === "admin") {
+    return <AuthorProfile />;
   }
 
   return (

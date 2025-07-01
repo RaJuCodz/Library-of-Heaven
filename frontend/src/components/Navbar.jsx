@@ -7,8 +7,8 @@ import {
   FaTimes,
   FaHome,
   FaBook,
-  FaHeart,
   FaEnvelope,
+  FaPenFancy,
 } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
 import { authActions } from "../store/auth";
@@ -18,6 +18,7 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const userRole = useSelector((state) => state.auth.role);
   const dispatch = useDispatch();
   const location = useLocation();
 
@@ -30,7 +31,7 @@ const Navbar = () => {
         setIsScrolled(false);
       }
     };
-
+    console.log("userRole", userRole);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -92,13 +93,24 @@ const Navbar = () => {
           </Link>
 
           {isLoggedIn ? (
-            <Link
-              to="/profile"
-              className="flex items-center px-3 py-2 rounded-lg text-gray-600 hover:text-red-500 hover:bg-red-50 text-lg transition-all duration-300"
-            >
-              <FaUser className="mr-2 w-6 h-6" />
-              Profile
-            </Link>
+            <>
+              {userRole == "user" && (
+                <Link
+                  to="/become-author"
+                  className="flex items-center px-3 py-2 rounded-lg text-gray-600 hover:text-red-500 hover:bg-red-50 text-lg transition-all duration-300"
+                >
+                  <FaPenFancy className="mr-2 w-6 h-6" />
+                  Become Author
+                </Link>
+              )}
+              <Link
+                to="/profile"
+                className="flex items-center px-3 py-2 rounded-lg text-gray-600 hover:text-red-500 hover:bg-red-50 text-lg transition-all duration-300"
+              >
+                <FaUser className="mr-2 w-6 h-6" />
+                Profile
+              </Link>
+            </>
           ) : (
             <div className="flex space-x-3">
               <Button
@@ -163,6 +175,16 @@ const Navbar = () => {
 
             {isLoggedIn ? (
               <>
+                {userRole === "user" && (
+                  <Link
+                    to="/become-author"
+                    className="flex items-center px-4 py-3 rounded-lg text-gray-600 hover:text-red-500 hover:bg-red-50 text-lg transition-all duration-300"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <FaPenFancy className="mr-3 w-6 h-6" />
+                    Become Author
+                  </Link>
+                )}
                 <Link
                   to="/profile"
                   className="flex items-center px-4 py-3 rounded-lg text-gray-600 hover:text-red-500 hover:bg-red-50 text-lg transition-all duration-300"

@@ -225,4 +225,32 @@ router.delete("/remove_from_fav", auth, async (req, res) => {
   }
 });
 
+// Become Author route
+router.put("/become_author", auth, async (req, res) => {
+  try {
+    const id = req.headers.id;
+    const { authorName, bio } = req.body;
+    if (!id) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+    if (!authorName || !bio) {
+      return res
+        .status(400)
+        .json({ message: "Author Name and Bio are required" });
+    }
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    user.role = "admin";
+    user.authorName = authorName;
+    user.bio = bio;
+    await user.save();
+    res.status(200).json({ message: "You are now an author (admin)!" });
+  } catch (err) {
+    console.error("Error updating user role to admin:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 module.exports = router;
