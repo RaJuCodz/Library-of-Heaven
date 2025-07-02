@@ -3,7 +3,6 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { authActions } from "../store/auth";
-import { apiUrl } from "../api";
 
 const BecomeAuthor = () => {
   const [authorName, setAuthorName] = useState("");
@@ -25,7 +24,7 @@ const BecomeAuthor = () => {
         id,
       };
       const response = await axios.post(
-        apiUrl("/become_author"),
+        "https://library-of-heaven.onrender.com/api/v1/become_author",
         {},
         { headers }
       );

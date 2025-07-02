@@ -4,7 +4,6 @@ import BookCard from "../components/BookCard";
 import { FaSort, FaSearch } from "react-icons/fa";
 import { toast } from "react-toastify";
 import Button from "../components/ui/Button";
-import { apiUrl } from "../api";
 
 const AllBooks = () => {
   const [books, setBooks] = useState([]);
@@ -18,18 +17,23 @@ const AllBooks = () => {
     const fetchBooks = async () => {
       setIsLoading(true);
       try {
-        const response = await axios.get(apiUrl("/get_all_books"));
+        const response = await axios.get(
+          "https://library-of-heaven.onrender.com/api/v1/get_all_books"
+        );
         setBooks(response.data.data);
         setFilteredBooks(response.data.data);
 
         if (localStorage.getItem("token")) {
           try {
-            const favResponse = await axios.get(apiUrl("/get_fav_books"), {
-              headers: {
-                id: localStorage.getItem("id"),
-                authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-            });
+            const favResponse = await axios.get(
+              "https://library-of-heaven.onrender.com/api/v1/get_fav_books",
+              {
+                headers: {
+                  id: localStorage.getItem("id"),
+                  authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+              }
+            );
             setFavorites(favResponse.data.data.map((book) => book._id));
           } catch (err) {
             console.error("Error fetching favorites:", err);
@@ -75,13 +79,20 @@ const AllBooks = () => {
 
     try {
       if (favorites.includes(bookId)) {
-        await axios.delete(apiUrl("/remove_from_fav"), {
-          headers,
-        });
+        await axios.delete(
+          "https://library-of-heaven.onrender.com/api/v1/remove_from_fav",
+          {
+            headers,
+          }
+        );
         setFavorites(favorites.filter((id) => id !== bookId));
         toast.success("Removed from favorites");
       } else {
-        await axios.post(apiUrl("/add_to_fav"), {}, { headers });
+        await axios.post(
+          "https://library-of-heaven.onrender.com/api/v1/add_to_fav",
+          {},
+          { headers }
+        );
         setFavorites([...favorites, bookId]);
         toast.success("Added to favorites");
       }

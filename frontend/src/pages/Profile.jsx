@@ -15,7 +15,6 @@ import Button from "../components/ui/Button";
 import { useDispatch } from "react-redux";
 import { authActions } from "../store/auth";
 import AuthorProfile from "./AuthorProfile";
-import { apiUrl } from "../api";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -41,9 +40,12 @@ const Profile = () => {
           id: userId,
           authorization: `Bearer ${token}`,
         };
-        const response = await axios.get(apiUrl("/get_user_info"), {
-          headers,
-        });
+        const response = await axios.get(
+          "https://library-of-heaven.onrender.com/api/v1/get_user_info",
+          {
+            headers,
+          }
+        );
 
         if (response.data) {
           setUser(response.data);

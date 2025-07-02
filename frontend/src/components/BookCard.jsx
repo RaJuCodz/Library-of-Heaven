@@ -17,7 +17,7 @@ const BookCard = ({ book, onFavoriteClick, small }) => {
       const token = localStorage.getItem("token");
       const id = localStorage.getItem("id");
       await axios.post(
-        "http://localhost:4000/api/v1/place_order",
+        "https://library-of-heaven.onrender.com/api/v1/place_order",
         { order: [{ book_id: book._id }] },
         {
           headers: {

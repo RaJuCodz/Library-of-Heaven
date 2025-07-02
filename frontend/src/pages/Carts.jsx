@@ -5,7 +5,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { Link } from "react-router-dom";
 import { FaTrash, FaShoppingCart, FaArrowRight, FaTruck } from "react-icons/fa";
 import Button from "../components/ui/Button";
-import { apiUrl } from "../api";
 
 const Carts = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -21,7 +20,10 @@ const Carts = () => {
   // Fetch cart items
   const fetchCartItems = async () => {
     try {
-      const response = await axios.get(apiUrl("/show_cart"), { headers });
+      const response = await axios.get(
+        "https://library-of-heaven.onrender.com/api/v1/show_cart",
+        { headers }
+      );
       setCartItems(response.data.data || []);
 
       // Calculate total price with proper type checking
@@ -43,9 +45,19 @@ const Carts = () => {
   // Remove item from cart
   const removeFromCart = async (bookId) => {
     try {
-      const response = await axios.delete(apiUrl("/remove_from_cart"), {
-        headers: { ...headers, book_id: bookId },
-      });
+      // Debug log for remove_from_cart
+      console.log(
+        "Removing from cart:",
+        "https://library-of-heaven.onrender.com/api/v1/remove_from_cart",
+        "with id:",
+        bookId
+      );
+      const response = await axios.delete(
+        "https://library-of-heaven.onrender.com/api/v1/remove_from_cart",
+        {
+          headers: { ...headers, book_id: bookId },
+        }
+      );
       toast.success(response.data.message);
       fetchCartItems(); // Refresh the cart after removal
     } catch (error) {
@@ -58,7 +70,11 @@ const Carts = () => {
     try {
       const token = localStorage.getItem("token");
       const id = localStorage.getItem("id");
-      await axios.post(apiUrl("/place_order"), {}, { headers });
+      await axios.post(
+        "https://library-of-heaven.onrender.com/api/v1/place_order",
+        {},
+        { headers }
+      );
       toast.success("Order placed for all cart items!");
       // Optionally clear cart or redirect
     } catch (err) {

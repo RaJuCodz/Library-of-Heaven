@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { apiUrl } from "../api";
 
 const Settings = () => {
   const [address, setAddress] = useState("");
@@ -17,7 +16,10 @@ const Settings = () => {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const response = await axios.get(apiUrl("/get_user_info"), { headers });
+        const response = await axios.get(
+          "https://library-of-heaven.onrender.com/api/v1/get_user_info",
+          { headers }
+        );
         setAddress(response.data.address || "");
       } catch (error) {
         console.error("Error fetching user info:", error);
@@ -39,7 +41,7 @@ const Settings = () => {
     setLoading(true);
     try {
       const response = await axios.put(
-        apiUrl("/update_address"),
+        "https://library-of-heaven.onrender.com/api/v1/update_address",
         { address },
         { headers }
       );

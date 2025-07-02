@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { apiUrl } from "../api";
 
 const OrderHistory = () => {
   const [orders, setOrders] = useState([]);
@@ -16,9 +15,12 @@ const OrderHistory = () => {
   // Fetch order history
   const fetchOrderHistory = async () => {
     try {
-      const response = await axios.get(apiUrl("/get_order_history"), {
-        headers,
-      });
+      const response = await axios.get(
+        "https://library-of-heaven.onrender.com/api/v1/get_order_history",
+        {
+          headers,
+        }
+      );
       setOrders(response.data.data); // Assuming the API returns data in a `data` field
       setLoading(false);
     } catch (error) {

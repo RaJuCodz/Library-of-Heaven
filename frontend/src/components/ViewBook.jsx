@@ -27,10 +27,11 @@ const ViewBook = () => {
   const role = localStorage.getItem("role");
 
   useEffect(() => {
+    console.log("[ViewBook] book_id:", book_id); // Debug log for book_id
     const fetchBook = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:4000/api/v1/get_book_by_id/${book_id}`
+          `https://library-of-heaven.onrender.com/api/v1/get_book_by_id/${book_id}`
         );
         setBook(response.data.data);
         // Fetch more books after getting the current book
@@ -50,7 +51,7 @@ const ViewBook = () => {
     setIsLoadingMore(true);
     try {
       const response = await axios.get(
-        "http://localhost:4000/api/v1/get_recent_books"
+        "https://library-of-heaven.onrender.com/api/v1/get_recent_books"
       );
       // Filter out the current book and get 10 random books
       const filteredBooks = response.data.data
@@ -80,7 +81,7 @@ const ViewBook = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:4000/api/v1/add_to_fav",
+        "https://library-of-heaven.onrender.com/api/v1/add_to_fav",
         { book_id: book_id },
         { headers }
       );
@@ -96,7 +97,7 @@ const ViewBook = () => {
   const handleAddToCart = async () => {
     try {
       const response = await axios.put(
-        "http://localhost:4000/api/v1/add_to_cart",
+        "https://library-of-heaven.onrender.com/api/v1/add_to_cart",
         { book_id: book_id },
         { headers }
       );

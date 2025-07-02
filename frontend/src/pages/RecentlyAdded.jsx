@@ -3,7 +3,6 @@ import axios from "axios";
 import BookCard from "../components/BookCard";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { apiUrl } from "../api";
 
 const RecentlyAdded = () => {
   const [data, setData] = useState([]);
@@ -13,7 +12,9 @@ const RecentlyAdded = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(apiUrl("/get_recent_books"));
+        const response = await axios.get(
+          "https://library-of-heaven.onrender.com/api/v1/get_recent_books"
+        );
         setData(response.data.data);
         setLoading(false);
       } catch (error) {

@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import BookCard from "../components/BookCard";
 import Button from "../components/ui/Button";
-import { apiUrl } from "../api";
 
 const AuthorProfile = () => {
   const [profile, setProfile] = useState(null);
@@ -38,7 +37,10 @@ const AuthorProfile = () => {
           Authorization: `Bearer ${token}`,
           id,
         };
-        const response = await axios.get(apiUrl("/get_user_info"), { headers });
+        const response = await axios.get(
+          "https://library-of-heaven.onrender.com/api/v1/get_user_info",
+          { headers }
+        );
         setProfile(response.data);
       } catch {
         setError("Failed to load author profile");
@@ -52,9 +54,14 @@ const AuthorProfile = () => {
           Authorization: `Bearer ${token}`,
           id,
         };
-        const myBooksResponse = await axios.get(apiUrl("/get_my_books"), {
-          headers,
-        });
+        // Debug log for get_my_books
+        console.log("Fetching my books from:", apiUrl("/get_my_books"));
+        const myBooksResponse = await axios.get(
+          "https://library-of-heaven.onrender.com/api/v1/get_my_books",
+          {
+            headers,
+          }
+        );
         setBooks(myBooksResponse.data.data);
       } catch {
         setBooks([]);
@@ -68,9 +75,17 @@ const AuthorProfile = () => {
           Authorization: `Bearer ${token}`,
           id,
         };
-        const ordersResponse = await axios.get(apiUrl("/get_author_orders"), {
-          headers,
-        });
+        // Debug log for get_author_orders
+        console.log(
+          "Fetching author orders from:",
+          apiUrl("/get_author_orders")
+        );
+        const ordersResponse = await axios.get(
+          "https://library-of-heaven.onrender.com/api/v1/get_author_orders",
+          {
+            headers,
+          }
+        );
         setAuthorOrders(ordersResponse.data.data);
       } catch {
         setAuthorOrders([]);
@@ -95,9 +110,13 @@ const AuthorProfile = () => {
         id,
       };
       const bookData = { ...newBook, author: profile.authorName };
-      const addBookResponse = await axios.post(apiUrl("/add_book"), bookData, {
-        headers,
-      });
+      const addBookResponse = await axios.post(
+        "https://library-of-heaven.onrender.com/api/v1/add_book",
+        bookData,
+        {
+          headers,
+        }
+      );
       setAddSuccess("Book added successfully!");
       setShowAddForm(false);
       setNewBook({
@@ -123,9 +142,19 @@ const AuthorProfile = () => {
         id,
         book_id: bookId,
       };
-      await axios.delete(apiUrl("/delete_book"), {
-        headers: { ...headers, book_id: bookId },
-      });
+      // Debug log for delete_book
+      console.log(
+        "Deleting book from:",
+        apiUrl("/delete_book"),
+        "with id:",
+        bookId
+      );
+      await axios.delete(
+        "https://library-of-heaven.onrender.com/api/v1/delete_book",
+        {
+          headers: { ...headers, book_id: bookId },
+        }
+      );
       setBooks((prev) => prev.filter((b) => b._id !== bookId));
     } catch (err) {
       alert(err.response?.data?.message || "Failed to delete book");
@@ -147,7 +176,7 @@ const AuthorProfile = () => {
         id,
       };
       const uploadResponse = await axios.post(
-        apiUrl("/upload_image"),
+        "https://library-of-heaven.onrender.com/api/v1/upload_image",
         formData,
         { headers: { ...headers, "Content-Type": "multipart/form-data" } }
       );
@@ -165,6 +194,11 @@ const AuthorProfile = () => {
   if (error)
     return <div className="text-red-500 text-center mt-8">{error}</div>;
   if (!profile) return <div className="text-center mt-8">Loading...</div>;
+
+  // Helper to get API URL (for debug logs)
+  function apiUrl(path) {
+    return `https://library-of-heaven.onrender.com/api/v1${path}`;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 pt-24 px-4 md:px-8">
@@ -368,7 +402,6 @@ const AuthorProfile = () => {
           )}
         </div>
 
-        {/* Author Orders Section */}
         <div className="mt-12">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
             Orders for Your Books

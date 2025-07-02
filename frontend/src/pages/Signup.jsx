@@ -1,7 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { apiUrl } from "../api";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -36,7 +35,10 @@ const Signup = () => {
     const formErrors = validateForm();
     if (Object.keys(formErrors).length === 0) {
       try {
-        const response = await axios.post(apiUrl("/signup"), formData);
+        const response = await axios.post(
+          "https://library-of-heaven.onrender.com/api/v1/signup",
+          formData
+        );
         console.log("Response:", response.data);
         navigate("/login");
       } catch (error) {

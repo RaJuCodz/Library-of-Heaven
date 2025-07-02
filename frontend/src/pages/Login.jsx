@@ -3,7 +3,6 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { authActions } from "../store/auth";
 import { useDispatch } from "react-redux";
-import { apiUrl } from "../api";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -35,7 +34,7 @@ const Login = () => {
     if (Object.keys(formErrors).length === 0) {
       console.log("Form submitted successfully", formData);
       axios
-        .post(apiUrl("/signin"), formData)
+        .post("https://library-of-heaven.onrender.com/api/v1/signin", formData)
         .then((response) => {
           console.log(response);
           if (response.data.token) {

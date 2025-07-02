@@ -11,7 +11,6 @@ import {
 } from "react-icons/fa";
 import Button from "../components/ui/Button";
 import axios from "axios";
-import { apiUrl } from "../api";
 
 const ViewDetail = () => {
   const { id } = useParams();
@@ -25,8 +24,11 @@ const ViewDetail = () => {
 
   useEffect(() => {
     const fetchBook = async () => {
+      console.log("Book ID param:", id);
+      const fullUrl = `https://library-of-heaven.onrender.com/api/v1/get_book_by_id/${id}`;
+      console.log("Fetching book from:", fullUrl);
       try {
-        const response = await axios.get(apiUrl(`/get_book_by_id/${id}`));
+        const response = await axios.get(fullUrl);
         console.log("Book data:", response.data); // Debug log
         setBook(response.data.data);
         setLoading(false);
