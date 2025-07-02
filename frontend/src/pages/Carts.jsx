@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Link } from "react-router-dom";
 import { FaTrash, FaShoppingCart, FaArrowRight, FaTruck } from "react-icons/fa";
+import Button from "../components/ui/Button";
 
 const Carts = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -54,6 +55,29 @@ const Carts = () => {
     } catch (error) {
       console.error("Error removing item from cart:", error);
       toast.error("Failed to remove item from cart");
+    }
+  };
+
+  const handleCheckout = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const id = localStorage.getItem("id");
+      await axios.post(
+        "http://localhost:4000/api/v1/place_order",
+        { order: cartItems.map((b) => ({ book_id: b._id })) },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            id,
+          },
+        }
+      );
+      toast.success("Order placed for all cart items!");
+      // Optionally clear cart or redirect
+    } catch (err) {
+      toast.error(
+        err.response?.data?.message || "Checkout failed. Please try again."
+      );
     }
   };
 
@@ -187,9 +211,20 @@ const Carts = () => {
                 </div>
               </div>
 
-              <button className="w-full mt-6 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all duration-300 font-medium">
-                Proceed to Checkout
-              </button>
+              {/* Checkout Button */}
+              {cartItems.length > 0 &&
+                localStorage.getItem("role") !== "admin" && (
+                  <div className="flex justify-end mt-6">
+                    <Button
+                      onClick={handleCheckout}
+                      className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold opacity-50 cursor-not-allowed"
+                      disabled
+                      title="This feature is temporarily disabled"
+                    >
+                      Proceed to Checkout
+                    </Button>
+                  </div>
+                )}
 
               {/* Ichigo Image */}
               <div className="mt-8">

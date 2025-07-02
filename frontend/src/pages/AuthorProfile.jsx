@@ -16,8 +16,11 @@ const AuthorProfile = () => {
     price: "",
     description: "",
   });
+  const [imageUploading, setImageUploading] = useState(false);
   const [addError, setAddError] = useState("");
   const [addSuccess, setAddSuccess] = useState("");
+  const [authorOrders, setAuthorOrders] = useState([]);
+  const [ordersLoading, setOrdersLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -62,8 +65,29 @@ const AuthorProfile = () => {
         setBooks([]);
       }
     };
+    const fetchAuthorOrders = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const id = localStorage.getItem("id");
+        const res = await axios.get(
+          "http://localhost:4000/api/v1/get_author_orders",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              id,
+            },
+          }
+        );
+        setAuthorOrders(res.data.data);
+      } catch {
+        setAuthorOrders([]);
+      } finally {
+        setOrdersLoading(false);
+      }
+    };
     fetchProfile();
     fetchBooks();
+    fetchAuthorOrders();
   }, [navigate]);
 
   const handleAddBook = async (e) => {
@@ -113,6 +137,35 @@ const AuthorProfile = () => {
       setBooks((prev) => prev.filter((b) => b._id !== bookId));
     } catch (err) {
       alert(err.response?.data?.message || "Failed to delete book");
+    }
+  };
+
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setImageUploading(true);
+    setAddError("");
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+      const token = localStorage.getItem("token");
+      const id = localStorage.getItem("id");
+      const res = await axios.post(
+        "http://localhost:4000/api/v1/upload_image",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+            id,
+          },
+        }
+      );
+      setNewBook((prev) => ({ ...prev, cover_image: res.data.imageUrl }));
+    } catch {
+      setAddError("Image upload failed");
+    } finally {
+      setImageUploading(false);
     }
   };
 
@@ -224,20 +277,29 @@ const AuthorProfile = () => {
             <div>
               <label
                 className="block text-sm font-semibold text-gray-900"
-                htmlFor="cover_image"
+                htmlFor="image"
               >
-                Cover Image URL
+                Book Cover Image
               </label>
               <input
-                id="cover_image"
-                name="cover_image"
-                value={newBook.cover_image}
-                onChange={(e) =>
-                  setNewBook({ ...newBook, cover_image: e.target.value })
-                }
+                id="image"
+                name="image"
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
                 className="w-full p-3 mt-2 bg-gray-50 border border-gray-200 text-gray-900 rounded-lg"
                 required
               />
+              {imageUploading && (
+                <p className="text-gray-500 text-sm mt-1">Uploading image...</p>
+              )}
+              {newBook.cover_image && !imageUploading && (
+                <img
+                  src={newBook.cover_image}
+                  alt="Preview"
+                  className="mt-2 w-24 h-24 object-cover rounded"
+                />
+              )}
             </div>
             <div>
               <label
@@ -283,21 +345,26 @@ const AuthorProfile = () => {
               <p className="text-green-600 text-sm col-span-2">{addSuccess}</p>
             )}
             <div className="col-span-2 flex justify-end">
-              <Button type="submit">Add Book</Button>
+              <Button
+                type="submit"
+                disabled={imageUploading || !newBook.cover_image}
+              >
+                Add Book
+              </Button>
             </div>
           </form>
         )}
 
         {/* Books List */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {books.length === 0 ? (
-            <p className="text-gray-600 col-span-3">No books found.</p>
+            <p className="text-gray-600 col-span-4">No books found.</p>
           ) : (
             books.map((book) => (
               <div key={book._id} className="relative group">
-                <BookCard book={book} />
+                <BookCard book={book} small />
                 <button
-                  className="absolute top-3 left-3 z-20 p-2 bg-white/80 hover:bg-red-100 rounded-full text-gray-500 hover:text-red-600 transition-all duration-300 shadow-md hover:shadow-lg"
+                  className="absolute top-2 left-2 z-20 p-1 bg-white/80 hover:bg-red-100 rounded-full text-gray-500 hover:text-red-600 transition-all duration-300 shadow-md hover:shadow-lg text-xs"
                   onClick={() => handleDeleteBook(book._id)}
                   title="Delete Book"
                 >
@@ -305,6 +372,53 @@ const AuthorProfile = () => {
                 </button>
               </div>
             ))
+          )}
+        </div>
+
+        {/* Author Orders Section */}
+        <div className="mt-12">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            Orders for Your Books
+          </h2>
+          {ordersLoading ? (
+            <p>Loading orders...</p>
+          ) : authorOrders.length === 0 ? (
+            <p className="text-gray-600">No orders for your books yet.</p>
+          ) : (
+            <div className="space-y-4">
+              {authorOrders.map((order) => (
+                <div
+                  key={order._id}
+                  className="bg-white rounded-lg p-4 shadow flex flex-col md:flex-row md:items-center md:justify-between"
+                >
+                  <div>
+                    <div className="font-semibold">{order.book.title}</div>
+                    <div className="text-sm text-gray-500">
+                      Ordered by: {order.user.username} ({order.user.email})
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      Order Date:{" "}
+                      {new Date(order.createdAt).toLocaleDateString()}
+                    </div>
+                  </div>
+                  <div>
+                    <span
+                      className={`font-bold ${
+                        order.status === "Order Placed"
+                          ? "text-yellow-600"
+                          : order.status === "Order Shipped"
+                          ? "text-blue-600"
+                          : order.status === "Order Delivered"
+                          ? "text-green-600"
+                          : "text-red-600"
+                      }`}
+                    >
+                      {order.status}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </div>

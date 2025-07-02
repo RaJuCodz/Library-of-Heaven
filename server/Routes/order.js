@@ -81,4 +81,26 @@ router.put("/update_order_status", async (req, res) => {
   }
 });
 
+// Get all orders for books by the logged-in author
+router.get("/get_author_orders", auth, async (req, res) => {
+  try {
+    const authorId = req.headers.id;
+    if (!authorId) {
+      return res.status(400).json({ message: "Author ID is required" });
+    }
+    // Find all books by this author
+    const books = await Book.find({ authorId }).select("_id");
+    const bookIds = books.map((b) => b._id);
+    // Find all orders for these books
+    const orders = await Order.find({ book: { $in: bookIds } })
+      .populate("user")
+      .populate("book")
+      .sort({ createdAt: -1 });
+    res.status(200).json({ data: orders });
+  } catch (err) {
+    console.error("Error getting author orders:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 module.exports = router;

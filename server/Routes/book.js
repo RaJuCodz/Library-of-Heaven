@@ -3,6 +3,25 @@ const User = require("../Models/user");
 const jwt = require("jsonwebtoken");
 const { auth } = require("./userAuth");
 const Book = require("../Models/books");
+const multer = require("multer");
+const cloudinary = require("cloudinary").v2;
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+
+// Cloudinary config (ensure your .env has CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET)
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "bookstore_books",
+    allowed_formats: ["jpg", "jpeg", "png", "webp"],
+  },
+});
+const upload = multer({ storage: storage });
 
 // Add single book
 router.post("/add_book", auth, async (req, res) => {
@@ -183,4 +202,12 @@ router.get("/get_my_books", auth, async (req, res) => {
     console.error("Error getting author's books:", err);
     res.status(500).json({ message: "Internal server error" });
   }
+});
+
+// Image upload route
+router.post("/upload_image", auth, upload.single("image"), (req, res) => {
+  if (!req.file || !req.file.path) {
+    return res.status(400).json({ message: "No file uploaded" });
+  }
+  res.status(200).json({ imageUrl: req.file.path });
 });
