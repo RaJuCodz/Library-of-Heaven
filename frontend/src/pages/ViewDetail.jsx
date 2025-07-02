@@ -11,6 +11,7 @@ import {
 } from "react-icons/fa";
 import Button from "../components/ui/Button";
 import axios from "axios";
+import { apiUrl } from "../api";
 
 const ViewDetail = () => {
   const { id } = useParams();
@@ -25,9 +26,7 @@ const ViewDetail = () => {
   useEffect(() => {
     const fetchBook = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:4000/api/v1/get_book_by_id/${id}`
-        );
+        const response = await axios.get(apiUrl(`/get_book_by_id/${id}`));
         console.log("Book data:", response.data); // Debug log
         setBook(response.data.data);
         setLoading(false);
