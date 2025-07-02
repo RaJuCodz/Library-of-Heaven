@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import BookCard from "../components/BookCard";
 import Button from "../components/ui/Button";
+import { apiUrl } from "../api";
 
 const AuthorProfile = () => {
   const [profile, setProfile] = useState(null);
@@ -33,16 +34,15 @@ const AuthorProfile = () => {
       try {
         const token = localStorage.getItem("token");
         const id = localStorage.getItem("id");
-        const res = await axios.get(
-          "http://localhost:4000/api/v1/get_user_info",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              id,
-            },
-          }
+        const headers = {
+          Authorization: `Bearer ${token}`,
+          id,
+        };
+        const response = await axios.get(
+          apiUrl("/get_user_info"),
+          { headers }
         );
-        setProfile(res.data);
+        setProfile(response.data);
       } catch {
         setError("Failed to load author profile");
       }
@@ -51,16 +51,15 @@ const AuthorProfile = () => {
       try {
         const token = localStorage.getItem("token");
         const id = localStorage.getItem("id");
-        const res = await axios.get(
-          "http://localhost:4000/api/v1/get_my_books",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              id,
-            },
-          }
+        const headers = {
+          Authorization: `Bearer ${token}`,
+          id,
+        };
+        const myBooksResponse = await axios.get(
+          apiUrl("/get_my_books"),
+          { headers }
         );
-        setBooks(res.data.data);
+        setBooks(myBooksResponse.data.data);
       } catch {
         setBooks([]);
       }
@@ -69,16 +68,15 @@ const AuthorProfile = () => {
       try {
         const token = localStorage.getItem("token");
         const id = localStorage.getItem("id");
-        const res = await axios.get(
-          "http://localhost:4000/api/v1/get_author_orders",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              id,
-            },
-          }
+        const headers = {
+          Authorization: `Bearer ${token}`,
+          id,
+        };
+        const ordersResponse = await axios.get(
+          apiUrl("/get_author_orders"),
+          { headers }
         );
-        setAuthorOrders(res.data.data);
+        setAuthorOrders(ordersResponse.data.data);
       } catch {
         setAuthorOrders([]);
       } finally {
@@ -97,15 +95,15 @@ const AuthorProfile = () => {
     try {
       const token = localStorage.getItem("token");
       const id = localStorage.getItem("id");
-      const res = await axios.post(
-        "http://localhost:4000/api/v1/add_book",
-        { ...newBook, author: profile.authorName },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            id,
-          },
-        }
+      const headers = {
+        Authorization: `Bearer ${token}`,
+        id,
+      };
+      const bookData = { ...newBook, author: profile.authorName };
+      const addBookResponse = await axios.post(
+        apiUrl("/add_book"),
+        bookData,
+        { headers }
       );
       setAddSuccess("Book added successfully!");
       setShowAddForm(false);
@@ -116,7 +114,7 @@ const AuthorProfile = () => {
         price: "",
         description: "",
       });
-      setBooks((prev) => [res.data.book, ...prev]);
+      setBooks((prev) => [addBookResponse.data.book, ...prev]);
     } catch (err) {
       setAddError(err.response?.data?.message || "Failed to add book");
     }
@@ -127,13 +125,15 @@ const AuthorProfile = () => {
     try {
       const token = localStorage.getItem("token");
       const id = localStorage.getItem("id");
-      await axios.delete("http://localhost:4000/api/v1/delete_book", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          id,
-          book_id: bookId,
-        },
-      });
+      const headers = {
+        Authorization: `Bearer ${token}`,
+        id,
+        book_id: bookId,
+      };
+      await axios.delete(
+        apiUrl("/delete_book"),
+        { headers: { ...headers, book_id: bookId } }
+      );
       setBooks((prev) => prev.filter((b) => b._id !== bookId));
     } catch (err) {
       alert(err.response?.data?.message || "Failed to delete book");
@@ -150,18 +150,16 @@ const AuthorProfile = () => {
       formData.append("image", file);
       const token = localStorage.getItem("token");
       const id = localStorage.getItem("id");
-      const res = await axios.post(
-        "http://localhost:4000/api/v1/upload_image",
+      const headers = {
+        Authorization: `Bearer ${token}`,
+        id,
+      };
+      const uploadResponse = await axios.post(
+        apiUrl("/upload_image"),
         formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-            id,
-          },
-        }
+        { headers: { ...headers, "Content-Type": "multipart/form-data" } }
       );
-      setNewBook((prev) => ({ ...prev, cover_image: res.data.imageUrl }));
+      setNewBook((prev) => ({ ...prev, cover_image: uploadResponse.data.imageUrl }));
     } catch {
       setAddError("Image upload failed");
     } finally {
@@ -372,7 +370,7 @@ const AuthorProfile = () => {
                 </button>
               </div>
             ))
-          )}
+          }
         </div>
 
         {/* Author Orders Section */}

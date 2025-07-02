@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { Link } from "react-router-dom";
 import { FaTrash, FaShoppingCart, FaArrowRight, FaTruck } from "react-icons/fa";
 import Button from "../components/ui/Button";
+import { apiUrl } from "../api";
 
 const Carts = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -20,10 +21,7 @@ const Carts = () => {
   // Fetch cart items
   const fetchCartItems = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:4000/api/v1/show_cart",
-        { headers }
-      );
+      const response = await axios.get(apiUrl("/show_cart"), { headers });
       setCartItems(response.data.data || []);
 
       // Calculate total price with proper type checking
@@ -45,11 +43,9 @@ const Carts = () => {
   // Remove item from cart
   const removeFromCart = async (bookId) => {
     try {
-      const response = await axios.post(
-        "http://localhost:4000/api/v1/remove_from_cart",
-        {},
-        { headers: { ...headers, book_id: bookId } }
-      );
+      const response = await axios.delete(apiUrl("/remove_from_cart"), {
+        headers: { ...headers, book_id: bookId },
+      });
       toast.success(response.data.message);
       fetchCartItems(); // Refresh the cart after removal
     } catch (error) {
@@ -62,16 +58,7 @@ const Carts = () => {
     try {
       const token = localStorage.getItem("token");
       const id = localStorage.getItem("id");
-      await axios.post(
-        "http://localhost:4000/api/v1/place_order",
-        { order: cartItems.map((b) => ({ book_id: b._id })) },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            id,
-          },
-        }
-      );
+      await axios.post(apiUrl("/place_order"), {}, { headers });
       toast.success("Order placed for all cart items!");
       // Optionally clear cart or redirect
     } catch (err) {

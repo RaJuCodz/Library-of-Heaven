@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { authActions } from "../store/auth";
+import { apiUrl } from "../api";
 
 const BecomeAuthor = () => {
   const [authorName, setAuthorName] = useState("");
@@ -19,17 +20,16 @@ const BecomeAuthor = () => {
     try {
       const token = localStorage.getItem("token");
       const id = localStorage.getItem("id");
-      const res = await axios.put(
-        "http://localhost:4000/api/v1/become_author",
-        { authorName, bio },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            id,
-          },
-        }
+      const headers = {
+        Authorization: `Bearer ${token}`,
+        id,
+      };
+      const response = await axios.post(
+        apiUrl("/become_author"),
+        {},
+        { headers }
       );
-      setSuccess(res.data.message);
+      setSuccess(response.data.message);
       localStorage.setItem("role", "admin");
       dispatch(authActions.setRole("admin"));
       setTimeout(() => navigate("/author-profile"), 2000);

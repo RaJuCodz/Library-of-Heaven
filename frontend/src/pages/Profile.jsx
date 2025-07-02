@@ -15,6 +15,7 @@ import Button from "../components/ui/Button";
 import { useDispatch } from "react-redux";
 import { authActions } from "../store/auth";
 import AuthorProfile from "./AuthorProfile";
+import { apiUrl } from "../api";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -36,15 +37,13 @@ const Profile = () => {
 
       try {
         setLoading(true);
-        const response = await axios.get(
-          "http://localhost:4000/api/v1/get_user_info",
-          {
-            headers: {
-              id: userId,
-              authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const headers = {
+          id: userId,
+          authorization: `Bearer ${token}`,
+        };
+        const response = await axios.get(apiUrl("/get_user_info"), {
+          headers,
+        });
 
         if (response.data) {
           setUser(response.data);

@@ -3,6 +3,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { FaHeart, FaTrash } from "react-icons/fa";
 import "react-toastify/dist/ReactToastify.css";
+import { apiUrl } from "../api";
 
 const Favourites = () => {
   const [favouriteBooks, setFavouriteBooks] = useState([]);
@@ -17,10 +18,7 @@ const Favourites = () => {
   const fetchFavouriteBooks = async () => {
     try {
       console.log("Fetching favorites with headers:", headers);
-      const response = await axios.get(
-        "http://localhost:4000/api/v1/get_favorites",
-        { headers }
-      );
+      const response = await axios.get(apiUrl("/get_favorites"), { headers });
       console.log("Favorites response:", response.data);
 
       if (response.data && response.data.favorites) {
@@ -44,13 +42,9 @@ const Favourites = () => {
   const removeFromFavourites = async (bookId) => {
     try {
       console.log("Removing book from favorites:", bookId);
-      const response = await axios.delete(
-        "http://localhost:4000/api/v1/remove_from_fav",
-        {
-          headers,
-          data: { book_id: bookId },
-        }
-      );
+      const response = await axios.delete(apiUrl("/remove_from_fav"), {
+        headers: { ...headers, book_id: bookId },
+      });
       console.log("Remove from favorites response:", response.data);
       toast.success(response.data.message);
       fetchFavouriteBooks(); // Refresh the list after removal
