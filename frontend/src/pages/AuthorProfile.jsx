@@ -38,10 +38,7 @@ const AuthorProfile = () => {
           Authorization: `Bearer ${token}`,
           id,
         };
-        const response = await axios.get(
-          apiUrl("/get_user_info"),
-          { headers }
-        );
+        const response = await axios.get(apiUrl("/get_user_info"), { headers });
         setProfile(response.data);
       } catch {
         setError("Failed to load author profile");
@@ -55,10 +52,9 @@ const AuthorProfile = () => {
           Authorization: `Bearer ${token}`,
           id,
         };
-        const myBooksResponse = await axios.get(
-          apiUrl("/get_my_books"),
-          { headers }
-        );
+        const myBooksResponse = await axios.get(apiUrl("/get_my_books"), {
+          headers,
+        });
         setBooks(myBooksResponse.data.data);
       } catch {
         setBooks([]);
@@ -72,10 +68,9 @@ const AuthorProfile = () => {
           Authorization: `Bearer ${token}`,
           id,
         };
-        const ordersResponse = await axios.get(
-          apiUrl("/get_author_orders"),
-          { headers }
-        );
+        const ordersResponse = await axios.get(apiUrl("/get_author_orders"), {
+          headers,
+        });
         setAuthorOrders(ordersResponse.data.data);
       } catch {
         setAuthorOrders([]);
@@ -100,11 +95,9 @@ const AuthorProfile = () => {
         id,
       };
       const bookData = { ...newBook, author: profile.authorName };
-      const addBookResponse = await axios.post(
-        apiUrl("/add_book"),
-        bookData,
-        { headers }
-      );
+      const addBookResponse = await axios.post(apiUrl("/add_book"), bookData, {
+        headers,
+      });
       setAddSuccess("Book added successfully!");
       setShowAddForm(false);
       setNewBook({
@@ -130,10 +123,9 @@ const AuthorProfile = () => {
         id,
         book_id: bookId,
       };
-      await axios.delete(
-        apiUrl("/delete_book"),
-        { headers: { ...headers, book_id: bookId } }
-      );
+      await axios.delete(apiUrl("/delete_book"), {
+        headers: { ...headers, book_id: bookId },
+      });
       setBooks((prev) => prev.filter((b) => b._id !== bookId));
     } catch (err) {
       alert(err.response?.data?.message || "Failed to delete book");
@@ -159,7 +151,10 @@ const AuthorProfile = () => {
         formData,
         { headers: { ...headers, "Content-Type": "multipart/form-data" } }
       );
-      setNewBook((prev) => ({ ...prev, cover_image: uploadResponse.data.imageUrl }));
+      setNewBook((prev) => ({
+        ...prev,
+        cover_image: uploadResponse.data.imageUrl,
+      }));
     } catch {
       setAddError("Image upload failed");
     } finally {
@@ -370,7 +365,7 @@ const AuthorProfile = () => {
                 </button>
               </div>
             ))
-          }
+          )}
         </div>
 
         {/* Author Orders Section */}
