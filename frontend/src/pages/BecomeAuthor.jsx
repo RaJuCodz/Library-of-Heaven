@@ -23,9 +23,9 @@ const BecomeAuthor = () => {
         Authorization: `Bearer ${token}`,
         id,
       };
-      const response = await axios.post(
+      const response = await axios.put(
         "https://library-of-heaven.onrender.com/api/v1/become_author",
-        {},
+        { authorName, bio },
         { headers }
       );
       setSuccess(response.data.message);
