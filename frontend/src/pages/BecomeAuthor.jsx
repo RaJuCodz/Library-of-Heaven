@@ -40,15 +40,15 @@ const BecomeAuthor = () => {
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gray-50">
-      <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md z-10 mx-4">
-        <h1 className="text-3xl font-bold mb-6 text-center text-gray-900">
+    <div className="min-h-screen flex justify-center items-center bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+      <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg dark:shadow-gray-900/50 w-full max-w-md z-10 mx-4 transition-colors duration-300">
+        <h1 className="text-3xl font-bold mb-6 text-center text-gray-900 dark:text-gray-100 transition-colors duration-300">
           Become an Author
         </h1>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label
-              className="block text-sm font-semibold text-gray-900"
+              className="block text-sm font-semibold text-gray-900 dark:text-gray-200 transition-colors duration-300"
               htmlFor="authorName"
             >
               Author Name
@@ -58,13 +58,13 @@ const BecomeAuthor = () => {
               name="authorName"
               value={authorName}
               onChange={(e) => setAuthorName(e.target.value)}
-              className="w-full p-3 mt-2 bg-gray-50 border border-gray-200 text-gray-900 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              className="w-full p-3 mt-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors duration-300"
               required
             />
           </div>
           <div>
             <label
-              className="block text-sm font-semibold text-gray-900"
+              className="block text-sm font-semibold text-gray-900 dark:text-gray-200 transition-colors duration-300"
               htmlFor="bio"
             >
               Tell us about yourself (bio)
@@ -74,19 +74,19 @@ const BecomeAuthor = () => {
               name="bio"
               value={bio}
               onChange={(e) => setBio(e.target.value)}
-              className="w-full p-3 mt-2 bg-gray-50 border border-gray-200 text-gray-900 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              className="w-full p-3 mt-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors duration-300"
               rows={4}
               required
             />
           </div>
-          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+          {error && <p className="text-red-500 dark:text-red-400 text-sm text-center">{error}</p>}
           {success && (
-            <p className="text-green-600 text-sm text-center">{success}</p>
+            <p className="text-green-600 dark:text-green-400 text-sm text-center">{success}</p>
           )}
           <div className="flex justify-center">
             <button
               type="submit"
-              className="w-full py-3 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition-all duration-300 shadow-sm"
+              className="w-full py-3 bg-red-500 dark:bg-red-600 text-white font-semibold rounded-lg hover:bg-red-600 dark:hover:bg-red-700 transition-all duration-300 shadow-sm"
             >
               Submit
             </button>
