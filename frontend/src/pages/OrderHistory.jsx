@@ -16,7 +16,7 @@ const OrderHistory = () => {
   const fetchOrderHistory = async () => {
     try {
       const response = await axios.get(
-        "https://library-of-heaven.onrender.com/api/v1/get_order_history",
+        `${import.meta.env.VITE_API_URL}/get_order_history`,
         {
           headers,
         }
@@ -36,49 +36,48 @@ const OrderHistory = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <p className="text-gray-400">Loading order history...</p>
+      <div className="flex justify-center items-center h-64 bg-white dark:bg-gray-800 transition-colors duration-300 rounded-lg">
+        <p className="text-gray-600 dark:text-gray-400 transition-colors duration-300">Loading order history...</p>
       </div>
     );
   }
 
   if (orders.length === 0) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <p className="text-gray-500">No order history available.</p>
+      <div className="flex justify-center items-center h-64 bg-white dark:bg-gray-800 transition-colors duration-300 rounded-lg">
+        <p className="text-gray-500 dark:text-gray-400 transition-colors duration-300">No order history available.</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-gray-900 text-white p-6 rounded-lg">
-      <h2 className="text-2xl font-bold mb-6 text-yellow-400">Order History</h2>
+    <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white p-6 rounded-xl shadow-sm dark:shadow-gray-900/50 transition-colors duration-300">
+      <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white transition-colors duration-300">Order History</h2>
       <div className="space-y-4">
         {orders.map((order) => (
           <div
             key={order._id}
-            className="bg-gray-800 rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow duration-300"
+            className="bg-gray-50 dark:bg-gray-700 border border-gray-100 dark:border-gray-600 rounded-lg p-6 hover:shadow-md dark:shadow-lg dark:hover:shadow-xl transition-all duration-300"
           >
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-bold">{order.book.title}</h3>
-              <p className="text-sm text-gray-400">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white transition-colors duration-300">{order.book.title}</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">
                 Order Date: {new Date(order.createdAt).toLocaleDateString()}
               </p>
             </div>
-            <p className="text-sm text-gray-400 mb-2">by {order.book.author}</p>
-            <p className="text-lg font-semibold text-yellow-400 mb-4">
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-2 transition-colors duration-300">by {order.book.author}</p>
+            <p className="text-lg font-semibold text-red-600 dark:text-red-400 mb-4 transition-colors duration-300">
               ${order.book.price}
             </p>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">
               Status:{" "}
               <span
-                className={`font-semibold ${
-                  order.status === "completed"
+                className={`font - semibold ${order.status === "completed"
                     ? "text-green-500"
                     : order.status === "pending"
-                    ? "text-yellow-500"
-                    : "text-red-500"
-                }`}
+                      ? "text-yellow-500"
+                      : "text-red-500"
+                  }`}
               >
                 {order.status || "Pending"}
               </span>

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
+  FaMoon,
+  FaSun,
   FaShoppingCart,
   FaUser,
   FaBars,
@@ -13,6 +15,7 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { authActions } from "../store/auth";
 import Button from "./ui/Button";
+import { useTheme } from "../context/ThemeContext";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -21,6 +24,7 @@ const Navbar = () => {
   const userRole = useSelector((state) => state.auth.role);
   const dispatch = useDispatch();
   const location = useLocation();
+  const { theme, toggleTheme } = useTheme();
 
   // Handle scroll effect
   useEffect(() => {
@@ -53,9 +57,8 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-white/95 backdrop-blur-md shadow-sm" : "bg-white"
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-white/95 dark:bg-gray-900/95 backdrop-blur-md shadow-sm dark:shadow-gray-800" : "bg-white dark:bg-gray-900"
+        }`}
     >
       <div className="container mx-auto flex items-center justify-between py-2 px-6 md:px-8">
         {/* Logo Section */}
@@ -75,9 +78,8 @@ const Navbar = () => {
             <Link
               key={item.title}
               to={item.link}
-              className={`flex items-center px-3 py-2 rounded-lg text-gray-600 hover:text-red-500 hover:bg-red-50 text-lg transition-all duration-300 ${
-                location.pathname === item.link ? "text-red-500" : ""
-              }`}
+              className={`flex items-center px-3 py-2 rounded-lg text-gray-600 hover:text-red-500 hover:bg-red-50 text-lg transition-all duration-300 ${location.pathname === item.link ? "text-red-500" : ""
+                }`}
             >
               <item.icon className="mr-2 w-6 h-6" />
               {item.title}
@@ -131,32 +133,49 @@ const Navbar = () => {
               </Button>
             </div>
           )}
+
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-full text-gray-600 hover:text-indigo-500 hover:bg-indigo-50 focus:outline-none transition-all duration-300"
+            aria-label="Toggle Dark Mode"
+          >
+            {theme === "dark" ? <FaSun className="w-5 h-5" /> : <FaMoon className="w-5 h-5" />}
+          </button>
         </div>
 
-        {/* Mobile Menu Toggle Button */}
-        <button
-          className="md:hidden p-1.5 rounded-lg text-gray-600 hover:text-red-500 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-300"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
-          {isMenuOpen ? (
-            <FaTimes className="w-6 h-6" />
-          ) : (
-            <FaBars className="w-6 h-6" />
-          )}
-        </button>
+        <div className="flex items-center space-x-2 md:hidden">
+          <button
+            onClick={toggleTheme}
+            className="p-1.5 rounded-lg text-gray-600 hover:text-indigo-500 hover:bg-indigo-50 focus:outline-none transition-all duration-300"
+            aria-label="Toggle Dark Mode"
+          >
+            {theme === "dark" ? <FaSun className="w-5 h-5" /> : <FaMoon className="w-5 h-5" />}
+          </button>
+
+          {/* Mobile Menu Toggle Button */}
+          <button
+            className="p-1.5 rounded-lg text-gray-600 hover:text-red-500 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-300"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            {isMenuOpen ? (
+              <FaTimes className="w-6 h-6" />
+            ) : (
+              <FaBars className="w-6 h-6" />
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="bg-white md:hidden border-t border-gray-100 animate-fade-in">
+        <div className="bg-white dark:bg-gray-900 md:hidden border-t border-gray-100 dark:border-gray-800 animate-fade-in">
           <div className="flex flex-col space-y-2 py-6 px-6">
             {menuItems.map((item) => (
               <Link
                 key={item.title}
                 to={item.link}
-                className={`flex items-center px-4 py-3 rounded-lg text-gray-600 hover:text-red-500 hover:bg-red-50 text-lg transition-all duration-300 ${
-                  location.pathname === item.link ? "text-red-500" : ""
-                }`}
+                className={`flex items-center px-4 py-3 rounded-lg text-gray-600 hover:text-red-500 hover:bg-red-50 text-lg transition-all duration-300 ${location.pathname === item.link ? "text-red-500" : ""
+                  }`}
                 onClick={() => setIsMenuOpen(false)}
               >
                 <item.icon className="mr-3 w-6 h-6" />

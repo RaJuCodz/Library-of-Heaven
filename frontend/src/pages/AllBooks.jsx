@@ -18,7 +18,7 @@ const AllBooks = () => {
       setIsLoading(true);
       try {
         const response = await axios.get(
-          "https://library-of-heaven.onrender.com/api/v1/get_all_books"
+          `${import.meta.env.VITE_API_URL}/get_all_books`
         );
         setBooks(response.data.data);
         setFilteredBooks(response.data.data);
@@ -26,7 +26,7 @@ const AllBooks = () => {
         if (localStorage.getItem("token")) {
           try {
             const favResponse = await axios.get(
-              "https://library-of-heaven.onrender.com/api/v1/get_fav_books",
+              `${import.meta.env.VITE_API_URL}/get_fav_books`,
               {
                 headers: {
                   id: localStorage.getItem("id"),
@@ -80,7 +80,7 @@ const AllBooks = () => {
     try {
       if (favorites.includes(bookId)) {
         await axios.delete(
-          "https://library-of-heaven.onrender.com/api/v1/remove_from_fav",
+          `${import.meta.env.VITE_API_URL}/remove_from_fav`,
           {
             headers,
           }
@@ -89,7 +89,7 @@ const AllBooks = () => {
         toast.success("Removed from favorites");
       } else {
         await axios.post(
-          "https://library-of-heaven.onrender.com/api/v1/add_to_fav",
+          `${import.meta.env.VITE_API_URL}/add_to_fav`,
           {},
           { headers }
         );
@@ -112,15 +112,15 @@ const AllBooks = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-24">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-24 transition-colors duration-300">
       <div className="container mx-auto px-4">
         {/* Top Section with Title and Image */}
         <div className="flex items-center justify-between mb-12">
           <div className="flex-1">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4 transition-colors duration-300">
               Explore Our Collection
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl">
+            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl transition-colors duration-300">
               Discover our vast collection of books, from timeless classics to
               contemporary bestsellers.
             </p>
@@ -136,13 +136,13 @@ const AllBooks = () => {
 
         {/* Filter Bar */}
         <div className="mb-12 max-w-5xl mx-auto">
-          <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/50 p-6 transition-colors duration-300">
             <div className="flex flex-col sm:flex-row gap-6">
               {/* Search Bar */}
-              <div className="flex-1">
+              <div className="flex-1 relative pb-10 sm:pb-0"> {/* Adjusted layout for absolute icon offset */}
                 <div className="flex items-center gap-3 mb-3">
-                  <FaSearch className="text-red-500 w-5 h-5" />
-                  <h3 className="text-lg font-semibold text-gray-900">
+                  <FaSearch className="text-red-500 dark:text-red-400 w-5 h-5" />
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                     Search Comics
                   </h3>
                 </div>
@@ -152,39 +152,37 @@ const AllBooks = () => {
                     value={searchQuery}
                     onChange={(e) => handleSearch(e.target.value)}
                     placeholder="Search by title..."
-                    className="w-full px-4 py-2.5 pl-10 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+                    className="w-full px-4 py-2.5 pl-10 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 transition-colors duration-300"
                   />
-                  <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-4 h-4" />
                 </div>
               </div>
 
               {/* Sort Options */}
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-3">
-                  <FaSort className="text-red-500 w-5 h-5" />
-                  <h3 className="text-lg font-semibold text-gray-900">
+                  <FaSort className="text-red-500 dark:text-red-400 w-5 h-5" />
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                     Sort By Price
                   </h3>
                 </div>
                 <div className="flex gap-3">
                   <button
                     onClick={() => handleSort("price-low")}
-                    className={`px-4 py-2.5 rounded-lg flex items-center gap-2 transition-all duration-300 text-base ${
-                      sortBy === "price-low"
-                        ? "bg-red-500 text-white shadow-sm"
-                        : "bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200"
-                    }`}
+                    className={`px-4 py-2.5 rounded-lg flex items-center gap-2 transition-all duration-300 text-base ${sortBy === "price-low"
+                      ? "bg-red-500 text-white shadow-sm"
+                      : "bg-gray-50 dark:bg-gray-900 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700"
+                      }`}
                   >
                     <FaSort className="w-4 h-4" />
                     Low to High
                   </button>
                   <button
                     onClick={() => handleSort("price-high")}
-                    className={`px-4 py-2.5 rounded-lg flex items-center gap-2 transition-all duration-300 text-base ${
-                      sortBy === "price-high"
-                        ? "bg-red-500 text-white shadow-sm"
-                        : "bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200"
-                    }`}
+                    className={`px-4 py-2.5 rounded-lg flex items-center gap-2 transition-all duration-300 text-base ${sortBy === "price-high"
+                      ? "bg-red-500 text-white shadow-sm"
+                      : "bg-gray-50 dark:bg-gray-900 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700"
+                      }`}
                   >
                     <FaSort className="w-4 h-4" />
                     High to Low
@@ -215,7 +213,7 @@ const AllBooks = () => {
             </div>
           ) : (
             <div className="text-center py-20">
-              <p className="text-xl text-gray-600 mb-4">
+              <p className="text-xl text-gray-600 dark:text-gray-400 mb-4 transition-colors duration-300">
                 No books available at the moment.
               </p>
               <Button

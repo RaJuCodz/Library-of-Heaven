@@ -18,7 +18,7 @@ const Favourites = () => {
     try {
       console.log("Fetching favorites with headers:", headers);
       const response = await axios.get(
-        "https://library-of-heaven.onrender.com/api/v1/get_favorites",
+        `${import.meta.env.VITE_API_URL}/get_favorites`,
         { headers }
       );
       console.log("Favorites response:", response.data);
@@ -47,12 +47,13 @@ const Favourites = () => {
       // Debug log for remove_from_fav
       console.log(
         "Removing from fav:",
-        "https://library-of-heaven.onrender.com/api/v1/remove_from_fav",
+        `${import.meta.env.VITE_API_URL}/remove_from_fav`,
         "with id:",
         bookId
       );
-      const response = await axios.delete(
-        "https://library-of-heaven.onrender.com/api/v1/remove_from_fav",
+      const response = await axios.put(
+        `${import.meta.env.VITE_API_URL}/remove_from_fav`,
+        {},
         {
           headers: { ...headers, book_id: bookId },
         }
@@ -98,14 +99,14 @@ const Favourites = () => {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-6 text-gray-900">
+      <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100 transition-colors duration-300">
         Your Favorite Books
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {favouriteBooks.map((book) => (
           <div
             key={book._id}
-            className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden"
+            className="bg-white dark:bg-gray-900 rounded-xl shadow-sm dark:shadow-gray-900/50 hover:shadow-md dark:hover:shadow-gray-900 hover:shadow-red-500/10 dark:hover:shadow-red-900/10 transition-shadow duration-300 overflow-hidden"
           >
             <div className="relative">
               <img
@@ -115,21 +116,21 @@ const Favourites = () => {
               />
               <button
                 onClick={() => removeFromFavourites(book._id)}
-                className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md hover:bg-red-50 transition-colors duration-300"
+                className="absolute top-2 right-2 p-2 bg-white dark:bg-gray-800 rounded-full shadow-md hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors duration-300"
               >
                 <FaTrash className="w-5 h-5 text-red-500" />
               </button>
             </div>
             <div className="p-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-1">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1 transition-colors duration-300">
                 {book.title}
               </h3>
-              <p className="text-sm text-gray-600 mb-2">by {book.author}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2 transition-colors duration-300">by {book.author}</p>
               <div className="flex items-center justify-between">
-                <p className="text-lg font-semibold text-red-600">
+                <p className="text-lg font-semibold text-red-600 dark:text-red-400 transition-colors duration-300">
                   ${book.price}
                 </p>
-                <span className="text-sm text-gray-500">
+                <span className="text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">
                   {book.description?.slice(0, 50)}...
                 </span>
               </div>

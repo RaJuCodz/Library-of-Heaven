@@ -25,7 +25,7 @@ const ViewDetail = () => {
   useEffect(() => {
     const fetchBook = async () => {
       console.log("Book ID param:", id);
-      const fullUrl = `https://library-of-heaven.onrender.com/api/v1/get_book_by_id/${id}`;
+      const fullUrl = `${import.meta.env.VITE_API_URL}/get_book_by_id/${id}`;
       console.log("Fetching book from:", fullUrl);
       try {
         const response = await axios.get(fullUrl);
@@ -82,9 +82,8 @@ const ViewDetail = () => {
                 <img
                   src={book.cover_image}
                   alt={book.title}
-                  className={`w-full h-full object-cover transform transition-all duration-700 ${
-                    isImageLoaded ? "scale-100" : "scale-110 blur-sm"
-                  } group-hover:scale-105`}
+                  className={`w-full h-full object-cover transform transition-all duration-700 ${isImageLoaded ? "scale-100" : "scale-110 blur-sm"
+                    } group-hover:scale-105`}
                   onLoad={() => setIsImageLoaded(true)}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>

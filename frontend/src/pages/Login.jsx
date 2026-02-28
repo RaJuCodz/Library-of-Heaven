@@ -34,7 +34,7 @@ const Login = () => {
     if (Object.keys(formErrors).length === 0) {
       console.log("Form submitted successfully", formData);
       axios
-        .post("https://library-of-heaven.onrender.com/api/v1/signin", formData)
+        .post(`${import.meta.env.VITE_API_URL}/signin`, formData)
         .then((response) => {
           console.log(response);
           if (response.data.token) {
@@ -73,18 +73,18 @@ const Login = () => {
       </div>
 
       {/* Login Form */}
-      <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-lg z-10 mx-4">
-        <h1 className="text-4xl font-bold mb-6 text-center text-gray-900">
+      <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg dark:shadow-gray-900/50 w-full max-w-lg z-10 mx-4 transition-colors duration-300">
+        <h1 className="text-4xl font-bold mb-6 text-center text-gray-900 dark:text-gray-100 transition-colors duration-300">
           Welcome Back
         </h1>
-        <p className="text-gray-600 text-center mb-8">
+        <p className="text-gray-600 dark:text-gray-400 text-center mb-8 transition-colors duration-300">
           Sign in to access your account
         </p>
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Username */}
           <div>
             <label
-              className="block text-sm font-semibold text-gray-900"
+              className="block text-sm font-semibold text-gray-900 dark:text-gray-300 transition-colors duration-300"
               htmlFor="username"
             >
               Username
@@ -95,7 +95,7 @@ const Login = () => {
               name="username"
               value={formData.username}
               onChange={handleChange}
-              className="w-full p-3 mt-2 bg-gray-50 border border-gray-200 text-gray-900 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              className="w-full p-3 mt-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors duration-300"
               required
             />
             {errors.username && (
@@ -106,7 +106,7 @@ const Login = () => {
           {/* Password */}
           <div>
             <label
-              className="block text-sm font-semibold text-gray-900"
+              className="block text-sm font-semibold text-gray-900 dark:text-gray-300 transition-colors duration-300"
               htmlFor="password"
             >
               Password
@@ -117,7 +117,7 @@ const Login = () => {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full p-3 mt-2 bg-gray-50 border border-gray-200 text-gray-900 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              className="w-full p-3 mt-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors duration-300"
               required
             />
             {errors.password && (
@@ -134,7 +134,7 @@ const Login = () => {
             <div className="flex justify-center mt-2">
               <button
                 type="button"
-                className="text-blue-600 underline hover:text-blue-800"
+                className="text-blue-600 dark:text-blue-400 underline hover:text-blue-800 dark:hover:text-blue-300 transition-colors duration-300"
                 onClick={() => navigate("/signup")}
               >
                 Sign Up

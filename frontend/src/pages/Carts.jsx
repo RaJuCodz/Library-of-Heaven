@@ -21,7 +21,7 @@ const Carts = () => {
   const fetchCartItems = async () => {
     try {
       const response = await axios.get(
-        "https://library-of-heaven.onrender.com/api/v1/show_cart",
+        `${import.meta.env.VITE_API_URL}/show_cart`,
         { headers }
       );
       setCartItems(response.data.data || []);
@@ -48,12 +48,12 @@ const Carts = () => {
       // Debug log for remove_from_cart
       console.log(
         "Removing from cart:",
-        "https://library-of-heaven.onrender.com/api/v1/remove_from_cart",
+        `${import.meta.env.VITE_API_URL}/remove_from_cart`,
         "with id:",
         bookId
       );
       const response = await axios.delete(
-        "https://library-of-heaven.onrender.com/api/v1/remove_from_cart",
+        `${import.meta.env.VITE_API_URL}/remove_from_cart`,
         {
           headers: { ...headers, book_id: bookId },
         }
@@ -71,7 +71,7 @@ const Carts = () => {
       const token = localStorage.getItem("token");
       const id = localStorage.getItem("id");
       await axios.post(
-        "https://library-of-heaven.onrender.com/api/v1/place_order",
+        `${import.meta.env.VITE_API_URL}/place_order`,
         {},
         { headers }
       );
@@ -96,27 +96,27 @@ const Carts = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 pt-24 flex justify-center items-center">
-        <div className="w-16 h-16 border-4 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-24 flex justify-center items-center transition-colors duration-300">
+        <div className="w-16 h-16 border-4 border-red-600 dark:border-red-400 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
 
   if (cartItems.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 pt-24">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-24 transition-colors duration-300">
         <div className="container mx-auto px-4">
-          <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden p-8 text-center">
+          <div className="max-w-md mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 text-center transition-colors duration-300">
             <FaShoppingCart className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2 transition-colors duration-300">
               Your Cart is Empty
             </h2>
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 dark:text-gray-400 mb-6 transition-colors duration-300">
               Looks like you haven't added any books to your cart yet.
             </p>
             <Link
               to="/books"
-              className="inline-flex items-center px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all duration-300"
+              className="inline-flex items-center px-6 py-3 bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white rounded-lg transition-all duration-300"
             >
               Browse Books
               <FaArrowRight className="ml-2" />
@@ -128,19 +128,19 @@ const Carts = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-24">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-24 transition-colors duration-300">
       <div className="container mx-auto px-4">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Cart Items */}
           <div className="lg:w-2/3">
-            <h2 className="text-3xl font-bold text-gray-900 mb-6">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-6 transition-colors duration-300">
               Shopping Cart ({totalItems} items)
             </h2>
             <div className="space-y-4">
               {cartItems.map((book) => (
                 <div
                   key={book._id}
-                  className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300"
+                  className="bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-gray-900/50 overflow-hidden hover:shadow-lg dark:hover:shadow-gray-900/80 transition-all duration-300"
                 >
                   <div className="flex flex-col md:flex-row">
                     {/* Book Image */}
@@ -156,17 +156,17 @@ const Carts = () => {
                     <div className="p-6 md:w-3/4">
                       <div className="flex justify-between items-start">
                         <div>
-                          <h3 className="text-xl font-bold text-gray-900 mb-2">
+                          <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2 transition-colors duration-300">
                             {book.title}
                           </h3>
-                          <p className="text-gray-600 mb-2">by {book.author}</p>
-                          <p className="text-lg font-semibold text-red-600">
+                          <p className="text-gray-600 dark:text-gray-400 mb-2 transition-colors duration-300">by {book.author}</p>
+                          <p className="text-lg font-semibold text-red-600 dark:text-red-400 transition-colors duration-300">
                             ${formatPrice(book.price)}
                           </p>
                         </div>
                         <button
                           onClick={() => removeFromCart(book._id)}
-                          className="p-2 text-gray-400 hover:text-red-600 transition-colors duration-300"
+                          className="p-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors duration-300"
                         >
                           <FaTrash className="w-5 h-5" />
                         </button>
@@ -175,7 +175,7 @@ const Carts = () => {
                       <div className="mt-4">
                         <Link
                           to={`/view_detail/${book._id}`}
-                          className="text-red-600 hover:text-red-700 font-medium inline-flex items-center"
+                          className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 font-medium inline-flex items-center transition-colors duration-300"
                         >
                           View Details
                           <FaArrowRight className="ml-2 w-4 h-4" />
@@ -190,24 +190,24 @@ const Carts = () => {
 
           {/* Order Summary */}
           <div className="lg:w-1/3">
-            <div className="bg-white rounded-xl shadow-md p-6 sticky top-24">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-gray-900/50 p-6 sticky top-24 transition-colors duration-300">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4 transition-colors duration-300">
                 Order Summary
               </h3>
 
               <div className="space-y-4">
-                <div className="flex justify-between text-gray-600">
+                <div className="flex justify-between text-gray-600 dark:text-gray-400 transition-colors duration-300">
                   <span>Subtotal</span>
                   <span>${formatPrice(totalPrice)}</span>
                 </div>
-                <div className="flex justify-between text-gray-600">
+                <div className="flex justify-between text-gray-600 dark:text-gray-400 transition-colors duration-300">
                   <span>Shipping</span>
-                  <span className="text-green-600 flex items-center">
+                  <span className="text-green-600 dark:text-green-400 flex items-center transition-colors duration-300">
                     <FaTruck className="mr-1" /> Free
                   </span>
                 </div>
-                <div className="border-t pt-4">
-                  <div className="flex justify-between text-lg font-bold text-gray-900">
+                <div className="border-t border-gray-200 dark:border-gray-700 pt-4 transition-colors duration-300">
+                  <div className="flex justify-between text-lg font-bold text-gray-900 dark:text-gray-100 transition-colors duration-300">
                     <span>Total</span>
                     <span>${formatPrice(totalPrice)}</span>
                   </div>

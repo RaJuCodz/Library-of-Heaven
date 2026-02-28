@@ -17,7 +17,7 @@ const Settings = () => {
     const fetchUserInfo = async () => {
       try {
         const response = await axios.get(
-          "https://library-of-heaven.onrender.com/api/v1/get_user_info",
+          `${import.meta.env.VITE_API_URL}/get_user_info`,
           { headers }
         );
         setAddress(response.data.address || "");
@@ -41,7 +41,7 @@ const Settings = () => {
     setLoading(true);
     try {
       const response = await axios.put(
-        "https://library-of-heaven.onrender.com/api/v1/update_address",
+        `${import.meta.env.VITE_API_URL}/update_address`,
         { address },
         { headers }
       );
@@ -55,13 +55,13 @@ const Settings = () => {
   };
 
   return (
-    <div className="bg-gray-900 text-white p-6 rounded-lg">
-      <h2 className="text-2xl font-bold mb-6 text-yellow-400">Settings</h2>
+    <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white p-6 rounded-xl shadow-sm dark:shadow-gray-900/50 transition-colors duration-300">
+      <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-yellow-400 transition-colors duration-300">Settings</h2>
 
       {/* Address Update Form */}
       <form onSubmit={handleUpdateAddress} className="max-w-md">
         <div className="mb-6">
-          <label htmlFor="address" className="block text-sm font-medium mb-2">
+          <label htmlFor="address" className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300 transition-colors duration-300">
             Address
           </label>
           <input
@@ -69,7 +69,7 @@ const Settings = () => {
             id="address"
             value={address}
             onChange={(e) => setAddress(e.target.value)}
-            className="w-full px-4 py-2 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+            className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 dark:focus:ring-yellow-500 transition-colors duration-300 placeholder-gray-400 dark:placeholder-gray-400"
             placeholder="Enter your address"
             required
           />
@@ -78,7 +78,7 @@ const Settings = () => {
         <button
           type="submit"
           disabled={loading}
-          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300 disabled:bg-blue-400 disabled:cursor-not-allowed"
+          className="px-6 py-2 bg-red-600 hover:bg-red-700 dark:bg-blue-600 dark:hover:bg-blue-700 text-white rounded-lg transition duration-300 disabled:bg-gray-400 dark:disabled:bg-blue-400 disabled:cursor-not-allowed"
         >
           {loading ? "Updating..." : "Update Address"}
         </button>

@@ -23,9 +23,9 @@ const BecomeAuthor = () => {
         Authorization: `Bearer ${token}`,
         id,
       };
-      const response = await axios.put(
-        "https://library-of-heaven.onrender.com/api/v1/become_author",
-        { authorName, bio },
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/become-author`,
+        { authorName, bio }, // Keeping original payload variables as phone/address are not defined
         { headers }
       );
       setSuccess(response.data.message);

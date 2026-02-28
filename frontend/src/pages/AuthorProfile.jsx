@@ -38,7 +38,7 @@ const AuthorProfile = () => {
           id,
         };
         const response = await axios.get(
-          "https://library-of-heaven.onrender.com/api/v1/get_user_info",
+          `${import.meta.env.VITE_API_URL}/author/profile`,
           { headers }
         );
         setProfile(response.data);
@@ -55,9 +55,9 @@ const AuthorProfile = () => {
           id,
         };
         // Debug log for get_my_books
-        console.log("Fetching my books from:", apiUrl("/get_my_books"));
+        console.log("Fetching my books from:", apiUrl("/author/my-books"));
         const myBooksResponse = await axios.get(
-          "https://library-of-heaven.onrender.com/api/v1/get_my_books",
+          `${import.meta.env.VITE_API_URL}/author/my-books`,
           {
             headers,
           }
@@ -78,10 +78,10 @@ const AuthorProfile = () => {
         // Debug log for get_author_orders
         console.log(
           "Fetching author orders from:",
-          apiUrl("/get_author_orders")
+          apiUrl("/author/orders")
         );
         const ordersResponse = await axios.get(
-          "https://library-of-heaven.onrender.com/api/v1/get_author_orders",
+          `${import.meta.env.VITE_API_URL}/author/orders`,
           {
             headers,
           }
@@ -111,7 +111,7 @@ const AuthorProfile = () => {
       };
       const bookData = { ...newBook, author: profile.authorName };
       const addBookResponse = await axios.post(
-        "https://library-of-heaven.onrender.com/api/v1/add_book",
+        `${import.meta.env.VITE_API_URL}/author/add-book`,
         bookData,
         {
           headers,
@@ -145,12 +145,12 @@ const AuthorProfile = () => {
       // Debug log for delete_book
       console.log(
         "Deleting book from:",
-        apiUrl("/delete_book"),
+        apiUrl("/author/delete-book"),
         "with id:",
         bookId
       );
       await axios.delete(
-        "https://library-of-heaven.onrender.com/api/v1/delete_book",
+        `${import.meta.env.VITE_API_URL}/author/delete-book`,
         {
           headers: { ...headers, book_id: bookId },
         }
@@ -176,7 +176,7 @@ const AuthorProfile = () => {
         id,
       };
       const uploadResponse = await axios.post(
-        "https://library-of-heaven.onrender.com/api/v1/upload_image",
+        `${import.meta.env.VITE_API_URL}/author/upload-image`,
         formData,
         { headers: { ...headers, "Content-Type": "multipart/form-data" } }
       );
@@ -197,7 +197,7 @@ const AuthorProfile = () => {
 
   // Helper to get API URL (for debug logs)
   function apiUrl(path) {
-    return `https://library-of-heaven.onrender.com/api/v1${path}`;
+    return `${import.meta.env.VITE_API_URL}${path}`;
   }
 
   return (
@@ -429,15 +429,14 @@ const AuthorProfile = () => {
                   </div>
                   <div>
                     <span
-                      className={`font-bold ${
-                        order.status === "Order Placed"
-                          ? "text-yellow-600"
-                          : order.status === "Order Shipped"
+                      className={`font-bold ${order.status === "Order Placed"
+                        ? "text-yellow-600"
+                        : order.status === "Order Shipped"
                           ? "text-blue-600"
                           : order.status === "Order Delivered"
-                          ? "text-green-600"
-                          : "text-red-600"
-                      }`}
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }`}
                     >
                       {order.status}
                     </span>

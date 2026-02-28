@@ -36,7 +36,7 @@ const Signup = () => {
     if (Object.keys(formErrors).length === 0) {
       try {
         const response = await axios.post(
-          "https://library-of-heaven.onrender.com/api/v1/signup",
+          `${import.meta.env.VITE_API_URL}/signup`,
           formData
         );
         console.log("Response:", response.data);
@@ -53,15 +53,15 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gray-900">
-      <div className="bg-gray-800 text-white p-8 rounded-lg shadow-lg w-full max-w-lg">
-        <h1 className="text-3xl font-bold mb-6 text-center text-orange-500">
+    <div className="min-h-screen flex justify-center items-center bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+      <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white p-8 rounded-xl shadow-lg dark:shadow-gray-900/50 w-full max-w-lg transition-colors duration-300">
+        <h1 className="text-3xl font-bold mb-6 text-center text-red-500 dark:text-red-400">
           Sign Up
         </h1>
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Username */}
           <div>
-            <label className="block text-sm font-semibold" htmlFor="username">
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300" htmlFor="username">
               Username
             </label>
             <input
@@ -70,7 +70,7 @@ const Signup = () => {
               name="username"
               value={formData.username}
               onChange={handleChange}
-              className="w-full p-3 mt-2 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full p-3 mt-2 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors duration-300"
               required
             />
             {errors.username && (
@@ -80,7 +80,7 @@ const Signup = () => {
 
           {/* Email */}
           <div>
-            <label className="block text-sm font-semibold" htmlFor="email">
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300" htmlFor="email">
               Email
             </label>
             <input
@@ -89,7 +89,7 @@ const Signup = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full p-3 mt-2 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full p-3 mt-2 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors duration-300"
               required
             />
             {errors.email && (
@@ -99,7 +99,7 @@ const Signup = () => {
 
           {/* Password */}
           <div>
-            <label className="block text-sm font-semibold" htmlFor="password">
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300" htmlFor="password">
               Password
             </label>
             <input
@@ -108,7 +108,7 @@ const Signup = () => {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full p-3 mt-2 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full p-3 mt-2 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors duration-300"
               required
             />
             {errors.password && (
@@ -118,7 +118,7 @@ const Signup = () => {
 
           {/* Address (optional) */}
           <div>
-            <label className="block text-sm font-semibold" htmlFor="address">
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300" htmlFor="address">
               Address (Optional)
             </label>
             <input
@@ -127,7 +127,7 @@ const Signup = () => {
               name="address"
               value={formData.address}
               onChange={handleChange}
-              className="w-full p-3 mt-2 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full p-3 mt-2 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors duration-300"
             />
           </div>
 
@@ -135,7 +135,7 @@ const Signup = () => {
           <div className="flex justify-center">
             <button
               type="submit"
-              className="w-full py-3 bg-orange-500 text-white font-semibold rounded-lg hover:bg-orange-400 transition-all duration-300"
+              className="w-full py-3 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition-all duration-300 shadow-sm"
             >
               Sign Up
             </button>

@@ -17,7 +17,7 @@ const BookCard = ({ book, onFavoriteClick, small }) => {
       const token = localStorage.getItem("token");
       const id = localStorage.getItem("id");
       await axios.post(
-        "https://library-of-heaven.onrender.com/api/v1/place_order",
+        `${import.meta.env.VITE_API_URL}/place_order`,
         { order: [{ book_id: book._id }] },
         {
           headers: {
@@ -30,16 +30,15 @@ const BookCard = ({ book, onFavoriteClick, small }) => {
     } catch (err) {
       toast.error(
         err.response?.data?.message ||
-          "Failed to place order. Please try again."
+        "Failed to place order. Please try again."
       );
     }
   };
 
   return (
     <div
-      className={`book-card bg-white shadow-lg rounded-xl overflow-hidden transition-all duration-300 transform group relative border-2 border-red-500/20 hover:border-red-500 hover:shadow-2xl hover:-translate-y-2 ${
-        small ? "p-2" : ""
-      }`}
+      className={`book-card bg-white dark:bg-gray-800 shadow-lg dark:shadow-gray-900/50 rounded-xl overflow-hidden transition-all duration-300 transform group relative border-2 border-red-500/20 dark:border-red-500/10 hover:border-red-500 hover:shadow-2xl dark:hover:shadow-red-900/40 hover:-translate-y-2 ${small ? "p-2" : ""
+        }`}
       style={small ? { maxWidth: 180 } : {}}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -52,7 +51,7 @@ const BookCard = ({ book, onFavoriteClick, small }) => {
             e.stopPropagation();
             onFavoriteClick(book._id);
           }}
-          className="absolute top-3 right-3 z-10 p-2 bg-white/80 hover:bg-red-100 rounded-full text-gray-500 hover:text-red-600 transition-all duration-300 shadow-md hover:shadow-lg"
+          className="absolute top-3 right-3 z-10 p-2 bg-white/80 dark:bg-gray-900/80 hover:bg-red-100 dark:hover:bg-red-900/50 rounded-full text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-all duration-300 shadow-md hover:shadow-lg"
         >
           <FaHeart className="w-5 h-5" />
         </button>
@@ -61,9 +60,8 @@ const BookCard = ({ book, onFavoriteClick, small }) => {
       <Link to={`/view_detail/${book._id}`} className="block">
         {/* Book cover image container */}
         <div
-          className={`relative w-full ${
-            small ? "h-36" : "h-80"
-          } overflow-hidden`}
+          className={`relative w-full ${small ? "h-36" : "h-80"
+            } overflow-hidden`}
         >
           <img
             src={book.cover_image}
@@ -75,9 +73,8 @@ const BookCard = ({ book, onFavoriteClick, small }) => {
           {/* Quick Actions Overlay */}
           {!small && (
             <div
-              className={`absolute inset-0 bg-black/50 flex items-center justify-center gap-4 transition-opacity duration-300 ${
-                isHovered ? "opacity-100" : "opacity-0"
-              }`}
+              className={`absolute inset-0 bg-black/50 flex items-center justify-center gap-4 transition-opacity duration-300 ${isHovered ? "opacity-100" : "opacity-0"
+                }`}
             >
               <button className="p-3 bg-white rounded-full text-red-600 hover:bg-red-600 hover:text-white transition-all duration-300 transform hover:scale-110">
                 <FaShoppingCart className="w-6 h-6" />
@@ -97,63 +94,55 @@ const BookCard = ({ book, onFavoriteClick, small }) => {
               {[...Array(5)].map((_, i) => (
                 <FaStar
                   key={i}
-                  className={`transition-all duration-300 ${
-                    small ? "w-3 h-3" : "w-4 h-4"
-                  } ${
-                    i < Math.floor(rating)
+                  className={`transition-all duration-300 ${small ? "w-3 h-3" : "w-4 h-4"
+                    } ${i < Math.floor(rating)
                       ? "text-red-500 transform hover:scale-125"
                       : "text-gray-300"
-                  }`}
+                    }`}
                 />
               ))}
             </div>
             <span
-              className={`ml-2 text-gray-500 font-medium ${
-                small ? "text-xs" : ""
-              }`}
+              className={`ml-2 text-gray-500 dark:text-gray-400 font-medium ${small ? "text-xs" : ""
+                }`}
             >
               {rating}
             </span>
           </div>
 
           <h3
-            className={`font-bold text-gray-900 mb-1 line-clamp-1 group-hover:text-red-600 transition-colors duration-300 ${
-              small ? "text-base" : "text-xl"
-            }`}
+            className={`font-bold text-gray-900 dark:text-gray-100 mb-1 line-clamp-1 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors duration-300 ${small ? "text-base" : "text-xl"
+              }`}
           >
             {book.title}
           </h3>
           <p
-            className={`text-gray-600 mb-2 font-medium ${
-              small ? "text-xs" : "text-sm"
-            }`}
+            className={`text-gray-600 dark:text-gray-400 mb-2 font-medium ${small ? "text-xs" : "text-sm"
+              }`}
           >
             by {book.author}
           </p>
 
           {/* Price */}
           <div
-            className={`flex items-center justify-between ${
-              small ? "mb-2" : "mb-4"
-            }`}
+            className={`flex items-center justify-between ${small ? "mb-2" : "mb-4"
+              }`}
           >
             <p
-              className={`font-bold text-red-600 ${
-                small ? "text-base" : "text-2xl"
-              }`}
+              className={`font-bold text-red-600 dark:text-red-400 ${small ? "text-base" : "text-2xl"
+                }`}
             >
               ${book.price}
             </p>
             {!small && (
-              <span className="text-sm text-gray-500">Free Shipping</span>
+              <span className="text-sm text-gray-500 dark:text-gray-400">Free Shipping</span>
             )}
           </div>
 
           {/* Description */}
           <p
-            className={`text-gray-600 ${
-              small ? "text-xs mb-2 line-clamp-1" : "text-sm mb-6 line-clamp-2"
-            }`}
+            className={`text-gray-600 dark:text-gray-300 ${small ? "text-xs mb-2 line-clamp-1" : "text-sm mb-6 line-clamp-2"
+              }`}
           >
             {book.description}
           </p>
