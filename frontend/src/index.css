@@ -1,9 +1,163 @@
+/* ─────────────── Google Fonts ─────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Inter:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ─────────────── Base Styles ─────────────── */
 @layer base {
+  :root {
+    --color-accent:        #801818;
+    --color-accent-light:  #B52A2A;
+    --color-accent-warm:   #926644;
+    --color-bg:            #F4F0EC;
+    --color-bg-card:       #FDFCFB;
+    --color-bg-secondary:  #EDE8E1;
+    --color-border:        #DDD3C5;
+    --color-text-primary:  #1C1208;
+    --color-text-secondary:#6B5C42;
+    --color-text-muted:    #A89880;
+  }
+
+  .dark {
+    --color-accent:        #C94040;
+    --color-accent-light:  #E06060;
+    --color-accent-warm:   #B08052;
+    --color-bg:            #080F1A;
+    --color-bg-card:       #0D1B2A;
+    --color-bg-secondary:  #112136;
+    --color-border:        #1E3552;
+    --color-text-primary:  #F4F0EC;
+    --color-text-secondary:#B0A090;
+    --color-text-muted:    #6B8099;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
-    @apply bg-white text-gray-900 transition-colors duration-300 dark:bg-gray-900 dark:text-gray-100;
+    @apply bg-parchment-200 text-parchment-900 dark:bg-navy-900 dark:text-parchment-200;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', Georgia, serif;
+    letter-spacing: -0.01em;
+  }
+
+  h1 { @apply text-5xl font-bold leading-tight; }
+  h2 { @apply text-4xl font-bold leading-snug; }
+  h3 { @apply text-2xl font-semibold leading-snug; }
+  h4 { @apply text-xl font-semibold; }
+
+  ::selection {
+    background-color: rgba(128, 24, 24, 0.20);
+    color: inherit;
   }
 }
+
+/* ─────────────── Component Utilities ─────────────── */
+@layer components {
+  /* Section heading style */
+  .section-heading {
+    @apply font-serif text-4xl font-bold text-parchment-900 dark:text-parchment-100;
+  }
+
+  .section-subheading {
+    @apply font-sans text-lg text-toffee-600 dark:text-toffee-300 font-medium tracking-wide uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.78rem;
+  }
+
+  /* Premium glass card */
+  .glass-card {
+    @apply bg-white/80 dark:bg-navy-700/80 backdrop-blur-md border border-parchment-300 dark:border-navy-500;
+    box-shadow: var(--shadow-glass, 0 8px 32px rgba(0,0,0,0.10));
+  }
+
+  /* Gradient text — wine */
+  .gradient-text-wine {
+    background: linear-gradient(135deg, #801818 0%, #B52A2A 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .dark .gradient-text-wine {
+    background: linear-gradient(135deg, #E06060 0%, #C94040 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Decorative divider */
+  .divider-wine {
+    @apply h-px bg-gradient-to-r from-transparent via-wine-600 to-transparent dark:via-wine-400 opacity-40;
+  }
+
+  /* Input base style */
+  .input-field {
+    @apply w-full px-4 py-3 rounded-lg font-sans text-sm;
+    @apply bg-parchment-100 dark:bg-navy-700;
+    @apply border border-parchment-400 dark:border-navy-500;
+    @apply text-parchment-900 dark:text-parchment-100;
+    @apply placeholder-toffee-500/60 dark:placeholder-navy-300/60;
+    @apply focus:outline-none focus:ring-2 focus:ring-wine-600 dark:focus:ring-wine-400 focus:border-transparent;
+    @apply transition-all duration-200;
+  }
+
+  /* Label style */
+  .field-label {
+    @apply block text-xs font-semibold uppercase tracking-wider mb-1.5;
+    @apply text-toffee-700 dark:text-toffee-300;
+    letter-spacing: 0.08em;
+  }
+
+  /* Book card */
+  .book-card {
+    transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+
+  .book-card:hover {
+    transform: translateY(-6px);
+  }
+}
+
+/* ─────────────── Animations ─────────────── */
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-in-out both;
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.7s ease-out both;
+  }
+
+  .animate-fade-in-up-delay {
+    animation: fadeInUp 0.7s ease-out 0.2s both;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─────────────── Scrollbar ─────────────── */
+::-webkit-scrollbar       { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(128, 24, 24, 0.35);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(128, 24, 24, 0.6); }

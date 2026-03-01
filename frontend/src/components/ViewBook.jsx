@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
   FaArrowLeft,
@@ -7,12 +7,15 @@ import {
   FaTruck,
   FaShare,
   FaBookmark,
+  FaShoppingCart,
 } from "react-icons/fa";
+import Button from "./ui/Button";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const ViewBook = () => {
   const { book_id } = useParams();
+  const navigate = useNavigate();
   const [book, setBook] = useState(null);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [moreBooks, setMoreBooks] = useState([]);
@@ -22,9 +25,8 @@ const ViewBook = () => {
   useEffect(() => {
     const fetchBook = async () => {
       try {
-        const response = await axios.put(
-          `${import.meta.env.VITE_API_URL}/add_book_to_fav/${book_id}`,
-          {}
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/get_book_by_id/${book_id}`
         );
         setBook(response.data.data);
         fetchMoreBooks();
@@ -48,6 +50,40 @@ const ViewBook = () => {
       fetchBook();
     }
   }, [book_id]);
+
+  const handleAddToCart = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const id = localStorage.getItem("id");
+      if (!token || !id) {
+        toast.error("Please login to add to cart");
+        navigate("/login");
+        return;
+      }
+
+      const response = await axios.put(
+        `${import.meta.env.VITE_API_URL}/add_to_cart`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            id,
+            book_id: book._id,
+          },
+        }
+      );
+      if (response.data.message === "Book already added to cart") {
+        toast.error("Book is already in cart");
+      } else {
+        toast.success("Added to cart successfully!");
+      }
+      setTimeout(() => navigate("/cart"), 1500);
+    } catch (err) {
+      toast.error(
+        err.response?.data?.message || "Failed to add to cart. Try again."
+      );
+    }
+  };
 
   const fetchMoreBooks = async () => {
     setIsLoadingMore(true);
@@ -101,17 +137,6 @@ const ViewBook = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-24 transition-colors duration-300">
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
       <div className="container mx-auto px-4">
         {/* Back Button */}
         <Link
@@ -185,6 +210,23 @@ const ViewBook = () => {
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
                   {book.description}
                 </p>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-4 mb-4">
+                <Button
+                  onClick={handleAddToCart}
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white py-4 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+                >
+                  <FaShoppingCart className="inline-block mr-2" />
+                  Add to Cart
+                </Button>
+                <Button
+                  variant="outline"
+                  className="flex-1 border-2 border-red-600 text-red-600 hover:bg-red-50 py-4 transform hover:scale-105 transition-all duration-300"
+                >
+                  Buy Now
+                </Button>
               </div>
 
               {/* Purchase/Download Button */}

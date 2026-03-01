@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaStar, FaHeart, FaShoppingCart, FaEye } from "react-icons/fa";
 import Button from "./ui/Button";
 import PropTypes from "prop-types";
@@ -8,42 +8,83 @@ import axios from "axios";
 
 const BookCard = ({ book, onFavoriteClick, small }) => {
   const [isHovered, setIsHovered] = useState(false);
-  const rating = (4 + Math.random()).toFixed(1);
+  const rating = parseFloat((4 + Math.random()).toFixed(1));
+  const navigate = useNavigate();
 
   const handleBuyNow = async (e) => {
     e.preventDefault();
     e.stopPropagation();
     try {
       const token = localStorage.getItem("token");
-      const id = localStorage.getItem("id");
+      const id    = localStorage.getItem("id");
       await axios.post(
         `${import.meta.env.VITE_API_URL}/place_order`,
         { order: [{ book_id: book._id }] },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            id,
-          },
-        }
+        { headers: { Authorization: `Bearer ${token}`, id } }
       );
       toast.success("Order placed successfully!");
     } catch (err) {
-      toast.error(
-        err.response?.data?.message ||
-        "Failed to place order. Please try again."
-      );
+      toast.error(err.response?.data?.message || "Failed to place order.");
     }
   };
 
+  const handleAddToCart = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      const token = localStorage.getItem("token");
+      const id    = localStorage.getItem("id");
+      if (!token || !id) { toast.error("Please login to add to cart"); return; }
+
+      const response = await axios.put(
+        `${import.meta.env.VITE_API_URL}/add_to_cart`,
+        {},
+        { headers: { Authorization: `Bearer ${token}`, id, book_id: book._id } }
+      );
+      if (response.data.message === "Book already added to cart") {
+        toast.error("Book is already in cart");
+      } else {
+        toast.success("Added to cart!");
+      }
+      setTimeout(() => navigate("/cart"), 1500);
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to add to cart.");
+    }
+  };
+
+  if (small) {
+    return (
+      <div
+        className="book-card bg-parchment-50 dark:bg-navy-700 rounded-xl overflow-hidden shadow-card dark:shadow-card-dark border border-parchment-300 dark:border-navy-500 hover:shadow-card-hover hover:border-wine-400 dark:hover:border-wine-600 transition-all duration-300 hover:-translate-y-1"
+        style={{ maxWidth: 180 }}
+      >
+        <Link to={`/view_detail/${book._id}`} className="block">
+          <div className="relative h-36 overflow-hidden">
+            <img
+              src={book.cover_image}
+              alt={book.title}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+          </div>
+          <div className="p-2.5">
+            <h3 className="font-serif font-bold text-sm text-parchment-900 dark:text-parchment-100 line-clamp-1">
+              {book.title}
+            </h3>
+            <p className="font-sans text-xs text-toffee-600 dark:text-toffee-300 mt-0.5">by {book.author}</p>
+            <p className="font-sans font-bold text-sm text-wine-600 dark:text-wine-400 mt-1">${book.price}</p>
+          </div>
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div
-      className={`book-card bg-white dark:bg-gray-800 shadow-lg dark:shadow-gray-900/50 rounded-xl overflow-hidden transition-all duration-300 transform group relative border-2 border-red-500/20 dark:border-red-500/10 hover:border-red-500 hover:shadow-2xl dark:hover:shadow-red-900/40 hover:-translate-y-2 ${small ? "p-2" : ""
-        }`}
-      style={small ? { maxWidth: 180 } : {}}
+      className="book-card group bg-parchment-50 dark:bg-navy-700 rounded-2xl overflow-hidden shadow-card dark:shadow-card-dark border border-parchment-300 dark:border-navy-500 hover:shadow-card-hover hover:border-wine-400 dark:hover:border-wine-600 relative"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Favorite Button */}
+      {/* Favourite button */}
       {onFavoriteClick && (
         <button
           onClick={(e) => {
@@ -51,133 +92,121 @@ const BookCard = ({ book, onFavoriteClick, small }) => {
             e.stopPropagation();
             onFavoriteClick(book._id);
           }}
-          className="absolute top-3 right-3 z-10 p-2 bg-white/80 dark:bg-gray-900/80 hover:bg-red-100 dark:hover:bg-red-900/50 rounded-full text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-all duration-300 shadow-md hover:shadow-lg"
+          className="absolute top-3 right-3 z-10 p-2 bg-parchment-50/90 dark:bg-navy-800/90 backdrop-blur-sm rounded-full text-parchment-400 dark:text-parchment-500 hover:text-wine-600 dark:hover:text-wine-400 hover:bg-wine-50 dark:hover:bg-wine-900/30 shadow-sm transition-all duration-250"
+          aria-label="Add to favourites"
         >
-          <FaHeart className="w-5 h-5" />
+          <FaHeart className="w-4 h-4" />
         </button>
       )}
 
       <Link to={`/view_detail/${book._id}`} className="block">
-        {/* Book cover image container */}
-        <div
-          className={`relative w-full ${small ? "h-36" : "h-80"
-            } overflow-hidden`}
-        >
+        {/* Cover image */}
+        <div className="relative h-72 overflow-hidden bg-parchment-300 dark:bg-navy-600">
           <img
             src={book.cover_image}
             alt={book.title}
-            className="w-full h-full object-cover object-center transform group-hover:scale-110 transition-transform duration-700"
+            className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-red-900/30 via-transparent to-transparent opacity-70 group-hover:opacity-40 transition-all duration-300"></div>
+          {/* Subtle bottom gradient */}
+          <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-parchment-900/50 to-transparent" />
 
-          {/* Quick Actions Overlay */}
-          {!small && (
-            <div
-              className={`absolute inset-0 bg-black/50 flex items-center justify-center gap-4 transition-opacity duration-300 ${isHovered ? "opacity-100" : "opacity-0"
-                }`}
+          {/* Quick-action overlay */}
+          <div
+            className={[
+              "absolute inset-0 flex items-center justify-center gap-4 transition-all duration-300",
+              isHovered
+                ? "opacity-100 bg-navy-900/55 backdrop-blur-[2px]"
+                : "opacity-0 bg-transparent",
+            ].join(" ")}
+          >
+            <button
+              onClick={handleAddToCart}
+              className="p-3 bg-parchment-50 rounded-full text-wine-600 hover:bg-wine-600 hover:text-white shadow-lg transition-all duration-250 hover:scale-110"
+              aria-label="Add to cart"
             >
-              <button className="p-3 bg-white rounded-full text-red-600 hover:bg-red-600 hover:text-white transition-all duration-300 transform hover:scale-110">
-                <FaShoppingCart className="w-6 h-6" />
-              </button>
-              <button className="p-3 bg-white rounded-full text-red-600 hover:bg-red-600 hover:text-white transition-all duration-300 transform hover:scale-110">
-                <FaEye className="w-6 h-6" />
-              </button>
-            </div>
-          )}
+              <FaShoppingCart className="w-5 h-5" />
+            </button>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                navigate(`/view_detail/${book._id}`);
+              }}
+              className="p-3 bg-parchment-50 rounded-full text-toffee-600 hover:bg-toffee-500 hover:text-white shadow-lg transition-all duration-250 hover:scale-110"
+              aria-label="Quick view"
+            >
+              <FaEye className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
-        {/* Book details */}
-        <div className={small ? "p-2" : "p-6"}>
-          {/* Rating */}
-          <div className={`flex items-center ${small ? "mb-1" : "mb-3"}`}>
-            <div className="flex items-center">
+        {/* Details */}
+        <div className="p-5">
+          {/* Stars */}
+          <div className="flex items-center gap-1.5 mb-3">
+            <div className="flex items-center gap-0.5">
               {[...Array(5)].map((_, i) => (
                 <FaStar
                   key={i}
-                  className={`transition-all duration-300 ${small ? "w-3 h-3" : "w-4 h-4"
-                    } ${i < Math.floor(rating)
-                      ? "text-red-500 transform hover:scale-125"
-                      : "text-gray-300"
-                    }`}
+                  className={[
+                    "w-3.5 h-3.5 transition-colors",
+                    i < Math.floor(rating)
+                      ? "text-toffee-500"
+                      : "text-parchment-400 dark:text-navy-500",
+                  ].join(" ")}
                 />
               ))}
             </div>
-            <span
-              className={`ml-2 text-gray-500 dark:text-gray-400 font-medium ${small ? "text-xs" : ""
-                }`}
-            >
-              {rating}
-            </span>
+            <span className="font-sans text-xs text-toffee-600 dark:text-toffee-400 font-medium">{rating}</span>
           </div>
 
-          <h3
-            className={`font-bold text-gray-900 dark:text-gray-100 mb-1 line-clamp-1 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors duration-300 ${small ? "text-base" : "text-xl"
-              }`}
-          >
+          <h3 className="font-serif font-bold text-lg text-parchment-900 dark:text-parchment-100 mb-1 line-clamp-1 group-hover:text-wine-700 dark:group-hover:text-wine-400 transition-colors duration-250">
             {book.title}
           </h3>
-          <p
-            className={`text-gray-600 dark:text-gray-400 mb-2 font-medium ${small ? "text-xs" : "text-sm"
-              }`}
-          >
+          <p className="font-sans text-xs text-toffee-600 dark:text-toffee-300 mb-3 font-medium">
             by {book.author}
           </p>
 
-          {/* Price */}
-          <div
-            className={`flex items-center justify-between ${small ? "mb-2" : "mb-4"
-              }`}
-          >
-            <p
-              className={`font-bold text-red-600 dark:text-red-400 ${small ? "text-base" : "text-2xl"
-                }`}
-            >
+          {/* Price row */}
+          <div className="flex items-center justify-between mb-3">
+            <p className="font-sans font-bold text-2xl text-wine-600 dark:text-wine-400">
               ${book.price}
             </p>
-            {!small && (
-              <span className="text-sm text-gray-500 dark:text-gray-400">Free Shipping</span>
-            )}
+            <span className="text-xs text-toffee-500 dark:text-toffee-400 font-sans flex items-center gap-1">
+              <span className="w-1.5 h-1.5 bg-green-500 rounded-full inline-block" />
+              Free Shipping
+            </span>
           </div>
 
-          {/* Description */}
-          <p
-            className={`text-gray-600 dark:text-gray-300 ${small ? "text-xs mb-2 line-clamp-1" : "text-sm mb-6 line-clamp-2"
-              }`}
-          >
+          <p className="font-sans text-xs text-toffee-700 dark:text-parchment-400 line-clamp-2 leading-relaxed mb-5">
             {book.description}
           </p>
 
-          {/* Action Buttons */}
-          {!small && (
-            <div className="flex gap-3">
-              <Button
-                variant="secondary"
-                fullWidth
-                className="bg-red-600 hover:bg-red-700 text-white transform hover:scale-105 transition-all duration-300"
-              >
-                Add to Cart
-              </Button>
-              <Button
-                variant="outline"
-                fullWidth
-                className="border-red-600 text-red-600 hover:bg-red-50 transform hover:scale-105 transition-all duration-300"
-              >
-                Quick View
-              </Button>
-              {localStorage.getItem("role") !== "admin" && (
-                <Button
-                  variant="primary"
-                  fullWidth
-                  className="bg-green-600 hover:bg-green-700 text-white transform hover:scale-105 transition-all duration-300 opacity-50 cursor-not-allowed"
-                  onClick={handleBuyNow}
-                  disabled
-                  title="This feature is temporarily disabled"
-                >
-                  Buy Now
-                </Button>
-              )}
-            </div>
-          )}
+          {/* Action buttons */}
+          <div className="flex gap-2">
+            <Button
+              variant="primary"
+              fullWidth
+              size="sm"
+              onClick={handleAddToCart}
+            >
+              <FaShoppingCart className="w-3.5 h-3.5" />
+              Add to Cart
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                navigate(`/view_detail/${book._id}`);
+              }}
+              className="shrink-0 !px-3"
+              aria-label="Quick view"
+            >
+              <FaEye className="w-3.5 h-3.5" />
+            </Button>
+          </div>
         </div>
       </Link>
     </div>

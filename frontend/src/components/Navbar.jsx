@@ -11,6 +11,7 @@ import {
   FaBook,
   FaEnvelope,
   FaPenFancy,
+  FaSignOutAlt,
 } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
 import { authActions } from "../store/auth";
@@ -26,21 +27,12 @@ const Navbar = () => {
   const location = useLocation();
   const { theme, toggleTheme } = useTheme();
 
-  // Handle scroll effect
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 10) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
-    console.log("userRole", userRole);
+    const handleScroll = () => setIsScrolled(window.scrollY > 12);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Handle logout
   const handleLogout = () => {
     dispatch(authActions.logout());
     localStorage.removeItem("token");
@@ -49,146 +41,155 @@ const Navbar = () => {
     window.location.href = "/";
   };
 
+  const isActive = (path) =>
+    path === "/" ? location.pathname === "/" : location.pathname.startsWith(path);
+
   const menuItems = [
-    { title: "Home", link: "/", icon: FaHome },
-    { title: "Books", link: "/books", icon: FaBook },
-    { title: "Contact", link: "/contact", icon: FaEnvelope },
+    { title: "Home",    link: "/",       icon: FaHome    },
+    { title: "Books",   link: "/books",  icon: FaBook    },
+    { title: "Contact", link: "/contact",icon: FaEnvelope },
   ];
+
+  const navLinkCls = (path) =>
+    [
+      "relative flex items-center gap-2 px-3 py-2 text-sm font-medium font-sans rounded-md transition-all duration-250",
+      isActive(path)
+        ? "text-wine-600 dark:text-wine-400"
+        : "text-toffee-800 dark:text-parchment-300 hover:text-wine-600 dark:hover:text-wine-400",
+    ].join(" ");
+
+  const activeDot = (path) =>
+    isActive(path) ? (
+      <span className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-wine-600 dark:bg-wine-400" />
+    ) : null;
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-white/95 dark:bg-gray-900/95 backdrop-blur-md shadow-sm dark:shadow-gray-800" : "bg-white dark:bg-gray-900"
-        }`}
+      className={[
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+        isScrolled
+          ? "bg-parchment-50/95 dark:bg-navy-800/95 backdrop-blur-md border-b border-parchment-400/40 dark:border-navy-600/60 shadow-sm"
+          : "bg-parchment-50/80 dark:bg-navy-900/80 backdrop-blur-sm border-b border-transparent",
+      ].join(" ")}
     >
-      <div className="container mx-auto flex items-center justify-between py-2 px-6 md:px-8">
-        {/* Logo Section */}
-        <div className="flex items-center space-x-2">
-          <Link to="/" className="flex items-center">
-            <img
-              src="/images/LOGO.png"
-              alt="Library of Heaven"
-              className="h-16 w-auto transform scale-150"
-            />
-          </Link>
-        </div>
+      <div className="max-w-7xl mx-auto flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
+        {/* Logo */}
+        <Link to="/" className="flex items-center gap-2 shrink-0">
+          <img
+            src="/images/LOGO.png"
+            alt="Library of Heaven"
+            className="h-10 w-auto"
+          />
+          <span className="hidden sm:block font-serif font-bold text-lg text-wine-700 dark:text-wine-400 leading-none tracking-tight">
+            Library<br />
+            <span className="text-toffee-600 dark:text-toffee-300 text-sm font-medium font-sans tracking-widest uppercase" style={{ letterSpacing: "0.16em" }}>
+              of Heaven
+            </span>
+          </span>
+        </Link>
 
-        {/* Desktop Navigation Links */}
-        <div className="hidden md:flex items-center space-x-6">
+        {/* Desktop nav links */}
+        <div className="hidden md:flex items-center gap-1">
           {menuItems.map((item) => (
-            <Link
-              key={item.title}
-              to={item.link}
-              className={`flex items-center px-3 py-2 rounded-lg text-gray-600 hover:text-red-500 hover:bg-red-50 text-lg transition-all duration-300 ${location.pathname === item.link ? "text-red-500" : ""
-                }`}
-            >
-              <item.icon className="mr-2 w-6 h-6" />
+            <Link key={item.title} to={item.link} className={navLinkCls(item.link)}>
+              <item.icon className="w-3.5 h-3.5" />
               {item.title}
+              {activeDot(item.link)}
             </Link>
           ))}
 
-          <Link
-            to="/cart"
-            className="flex items-center px-3 py-2 rounded-lg text-gray-600 hover:text-red-500 hover:bg-red-50 text-lg transition-all duration-300"
-          >
-            <FaShoppingCart className="mr-2 w-6 h-6" />
+          <Link to="/cart" className={navLinkCls("/cart")}>
+            <FaShoppingCart className="w-3.5 h-3.5" />
             Cart
+            {activeDot("/cart")}
           </Link>
 
           {isLoggedIn ? (
             <>
-              {userRole == "user" && (
-                <Link
-                  to="/become-author"
-                  className="flex items-center px-3 py-2 rounded-lg text-gray-600 hover:text-red-500 hover:bg-red-50 text-lg transition-all duration-300"
-                >
-                  <FaPenFancy className="mr-2 w-6 h-6" />
+              {userRole === "user" && (
+                <Link to="/become-author" className={navLinkCls("/become-author")}>
+                  <FaPenFancy className="w-3.5 h-3.5" />
                   Become Author
+                  {activeDot("/become-author")}
                 </Link>
               )}
-              <Link
-                to="/profile"
-                className="flex items-center px-3 py-2 rounded-lg text-gray-600 hover:text-red-500 hover:bg-red-50 text-lg transition-all duration-300"
-              >
-                <FaUser className="mr-2 w-6 h-6" />
+              <Link to="/profile" className={navLinkCls("/profile")}>
+                <FaUser className="w-3.5 h-3.5" />
                 Profile
+                {activeDot("/profile")}
               </Link>
+              <button
+                onClick={handleLogout}
+                className="ml-2 flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-toffee-700 dark:text-parchment-400 hover:text-wine-600 dark:hover:text-wine-400 rounded-md transition-colors duration-200"
+              >
+                <FaSignOutAlt className="w-3.5 h-3.5" />
+                Logout
+              </button>
             </>
           ) : (
-            <div className="flex space-x-3">
-              <Button
-                to="/login"
-                variant="outline"
-                size="sm"
-                className="text-lg"
-              >
-                Sign In
-              </Button>
-              <Button
-                to="/signup"
-                variant="primary"
-                size="sm"
-                className="text-lg"
-              >
-                Sign Up
-              </Button>
+            <div className="flex items-center gap-2 ml-2">
+              <Button to="/login"  variant="ghost"   size="sm">Sign In</Button>
+              <Button to="/signup" variant="primary" size="sm">Sign Up</Button>
             </div>
           )}
-
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded-full text-gray-600 hover:text-indigo-500 hover:bg-indigo-50 focus:outline-none transition-all duration-300"
-            aria-label="Toggle Dark Mode"
-          >
-            {theme === "dark" ? <FaSun className="w-5 h-5" /> : <FaMoon className="w-5 h-5" />}
-          </button>
         </div>
 
-        <div className="flex items-center space-x-2 md:hidden">
+        {/* Theme toggle + mobile burger */}
+        <div className="flex items-center gap-1">
           <button
             onClick={toggleTheme}
-            className="p-1.5 rounded-lg text-gray-600 hover:text-indigo-500 hover:bg-indigo-50 focus:outline-none transition-all duration-300"
-            aria-label="Toggle Dark Mode"
+            className="p-2 rounded-lg text-toffee-600 dark:text-parchment-300 hover:bg-parchment-300 dark:hover:bg-navy-700 transition-all duration-200"
+            aria-label="Toggle theme"
           >
-            {theme === "dark" ? <FaSun className="w-5 h-5" /> : <FaMoon className="w-5 h-5" />}
+            {theme === "dark"
+              ? <FaSun  className="w-4 h-4 text-toffee-400" />
+              : <FaMoon className="w-4 h-4" />}
           </button>
 
-          {/* Mobile Menu Toggle Button */}
           <button
-            className="p-1.5 rounded-lg text-gray-600 hover:text-red-500 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-300"
+            className="md:hidden p-2 rounded-lg text-toffee-700 dark:text-parchment-300 hover:bg-parchment-300 dark:hover:bg-navy-700 transition-all duration-200"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label="Toggle menu"
           >
-            {isMenuOpen ? (
-              <FaTimes className="w-6 h-6" />
-            ) : (
-              <FaBars className="w-6 h-6" />
-            )}
+            {isMenuOpen
+              ? <FaTimes className="w-5 h-5" />
+              : <FaBars  className="w-5 h-5" />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile menu */}
       {isMenuOpen && (
-        <div className="bg-white dark:bg-gray-900 md:hidden border-t border-gray-100 dark:border-gray-800 animate-fade-in">
-          <div className="flex flex-col space-y-2 py-6 px-6">
+        <div className="md:hidden bg-parchment-100/98 dark:bg-navy-800/98 backdrop-blur-md border-t border-parchment-300 dark:border-navy-600 animate-fade-in">
+          <div className="flex flex-col gap-1 py-4 px-4">
             {menuItems.map((item) => (
               <Link
                 key={item.title}
                 to={item.link}
-                className={`flex items-center px-4 py-3 rounded-lg text-gray-600 hover:text-red-500 hover:bg-red-50 text-lg transition-all duration-300 ${location.pathname === item.link ? "text-red-500" : ""
-                  }`}
                 onClick={() => setIsMenuOpen(false)}
+                className={[
+                  "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200",
+                  isActive(item.link)
+                    ? "bg-wine-50 dark:bg-wine-900/30 text-wine-700 dark:text-wine-400"
+                    : "text-toffee-800 dark:text-parchment-300 hover:bg-parchment-200 dark:hover:bg-navy-700",
+                ].join(" ")}
               >
-                <item.icon className="mr-3 w-6 h-6" />
+                <item.icon className="w-4 h-4" />
                 {item.title}
               </Link>
             ))}
 
             <Link
               to="/cart"
-              className="flex items-center px-4 py-3 rounded-lg text-gray-600 hover:text-red-500 hover:bg-red-50 text-lg transition-all duration-300"
               onClick={() => setIsMenuOpen(false)}
+              className={[
+                "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200",
+                isActive("/cart")
+                  ? "bg-wine-50 dark:bg-wine-900/30 text-wine-700 dark:text-wine-400"
+                  : "text-toffee-800 dark:text-parchment-300 hover:bg-parchment-200 dark:hover:bg-navy-700",
+              ].join(" ")}
             >
-              <FaShoppingCart className="mr-3 w-6 h-6" />
+              <FaShoppingCart className="w-4 h-4" />
               Cart
             </Link>
 
@@ -197,51 +198,33 @@ const Navbar = () => {
                 {userRole === "user" && (
                   <Link
                     to="/become-author"
-                    className="flex items-center px-4 py-3 rounded-lg text-gray-600 hover:text-red-500 hover:bg-red-50 text-lg transition-all duration-300"
                     onClick={() => setIsMenuOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-toffee-800 dark:text-parchment-300 hover:bg-parchment-200 dark:hover:bg-navy-700 transition-all duration-200"
                   >
-                    <FaPenFancy className="mr-3 w-6 h-6" />
+                    <FaPenFancy className="w-4 h-4" />
                     Become Author
                   </Link>
                 )}
                 <Link
                   to="/profile"
-                  className="flex items-center px-4 py-3 rounded-lg text-gray-600 hover:text-red-500 hover:bg-red-50 text-lg transition-all duration-300"
                   onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-toffee-800 dark:text-parchment-300 hover:bg-parchment-200 dark:hover:bg-navy-700 transition-all duration-200"
                 >
-                  <FaUser className="mr-3 w-6 h-6" />
+                  <FaUser className="w-4 h-4" />
                   Profile
                 </Link>
                 <button
-                  onClick={() => {
-                    handleLogout();
-                    setIsMenuOpen(false);
-                  }}
-                  className="flex items-center px-4 py-3 rounded-lg text-gray-600 hover:text-red-500 hover:bg-red-50 text-lg transition-all duration-300"
+                  onClick={() => { handleLogout(); setIsMenuOpen(false); }}
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-wine-600 dark:text-wine-400 hover:bg-wine-50 dark:hover:bg-wine-900/20 transition-all duration-200"
                 >
+                  <FaSignOutAlt className="w-4 h-4" />
                   Logout
                 </button>
               </>
             ) : (
-              <div className="flex flex-col space-y-3 mt-4 pt-4 border-t border-gray-100">
-                <Button
-                  to="/login"
-                  variant="outline"
-                  fullWidth
-                  className="text-lg"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Sign In
-                </Button>
-                <Button
-                  to="/signup"
-                  variant="primary"
-                  fullWidth
-                  className="text-lg"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Sign Up
-                </Button>
+              <div className="flex flex-col gap-2 pt-3 mt-2 border-t border-parchment-300 dark:border-navy-600">
+                <Button to="/login"  variant="ghost"   fullWidth onClick={() => setIsMenuOpen(false)}>Sign In</Button>
+                <Button to="/signup" variant="primary" fullWidth onClick={() => setIsMenuOpen(false)}>Sign Up</Button>
               </div>
             )}
           </div>

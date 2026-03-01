@@ -11,6 +11,8 @@ import {
 } from "react-icons/fa";
 import Button from "../components/ui/Button";
 import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ViewDetail = () => {
   const { id } = useParams();
@@ -21,6 +23,40 @@ const ViewDetail = () => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
+
+  const handleAddToCart = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const id = localStorage.getItem("id");
+      if (!token || !id) {
+        toast.error("Please login to add to cart");
+        navigate("/login");
+        return;
+      }
+
+      const response = await axios.put(
+        `${import.meta.env.VITE_API_URL}/add_to_cart`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            id,
+            book_id: book._id,
+          },
+        }
+      );
+      if (response.data.message === "Book already added to cart") {
+        toast.error("Book is already in cart");
+      } else {
+        toast.success("Added to cart successfully!");
+      }
+      setTimeout(() => navigate("/cart"), 1500);
+    } catch (err) {
+      toast.error(
+        err.response?.data?.message || "Failed to add to cart. Try again."
+      );
+    }
+  };
 
   useEffect(() => {
     const fetchBook = async () => {
@@ -65,6 +101,17 @@ const ViewDetail = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 pt-24">
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <div className="container mx-auto px-4">
         {/* Back Button */}
         <button
@@ -182,7 +229,10 @@ const ViewDetail = () => {
 
               {/* Action Buttons */}
               <div className="flex gap-4">
-                <Button className="flex-1 bg-red-600 hover:bg-red-700 text-white py-4 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
+                <Button
+                  onClick={handleAddToCart}
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white py-4 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+                >
                   <FaShoppingCart className="inline-block mr-2" />
                   Add to Cart
                 </Button>

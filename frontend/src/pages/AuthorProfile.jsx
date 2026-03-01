@@ -192,8 +192,8 @@ const AuthorProfile = () => {
   };
 
   if (error)
-    return <div className="text-red-500 text-center mt-8">{error}</div>;
-  if (!profile) return <div className="text-center mt-8">Loading...</div>;
+    return <div className="text-red-500 dark:text-red-400 text-center mt-8">{error}</div>;
+  if (!profile) return <div className="text-center text-gray-900 dark:text-gray-100 mt-8 transition-colors duration-300">Loading...</div>;
 
   // Helper to get API URL (for debug logs)
   function apiUrl(path) {
@@ -201,10 +201,10 @@ const AuthorProfile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-24 px-4 md:px-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300 pt-24 px-4 md:px-8">
       <div className="max-w-6xl mx-auto">
         {/* Profile Header */}
-        <div className="bg-white rounded-2xl shadow-sm p-8 mb-8 relative overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm dark:shadow-gray-900/50 p-8 mb-8 relative overflow-hidden transition-colors duration-300">
           <div
             className="absolute inset-0 opacity-10"
             style={{
@@ -217,7 +217,7 @@ const AuthorProfile = () => {
           <div className="relative z-10">
             <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
               <div className="relative">
-                <div className="w-32 h-32 rounded-full bg-gray-100 flex items-center justify-center border-4 border-red-50">
+                <div className="w-32 h-32 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center border-4 border-red-50 dark:border-red-900/50 transition-colors duration-300">
                   <img
                     src={profile.avatar}
                     alt="avatar"
@@ -226,10 +226,10 @@ const AuthorProfile = () => {
                 </div>
               </div>
               <div className="flex-1 text-center md:text-left">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2 transition-colors duration-300">
                   {profile.authorName}
                 </h1>
-                <div className="flex flex-col md:flex-row gap-4 text-gray-600">
+                <div className="flex flex-col md:flex-row gap-4 text-gray-600 dark:text-gray-400 transition-colors duration-300">
                   <div className="flex items-center gap-2">
                     <span className="font-semibold">Bio:</span> {profile.bio}
                   </div>
@@ -271,7 +271,7 @@ const AuthorProfile = () => {
 
         {/* Author Actions */}
         <div className="mb-8 flex justify-between items-center">
-          <h2 className="text-2xl font-bold text-gray-900">My Books</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 transition-colors duration-300">My Books</h2>
           <Button onClick={() => setShowAddForm((v) => !v)}>
             {showAddForm ? "Cancel" : "Add New Book"}
           </Button>
@@ -281,11 +281,11 @@ const AuthorProfile = () => {
         {showAddForm && (
           <form
             onSubmit={handleAddBook}
-            className="bg-white rounded-xl shadow-md p-6 mb-8 grid grid-cols-1 md:grid-cols-2 gap-6"
+            className="bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-gray-900/50 p-6 mb-8 grid grid-cols-1 md:grid-cols-2 gap-6 transition-colors duration-300"
           >
             <div>
               <label
-                className="block text-sm font-semibold text-gray-900"
+                className="block text-sm font-semibold text-gray-900 dark:text-gray-200 transition-colors duration-300"
                 htmlFor="title"
               >
                 Title
@@ -297,13 +297,13 @@ const AuthorProfile = () => {
                 onChange={(e) =>
                   setNewBook({ ...newBook, title: e.target.value })
                 }
-                className="w-full p-3 mt-2 bg-gray-50 border border-gray-200 text-gray-900 rounded-lg"
+                className="w-full p-3 mt-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-red-500 transition-colors duration-300"
                 required
               />
             </div>
             <div>
               <label
-                className="block text-sm font-semibold text-gray-900"
+                className="block text-sm font-semibold text-gray-900 dark:text-gray-200 transition-colors duration-300"
                 htmlFor="image"
               >
                 Book Cover Image
@@ -314,11 +314,11 @@ const AuthorProfile = () => {
                 type="file"
                 accept="image/*"
                 onChange={handleImageChange}
-                className="w-full p-3 mt-2 bg-gray-50 border border-gray-200 text-gray-900 rounded-lg"
+                className="w-full p-3 mt-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-red-500 transition-colors duration-300"
                 required
               />
               {imageUploading && (
-                <p className="text-gray-500 text-sm mt-1">Uploading image...</p>
+                <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Uploading image...</p>
               )}
               {newBook.cover_image && !imageUploading && (
                 <img
@@ -330,7 +330,7 @@ const AuthorProfile = () => {
             </div>
             <div>
               <label
-                className="block text-sm font-semibold text-gray-900"
+                className="block text-sm font-semibold text-gray-900 dark:text-gray-200 transition-colors duration-300"
                 htmlFor="price"
               >
                 Price
@@ -342,13 +342,13 @@ const AuthorProfile = () => {
                 onChange={(e) =>
                   setNewBook({ ...newBook, price: e.target.value })
                 }
-                className="w-full p-3 mt-2 bg-gray-50 border border-gray-200 text-gray-900 rounded-lg"
+                className="w-full p-3 mt-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-red-500 transition-colors duration-300"
                 required
               />
             </div>
             <div>
               <label
-                className="block text-sm font-semibold text-gray-900"
+                className="block text-sm font-semibold text-gray-900 dark:text-gray-200 transition-colors duration-300"
                 htmlFor="description"
               >
                 Description
@@ -360,16 +360,16 @@ const AuthorProfile = () => {
                 onChange={(e) =>
                   setNewBook({ ...newBook, description: e.target.value })
                 }
-                className="w-full p-3 mt-2 bg-gray-50 border border-gray-200 text-gray-900 rounded-lg"
+                className="w-full p-3 mt-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-red-500 transition-colors duration-300"
                 rows={3}
                 required
               />
             </div>
             {addError && (
-              <p className="text-red-500 text-sm col-span-2">{addError}</p>
+              <p className="text-red-500 dark:text-red-400 text-sm col-span-2">{addError}</p>
             )}
             {addSuccess && (
-              <p className="text-green-600 text-sm col-span-2">{addSuccess}</p>
+              <p className="text-green-600 dark:text-green-400 text-sm col-span-2">{addSuccess}</p>
             )}
             <div className="col-span-2 flex justify-end">
               <Button
@@ -385,13 +385,13 @@ const AuthorProfile = () => {
         {/* Books List */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {books.length === 0 ? (
-            <p className="text-gray-600 col-span-4">No books found.</p>
+            <p className="text-gray-600 dark:text-gray-400 col-span-4 transition-colors duration-300">No books found.</p>
           ) : (
             books.map((book) => (
               <div key={book._id} className="relative group">
                 <BookCard book={book} small />
                 <button
-                  className="absolute top-2 left-2 z-20 p-1 bg-white/80 hover:bg-red-100 rounded-full text-gray-500 hover:text-red-600 transition-all duration-300 shadow-md hover:shadow-lg text-xs"
+                  className="absolute top-2 left-2 z-20 p-1 bg-white/80 dark:bg-gray-800/80 hover:bg-red-100 dark:hover:bg-red-900/50 rounded-full text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-all duration-300 shadow-md hover:shadow-lg text-xs"
                   onClick={() => handleDeleteBook(book._id)}
                   title="Delete Book"
                 >
@@ -403,26 +403,26 @@ const AuthorProfile = () => {
         </div>
 
         <div className="mt-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4 transition-colors duration-300">
             Orders for Your Books
           </h2>
           {ordersLoading ? (
-            <p>Loading orders...</p>
+            <p className="text-gray-900 dark:text-gray-100 transition-colors duration-300">Loading orders...</p>
           ) : authorOrders.length === 0 ? (
-            <p className="text-gray-600">No orders for your books yet.</p>
+            <p className="text-gray-600 dark:text-gray-400 transition-colors duration-300">No orders for your books yet.</p>
           ) : (
             <div className="space-y-4">
               {authorOrders.map((order) => (
                 <div
                   key={order._id}
-                  className="bg-white rounded-lg p-4 shadow flex flex-col md:flex-row md:items-center md:justify-between"
+                  className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow dark:shadow-gray-900/50 flex flex-col md:flex-row md:items-center md:justify-between transition-colors duration-300"
                 >
                   <div>
-                    <div className="font-semibold">{order.book.title}</div>
-                    <div className="text-sm text-gray-500">
+                    <div className="font-semibold text-gray-900 dark:text-gray-100 transition-colors duration-300">{order.book.title}</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">
                       Ordered by: {order.user.username} ({order.user.email})
                     </div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">
                       Order Date:{" "}
                       {new Date(order.createdAt).toLocaleDateString()}
                     </div>

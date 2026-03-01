@@ -2,16 +2,13 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 /**
- * Reusable Button component with multiple variants
- * @param {Object} props - Component props
- * @param {string} props.variant - Button style variant: 'primary', 'secondary', 'outline', 'text'
- * @param {string} props.size - Button size: 'sm', 'md', 'lg'
- * @param {string} props.to - If provided, renders as Link component
- * @param {boolean} props.fullWidth - Whether button should take full width
- * @param {boolean} props.isLoading - Whether button is in loading state
- * @param {boolean} props.disabled - Whether button is disabled
- * @param {React.ReactNode} props.children - Button content
- * @param {string} props.className - Additional CSS classes
+ * Premium Button component — Library of Heaven design system
+ * @param {string}  props.variant  - 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger'
+ * @param {string}  props.size     - 'sm' | 'md' | 'lg'
+ * @param {string}  props.to       - renders as <Link> if provided
+ * @param {boolean} props.fullWidth
+ * @param {boolean} props.isLoading
+ * @param {boolean} props.disabled
  */
 const Button = ({
   variant = "primary",
@@ -24,54 +21,60 @@ const Button = ({
   className = "",
   ...props
 }) => {
-  // Base classes for all button variants
-  const baseClasses = "font-medium rounded-lg transition-all duration-300 flex items-center justify-center";
-  
-  // Size classes
-  const sizeClasses = {
-    sm: "px-3 py-1.5 text-sm",
-    md: "px-5 py-2.5 text-base",
-    lg: "px-8 py-3.5 text-lg",
+  const base =
+    "inline-flex items-center justify-center font-sans font-semibold rounded-lg transition-all duration-300 tracking-wide focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 select-none";
+
+  const sizes = {
+    sm: "px-4 py-2 text-sm gap-1.5",
+    md: "px-6 py-2.5 text-sm gap-2",
+    lg: "px-8 py-3.5 text-base gap-2.5",
   };
-  
-  // Variant classes
-  const variantClasses = {
-    primary: "bg-primary-600 text-white hover:bg-primary-700 shadow-md hover:shadow-lg focus:ring-2 focus:ring-primary-500 focus:ring-opacity-50",
-    secondary: "bg-bookYellow-500 text-black hover:bg-bookYellow-600 shadow-md hover:shadow-lg focus:ring-2 focus:ring-bookYellow-400 focus:ring-opacity-50",
-    outline: "bg-transparent border-2 border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white focus:ring-2 focus:ring-primary-500 focus:ring-opacity-50",
-    text: "bg-transparent text-primary-500 hover:text-primary-700 hover:bg-primary-50 dark:hover:bg-darkBg-800",
-    danger: "bg-red-600 text-white hover:bg-red-700 shadow-md hover:shadow-lg focus:ring-2 focus:ring-red-500 focus:ring-opacity-50",
+
+  const variants = {
+    primary:
+      "bg-wine-600 text-parchment-50 hover:bg-wine-700 active:bg-wine-800 shadow-md hover:shadow-glow-wine focus-visible:ring-wine-500 dark:bg-wine-500 dark:hover:bg-wine-600",
+    secondary:
+      "bg-toffee-500 text-parchment-50 hover:bg-toffee-600 active:bg-toffee-700 shadow-md hover:shadow-glow-toffee focus-visible:ring-toffee-400",
+    outline:
+      "border-2 border-wine-600 text-wine-600 bg-transparent hover:bg-wine-600 hover:text-white active:bg-wine-700 focus-visible:ring-wine-500 dark:border-wine-400 dark:text-wine-400 dark:hover:bg-wine-400 dark:hover:text-navy-900",
+    ghost:
+      "text-wine-600 bg-transparent hover:bg-wine-50 active:bg-wine-100 focus-visible:ring-wine-400 dark:text-wine-400 dark:hover:bg-wine-900/30",
+    danger:
+      "bg-red-600 text-white hover:bg-red-700 active:bg-red-800 shadow-md focus-visible:ring-red-500",
   };
-  
-  // Loading and disabled states
-  const stateClasses = (disabled || isLoading) 
-    ? "opacity-70 cursor-not-allowed" 
-    : "hover:scale-[1.02] active:scale-[0.98]";
-  
-  // Full width class
-  const widthClass = fullWidth ? "w-full" : "";
-  
-  // Combine all classes
-  const buttonClasses = `${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${stateClasses} ${widthClass} ${className}`;
-  
-  // Render as Link if 'to' prop is provided
+
+  const stateClasses =
+    disabled || isLoading
+      ? "opacity-60 cursor-not-allowed pointer-events-none"
+      : "hover:scale-[1.02] active:scale-[0.98]";
+
+  const cls = [
+    base,
+    sizes[size] || sizes.md,
+    variants[variant] || variants.primary,
+    stateClasses,
+    fullWidth ? "w-full" : "",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const spinner = (
+    <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+  );
+
   if (to) {
     return (
-      <Link to={to} className={buttonClasses} {...props}>
-        {isLoading ? (
-          <span className="mr-2 inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
-        ) : null}
+      <Link to={to} className={cls} {...props}>
+        {isLoading && spinner}
         {children}
       </Link>
     );
   }
-  
-  // Otherwise render as button
+
   return (
-    <button className={buttonClasses} disabled={disabled || isLoading} {...props}>
-      {isLoading ? (
-        <span className="mr-2 inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
-      ) : null}
+    <button className={cls} disabled={disabled || isLoading} {...props}>
+      {isLoading && spinner}
       {children}
     </button>
   );

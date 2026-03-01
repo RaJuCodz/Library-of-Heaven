@@ -37,7 +37,7 @@ const App = () => {
   }, [dispatch]);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
+    <div className="min-h-screen bg-parchment-200 dark:bg-navy-900 dark:text-parchment-100 transition-colors duration-300">
       <ScrollToTop />
       {/* ToastContainer for displaying notifications */}
       <ToastContainer
