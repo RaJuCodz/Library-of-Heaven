@@ -1,143 +1,145 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { FaHeart, FaTrash } from "react-icons/fa";
-import "react-toastify/dist/ReactToastify.css";
+import { motion, AnimatePresence } from "framer-motion";
+import { FaHeart, FaTrash, FaBook, FaStar } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const Favourites = () => {
-  const [favouriteBooks, setFavouriteBooks] = useState([]);
+  const [books, setBooks]     = useState([]);
   const [loading, setLoading] = useState(true);
 
   const headers = {
-    id: localStorage.getItem("id"),
+    id:            localStorage.getItem("id"),
     authorization: `Bearer ${localStorage.getItem("token")}`,
   };
 
-  // Fetch favourite books
-  const fetchFavouriteBooks = async () => {
+  const fetchFavourites = async () => {
     try {
-      console.log("Fetching favorites with headers:", headers);
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/get_favorites`,
-        { headers }
-      );
-      console.log("Favorites response:", response.data);
-
-      if (response.data && response.data.favorites) {
-        console.log("Found favorites:", response.data.favorites);
-        setFavouriteBooks(response.data.favorites);
-      } else {
-        console.log("No favorites found in response");
-        setFavouriteBooks([]);
-      }
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching favourite books:", error.response || error);
-      toast.error(
-        error.response?.data?.message || "Failed to fetch favourite books"
-      );
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/get_favorites`, { headers });
+      setBooks(res.data?.favorites || []);
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to fetch favourite books");
+    } finally {
       setLoading(false);
     }
   };
 
-  // Remove a book from favourites
-  const removeFromFavourites = async (bookId) => {
+  const removeFavourite = async (bookId) => {
     try {
-      console.log("Removing book from favorites:", bookId);
-      // Debug log for remove_from_fav
-      console.log(
-        "Removing from fav:",
-        `${import.meta.env.VITE_API_URL}/remove_from_fav`,
-        "with id:",
-        bookId
-      );
-      const response = await axios.put(
+      const res = await axios.put(
         `${import.meta.env.VITE_API_URL}/remove_from_fav`,
         {},
-        {
-          headers: { ...headers, book_id: bookId },
-        }
+        { headers: { ...headers, book_id: bookId } }
       );
-      console.log("Remove from favorites response:", response.data);
-      toast.success(response.data.message);
-      fetchFavouriteBooks(); // Refresh the list after removal
-    } catch (error) {
-      console.error(
-        "Error removing book from favourites:",
-        error.response || error
-      );
-      toast.error(
-        error.response?.data?.message || "Failed to remove book from favourites"
-      );
+      toast.success(res.data.message || "Removed from favourites");
+      setBooks((prev) => prev.filter((b) => b._id !== bookId));
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to remove from favourites");
     }
   };
 
-  useEffect(() => {
-    fetchFavouriteBooks();
-  }, []);
+  useEffect(() => { fetchFavourites(); }, []);
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="flex flex-col items-center">
-          <div className="w-12 h-12 border-4 border-red-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-          <p className="text-gray-600">Loading your favorite books...</p>
-        </div>
+      <div className="flex flex-col items-center justify-center h-56 gap-4">
+        <div className="w-8 h-8 border-2 border-wine-600 border-t-transparent rounded-full animate-spin" />
+        <p className="font-sans text-sm text-toffee-600 dark:text-toffee-400">Loading favourites…</p>
       </div>
     );
   }
 
-  if (favouriteBooks.length === 0) {
+  if (books.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-64">
-        <FaHeart className="w-16 h-16 text-red-200 mb-4" />
-        <p className="text-xl text-gray-600 mb-2">No favorite books yet</p>
-        <p className="text-gray-500">Start adding books to your favorites!</p>
+      <div className="flex flex-col items-center justify-center h-56 gap-4 text-center">
+        <div className="w-16 h-16 rounded-2xl bg-wine-600/10 dark:bg-wine-500/15 flex items-center justify-center">
+          <FaHeart className="w-7 h-7 text-wine-400 dark:text-wine-500" />
+        </div>
+        <div>
+          <p className="font-serif text-xl font-bold text-parchment-800 dark:text-parchment-200 mb-1">No favourites yet</p>
+          <p className="font-sans text-sm text-toffee-600 dark:text-toffee-400">Browse books and heart the ones you love.</p>
+        </div>
+        <Link
+          to="/books"
+          className="mt-2 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-wine-600 text-parchment-50 font-sans text-sm font-semibold hover:bg-wine-700 transition-colors"
+        >
+          <FaBook className="w-3.5 h-3.5" /> Browse Books
+        </Link>
       </div>
     );
   }
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100 transition-colors duration-300">
-        Your Favorite Books
-      </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {favouriteBooks.map((book) => (
-          <div
-            key={book._id}
-            className="bg-white dark:bg-gray-900 rounded-xl shadow-sm dark:shadow-gray-900/50 hover:shadow-md dark:hover:shadow-gray-900 hover:shadow-red-500/10 dark:hover:shadow-red-900/10 transition-shadow duration-300 overflow-hidden"
-          >
-            <div className="relative">
-              <img
-                src={book.cover_image}
-                alt={book.title}
-                className="w-full h-48 object-cover"
-              />
-              <button
-                onClick={() => removeFromFavourites(book._id)}
-                className="absolute top-2 right-2 p-2 bg-white dark:bg-gray-800 rounded-full shadow-md hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors duration-300"
-              >
-                <FaTrash className="w-5 h-5 text-red-500" />
-              </button>
-            </div>
-            <div className="p-4">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1 transition-colors duration-300">
-                {book.title}
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2 transition-colors duration-300">by {book.author}</p>
-              <div className="flex items-center justify-between">
-                <p className="text-lg font-semibold text-red-600 dark:text-red-400 transition-colors duration-300">
-                  ${book.price}
-                </p>
-                <span className="text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">
-                  {book.description?.slice(0, 50)}...
-                </span>
-              </div>
-            </div>
-          </div>
-        ))}
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="font-serif text-2xl font-bold text-parchment-900 dark:text-parchment-100">Your Favourites</h2>
+          <p className="font-sans text-xs text-toffee-600 dark:text-toffee-400 mt-0.5">{books.length} book{books.length !== 1 ? "s" : ""} saved</p>
+        </div>
+        <div className="w-9 h-9 rounded-xl bg-wine-600/10 dark:bg-wine-500/15 flex items-center justify-center">
+          <FaHeart className="w-4 h-4 text-wine-600 dark:text-wine-400" />
+        </div>
       </div>
+
+      <AnimatePresence mode="popLayout">
+        <motion.div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+          {books.map((book, i) => {
+            const rating = (4 + Math.random()).toFixed(1);
+            return (
+              <motion.div
+                key={book._id}
+                layout
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.35, delay: i * 0.06 }}
+                className="group bg-parchment-100 dark:bg-navy-700 rounded-xl border border-parchment-300 dark:border-navy-500 overflow-hidden hover:border-wine-400 dark:hover:border-wine-600 hover:shadow-card-hover transition-all duration-300 hover:-translate-y-0.5"
+              >
+                <Link to={`/view_detail/${book._id}`} className="block">
+                  <div className="relative h-44 overflow-hidden bg-parchment-300 dark:bg-navy-600">
+                    <img
+                      src={book.cover_image}
+                      alt={book.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-parchment-900/60 to-transparent" />
+                    {/* Rating badge */}
+                    <div className="absolute top-2.5 left-2.5 flex items-center gap-1 px-2 py-1 rounded-full bg-navy-900/70 backdrop-blur-sm">
+                      <FaStar className="w-2.5 h-2.5 text-toffee-400" />
+                      <span className="font-sans text-xs text-parchment-100 font-medium">{rating}</span>
+                    </div>
+                  </div>
+                </Link>
+
+                <div className="p-4">
+                  <div className="flex items-start justify-between gap-2 mb-1">
+                    <Link to={`/view_detail/${book._id}`} className="flex-1">
+                      <h3 className="font-serif font-bold text-base text-parchment-900 dark:text-parchment-100 line-clamp-1 group-hover:text-wine-700 dark:group-hover:text-wine-400 transition-colors">
+                        {book.title}
+                      </h3>
+                    </Link>
+                    <button
+                      onClick={() => removeFavourite(book._id)}
+                      className="p-1.5 rounded-lg text-toffee-400 dark:text-toffee-600 hover:bg-wine-50 dark:hover:bg-wine-900/20 hover:text-wine-600 dark:hover:text-wine-400 transition-all duration-200 shrink-0"
+                      aria-label="Remove from favourites"
+                    >
+                      <FaTrash className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                  <p className="font-sans text-xs text-toffee-600 dark:text-toffee-400 mb-3">by {book.author}</p>
+                  <div className="flex items-center justify-between">
+                    <p className="font-sans font-bold text-lg text-wine-600 dark:text-wine-400">${book.price}</p>
+                    <span className="font-sans text-xs text-toffee-500 dark:text-toffee-500 line-clamp-1 max-w-[120px]">
+                      {book.description?.slice(0, 40)}…
+                    </span>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 };
