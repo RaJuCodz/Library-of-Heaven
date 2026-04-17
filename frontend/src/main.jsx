@@ -1,5 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import "./api"; // registers global axios interceptor for invalid token redirect
 import "./index.css";
 import "./styles/animations.css";
 import "./styles/Neon.css";
