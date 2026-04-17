@@ -34,4 +34,21 @@ app.get("/", (req, res) => {
 });
 
 // Start Server
-app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Listening on port ${PORT}`);
+});
+
+// Keep Render free tier alive — ping every 14 minutes
+const cron = require("node-cron");
+const https = require("https");
+
+cron.schedule("*/14 * * * *", () => {
+  const RENDER_URL = process.env.RENDER_EXTERNAL_URL;
+  if (!RENDER_URL) return;
+
+  https.get(RENDER_URL, (res) => {
+    console.log(`Keep-alive ping: ${res.statusCode}`);
+  }).on("error", (err) => {
+    console.error("Keep-alive ping failed:", err.message);
+  });
+});
