@@ -4,11 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "test": "jest --forceExit --detectOpenHandles"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "mongodb-memory-server": "^10.4.3",
+    "supertest": "^7.2.2"
+  },
   "dependencies": {
     "bcrpyt": "^2.0.0",
     "bcryptjs": "^2.4.3",
