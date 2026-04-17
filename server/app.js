@@ -7,20 +7,26 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const user = require("./Routes/user");
 const book = require("./Routes/book");
-const favourite = require("./Routes/favor");
-const cart = require("./Routes/carts");
-const order = require("./Routes/order");
+const chapter = require("./Routes/chapter");
+const reading = require("./Routes/reading");
+const wallet = require("./Routes/wallet");
+const review = require("./Routes/review");
+
 // Connect to Database
-connectDB();
+connectDB().then(() => {
+  const { initBloomFilter } = require('./utils/bloomFilter');
+  initBloomFilter();
+});
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use("/api/v1", user);
 app.use("/api/v1", book);
-app.use("/api/v1", favourite);
-app.use("/api/v1", cart);
-app.use("/api/v1", order);
+app.use("/api/v1", chapter);
+app.use("/api/v1", reading);
+app.use("/api/v1", wallet);
+app.use("/api/v1", review);
 // Routes
 
 app.get("/", (req, res) => {

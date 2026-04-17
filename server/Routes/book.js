@@ -23,184 +23,234 @@ const storage = new CloudinaryStorage({
 });
 const upload = multer({ storage: storage });
 
-// Add single book
-router.post("/add_book", auth, async (req, res) => {
+// Add single novel
+router.post("/add_novel", auth, async (req, res) => {
   try {
-    const { title, author, cover_image, price, description } = req.body;
-    const authorId = req.headers.id;
-    // Validate required fields
-    if (!title || !author || !cover_image || !price || !description) {
-      return res.status(400).json({
-        message:
-          "All fields are required: title, author, cover_image, price, description",
-      });
-    }
-    if (!authorId) {
-      return res.status(400).json({ message: "Author ID is required" });
-    }
-    const newBook = new Book({
+    const {
       title,
       author,
       cover_image,
-      price,
-      description,
+      synopsis,
+      genres,
+      tags,
+      totalChapters,
+      freeChapters,
+      chapterPrice,
+      language,
+      contentRating,
+    } = req.body;
+    const authorId = req.headers.id;
+
+    if (!title || !author || !cover_image || !synopsis) {
+      return res.status(400).json({
+        message: "Required fields missing: title, author, cover_image, synopsis",
+      });
+    }
+
+    if (!authorId) {
+      return res.status(400).json({ message: "Author ID is required" });
+    }
+
+    const newNovel = new Book({
+      title,
+      author,
+      cover_image,
+      synopsis,
+      genres: genres || [],
+      tags: tags || [],
+      totalChapters: totalChapters || 0,
+      freeChapters: freeChapters || 3,
+      chapterPrice: chapterPrice !== undefined ? chapterPrice : 5,
+      language: language || "English",
+      contentRating: contentRating || "everyone",
       authorId,
     });
-    const savedBook = await newBook.save();
+
+    const savedNovel = await newNovel.save();
     res.status(200).json({
-      message: "Book added successfully",
-      book_id: savedBook._id,
-      book: savedBook,
+      message: "Novel added successfully",
+      novel_id: savedNovel._id,
+      novel: savedNovel,
     });
   } catch (err) {
-    console.error("Error adding book:", err);
+    console.error("Error adding novel:", err);
     res.status(500).json({ message: "Internal server error" });
   }
 });
 
-// Add multiple books at once
-router.post("/add_books_bulk", auth, async (req, res) => {
+// Update novel
+router.put("/update_novel", auth, async (req, res) => {
   try {
-    const { books } = req.body;
-
-    if (!Array.isArray(books) || books.length === 0) {
-      return res.status(400).json({
-        message: "Please provide an array of books",
-      });
+    const { novel_id } = req.headers;
+    const authorId = req.headers.id; // added auth check
+    if (!novel_id) {
+      return res.status(400).json({ message: "Novel ID is required" });
     }
 
-    // Validate each book in the array
-    const validBooks = books.filter((book) => {
-      return (
-        book.title &&
-        book.author &&
-        book.cover_image &&
-        book.price &&
-        book.description
-      );
-    });
+    const {
+      title,
+      author,
+      cover_image,
+      synopsis,
+      genres,
+      tags,
+      status,
+      freeChapters,
+      chapterPrice,
+      language,
+      contentRating,
+    } = req.body;
 
-    if (validBooks.length !== books.length) {
-      return res.status(400).json({
-        message:
-          "Some books are missing required fields. Each book must have: title, author, cover_image, price, description",
-      });
+    const novel = await Book.findById(novel_id);
+    if (!novel) {
+      return res.status(404).json({ message: "Novel not found" });
     }
 
-    // Insert all books at once
-    const savedBooks = await Book.insertMany(validBooks);
+    if (novel.authorId.toString() !== authorId) {
+      return res.status(403).json({ message: "Not authorized to update this novel" });
+    }
 
-    res.status(200).json({
-      message: `${savedBooks.length} books added successfully`,
-      books: savedBooks,
-    });
+    if (title !== undefined) novel.title = title;
+    if (author !== undefined) novel.author = author;
+    if (cover_image !== undefined) novel.cover_image = cover_image;
+    if (synopsis !== undefined) novel.synopsis = synopsis;
+    if (genres !== undefined) novel.genres = genres;
+    if (tags !== undefined) novel.tags = tags;
+    if (status !== undefined) novel.status = status;
+    if (freeChapters !== undefined) novel.freeChapters = freeChapters;
+    if (chapterPrice !== undefined) novel.chapterPrice = chapterPrice;
+    if (language !== undefined) novel.language = language;
+    if (contentRating !== undefined) novel.contentRating = contentRating;
+
+    await novel.save();
+    res.status(200).json({ message: "Novel updated successfully" });
   } catch (err) {
-    console.error("Error adding books in bulk:", err);
+    console.error("Error updating novel:", err);
     res.status(500).json({ message: "Internal server error" });
   }
 });
 
-//update book
-router.put("/update_book", auth, async (req, res) => {
+// Delete novel
+router.delete("/delete_novel", auth, async (req, res) => {
   try {
-    const { book_id } = req.headers;
-    if (!book_id) {
-      return res.status(400).json({ message: "Book ID is required" });
-    }
-    const { url, title, author, price, description, image } = req.body;
-    const book = await Book.findById(book_id);
-    if (!book) {
-      return res.status(404).json({ message: "Book not found" });
-    }
-    book.url = url;
-    book.title = title;
-    book.author = author;
-    book.price = price;
-    book.description = description;
-    book.image = image;
-    await book.save();
-    res.status(200).json({ message: "Book updated successfully" });
-  } catch {}
-});
-module.exports = router;
-
-// delete the book
-router.delete("/delete_book", auth, async (req, res) => {
-  try {
-    const { book_id } = req.headers;
+    const { novel_id } = req.headers;
     const authorId = req.headers.id;
-    if (!book_id) {
-      return res.status(400).json({ message: "Book ID is required" });
+    if (!novel_id) {
+      return res.status(400).json({ message: "Novel ID is required" });
     }
     if (!authorId) {
       return res.status(400).json({ message: "Author ID is required" });
     }
-    const book = await Book.findById(book_id);
-    if (!book) {
-      return res.status(404).json({ message: "Book not found" });
+    const novel = await Book.findById(novel_id);
+    if (!novel) {
+      return res.status(404).json({ message: "Novel not found" });
     }
-    if (book.authorId.toString() !== authorId) {
+    if (novel.authorId.toString() !== authorId) {
       return res
         .status(403)
-        .json({ message: "You are not authorized to delete this book" });
+        .json({ message: "You are not authorized to delete this novel" });
     }
-    await Book.findByIdAndDelete(book_id);
-    res.status(200).json({ message: "Book deleted successfully" });
+    await Book.findByIdAndDelete(novel_id);
+    res.status(200).json({ message: "Novel deleted successfully" });
   } catch (err) {
-    console.error("Error deleting book:", err);
-    res.status(500).json({ message: "Internal server error" });
-  }
-});
-// get all books
-router.get("/get_all_books", async (req, res) => {
-  try {
-    const books = await Book.find().sort({ createdAt: -1 });
-    res.status(200).json({ data: books });
-  } catch (err) {
-    console.error("Error getting books:", err);
-    res.status(500).json({ message: "Internal server error" });
-  }
-});
-router.get("/get_recent_books", async (req, res) => {
-  try {
-    const books = await Book.find().sort({ createdAt: -1 }).limit(20);
-    res.status(200).json({ data: books });
-  } catch (err) {
-    console.error("Error getting books:", err);
+    console.error("Error deleting novel:", err);
     res.status(500).json({ message: "Internal server error" });
   }
 });
 
-// get book by id
-router.get("/get_book_by_id/:book_id", async (req, res) => {
+// Get all novels
+router.get("/get_all_novels", async (req, res) => {
   try {
-    const { book_id } = req.params;
-    if (!book_id) {
-      return res.status(400).json({ message: "Book ID is required" });
-    }
-    const book = await Book.findById(book_id);
-    if (!book) {
-      return res.status(404).json({ message: "Book not found" });
-    }
-    res.status(200).json({ data: book });
+    const novels = await Book.find({}).sort({ createdAt: -1 });
+    res.status(200).json({ data: novels });
   } catch (err) {
-    console.error("Error getting book by ID:", err);
+    console.error("Error getting novels:", err);
     res.status(500).json({ message: "Internal server error" });
   }
 });
 
-// Get all books by the logged-in author
-router.get("/get_my_books", auth, async (req, res) => {
+// Get recent novels
+router.get("/get_recent_novels", async (req, res) => {
+  try {
+    const novels = await Book.find({}).sort({ createdAt: -1 }).limit(20);
+    res.status(200).json({ data: novels });
+  } catch (err) {
+    console.error("Error getting recent novels:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// Get novel by id
+router.get("/get_novel_by_id/:novel_id", async (req, res) => {
+  try {
+    const { novel_id } = req.params;
+    if (!novel_id) {
+      return res.status(400).json({ message: "Novel ID is required" });
+    }
+    const novel = await Book.findById(novel_id);
+    if (!novel) {
+      return res.status(404).json({ message: "Novel not found" });
+    }
+    res.status(200).json({ data: novel });
+  } catch (err) {
+    console.error("Error getting novel by ID:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// Get all novels by the logged-in author
+router.get("/get_my_novels", auth, async (req, res) => {
   try {
     const authorId = req.headers.id;
     if (!authorId) {
       return res.status(400).json({ message: "Author ID is required" });
     }
-    const books = await Book.find({ authorId }).sort({ createdAt: -1 });
-    res.status(200).json({ data: books });
+    const novels = await Book.find({ authorId }).sort({ createdAt: -1 });
+    res.status(200).json({ data: novels });
   } catch (err) {
-    console.error("Error getting author's books:", err);
+    console.error("Error getting author's novels:", err);
     res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// Get trending novels (sorted by views/rating)
+router.get("/get_trending_novels", async (req, res) => {
+  try {
+    // Basic trending logic: sort by viewCount and rating descending
+    const novels = await Book.find({}).sort({ viewCount: -1, rating: -1 }).limit(20);
+    res.status(200).json({ data: novels });
+  } catch (err) {
+    console.error("Error getting trending novels:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// Search novels
+router.get("/search_novels", async (req, res) => {
+  try {
+    const { query } = req.query;
+    if (!query) return res.status(400).json({ message: "Search query required" });
+
+    // Assuming text index on title and tags is properly built
+    const novels = await Book.find({ $text: { $search: query } }).limit(50);
+    res.status(200).json({ data: novels });
+  } catch (err) {
+    console.error("Error searching novels:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// Get novels by genre
+router.get("/get_novels_by_genre", async (req, res) => {
+  try {
+    const { genre } = req.query;
+    if (!genre) return res.status(400).json({ message: "Genre query parameter required" });
+
+    const novels = await Book.find({ genres: genre }).sort({ createdAt: -1 });
+    res.status(200).json({ data: novels });
+  } catch (err) {
+    console.error("Error getting novels by genre", err);
+    res.status(500).json({ message: "Internal Server error" });
   }
 });
 
@@ -211,3 +261,20 @@ router.post("/upload_image", auth, upload.single("image"), (req, res) => {
   }
   res.status(200).json({ imageUrl: req.file.path });
 });
+
+// Get Author Novels
+router.get("/get_author_novels", auth, async (req, res) => {
+  try {
+    const authorId = req.headers.id;
+    if (!authorId) {
+      return res.status(400).json({ message: "Author ID is required" });
+    }
+    const novels = await Book.find({ authorId }).sort({ createdAt: -1 });
+    res.status(200).json({ data: novels });
+  } catch (err) {
+    console.error("Error fetching author novels", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+module.exports = router;

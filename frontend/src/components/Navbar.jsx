@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import {
   FaMoon,
   FaSun,
-  FaShoppingCart,
+  FaWallet,
   FaUser,
   FaBars,
   FaTimes,
@@ -45,9 +45,9 @@ const Navbar = () => {
     path === "/" ? location.pathname === "/" : location.pathname.startsWith(path);
 
   const menuItems = [
-    { title: "Home",    link: "/",       icon: FaHome    },
-    { title: "Books",   link: "/books",  icon: FaBook    },
-    { title: "Contact", link: "/contact",icon: FaEnvelope },
+    { title: "Home", link: "/", icon: FaHome },
+    { title: "Books", link: "/books", icon: FaBook },
+    { title: "Contact", link: "/contact", icon: FaEnvelope },
   ];
 
   const navLinkCls = (path) =>
@@ -98,19 +98,26 @@ const Navbar = () => {
             </Link>
           ))}
 
-          <Link to="/cart" className={navLinkCls("/cart")}>
-            <FaShoppingCart className="w-3.5 h-3.5" />
-            Cart
-            {activeDot("/cart")}
+          <Link to="/wallet" className={navLinkCls("/wallet")}>
+            <FaWallet className="w-3.5 h-3.5" />
+            Wallet
+            {activeDot("/wallet")}
           </Link>
 
           {isLoggedIn ? (
             <>
-              {userRole === "user" && (
+              {userRole === "reader" && (
                 <Link to="/become-author" className={navLinkCls("/become-author")}>
                   <FaPenFancy className="w-3.5 h-3.5" />
                   Become Author
                   {activeDot("/become-author")}
+                </Link>
+              )}
+              {(userRole === "author" || userRole === "admin") && (
+                <Link to="/author-profile" className={navLinkCls("/author-profile")}>
+                  <FaPenFancy className="w-3.5 h-3.5" />
+                  Author Dashboard
+                  {activeDot("/author-profile")}
                 </Link>
               )}
               <Link to="/profile" className={navLinkCls("/profile")}>
@@ -128,7 +135,7 @@ const Navbar = () => {
             </>
           ) : (
             <div className="flex items-center gap-2 ml-2">
-              <Button to="/login"  variant="ghost"   size="sm">Sign In</Button>
+              <Button to="/login" variant="ghost" size="sm">Sign In</Button>
               <Button to="/signup" variant="primary" size="sm">Sign Up</Button>
             </div>
           )}
@@ -142,7 +149,7 @@ const Navbar = () => {
             aria-label="Toggle theme"
           >
             {theme === "dark"
-              ? <FaSun  className="w-4 h-4 text-toffee-400" />
+              ? <FaSun className="w-4 h-4 text-toffee-400" />
               : <FaMoon className="w-4 h-4" />}
           </button>
 
@@ -153,7 +160,7 @@ const Navbar = () => {
           >
             {isMenuOpen
               ? <FaTimes className="w-5 h-5" />
-              : <FaBars  className="w-5 h-5" />}
+              : <FaBars className="w-5 h-5" />}
           </button>
         </div>
       </div>
@@ -180,22 +187,22 @@ const Navbar = () => {
             ))}
 
             <Link
-              to="/cart"
+              to="/wallet"
               onClick={() => setIsMenuOpen(false)}
               className={[
                 "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200",
-                isActive("/cart")
+                isActive("/wallet")
                   ? "bg-wine-50 dark:bg-wine-900/30 text-wine-700 dark:text-wine-400"
                   : "text-toffee-800 dark:text-parchment-300 hover:bg-parchment-200 dark:hover:bg-navy-700",
               ].join(" ")}
             >
-              <FaShoppingCart className="w-4 h-4" />
-              Cart
+              <FaWallet className="w-4 h-4" />
+              Wallet
             </Link>
 
             {isLoggedIn ? (
               <>
-                {userRole === "user" && (
+                {userRole === "reader" && (
                   <Link
                     to="/become-author"
                     onClick={() => setIsMenuOpen(false)}
@@ -203,6 +210,16 @@ const Navbar = () => {
                   >
                     <FaPenFancy className="w-4 h-4" />
                     Become Author
+                  </Link>
+                )}
+                {(userRole === "author" || userRole === "admin") && (
+                  <Link
+                    to="/author-profile"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-toffee-800 dark:text-parchment-300 hover:bg-parchment-200 dark:hover:bg-navy-700 transition-all duration-200"
+                  >
+                    <FaPenFancy className="w-4 h-4" />
+                    Author Dashboard
                   </Link>
                 )}
                 <Link
@@ -223,7 +240,7 @@ const Navbar = () => {
               </>
             ) : (
               <div className="flex flex-col gap-2 pt-3 mt-2 border-t border-parchment-300 dark:border-navy-600">
-                <Button to="/login"  variant="ghost"   fullWidth onClick={() => setIsMenuOpen(false)}>Sign In</Button>
+                <Button to="/login" variant="ghost" fullWidth onClick={() => setIsMenuOpen(false)}>Sign In</Button>
                 <Button to="/signup" variant="primary" fullWidth onClick={() => setIsMenuOpen(false)}>Sign Up</Button>
               </div>
             )}

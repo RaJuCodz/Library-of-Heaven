@@ -7,17 +7,17 @@ import { motion } from "framer-motion";
 import { FaPenFancy, FaCheckCircle, FaBook, FaStar, FaUsers } from "react-icons/fa";
 
 const PERKS = [
-  { icon: FaBook,   text: "Publish your books to thousands of readers" },
-  { icon: FaStar,   text: "Earn recognition and grow your audience"     },
-  { icon: FaUsers,  text: "Join a community of passionate authors"      },
+  { icon: FaBook, text: "Publish your books to thousands of readers" },
+  { icon: FaStar, text: "Earn recognition and grow your audience" },
+  { icon: FaUsers, text: "Join a community of passionate authors" },
 ];
 
 const BecomeAuthor = () => {
   const [authorName, setAuthorName] = useState("");
-  const [bio, setBio]               = useState("");
-  const [success, setSuccess]       = useState("");
-  const [error, setError]           = useState("");
-  const [isLoading, setIsLoading]   = useState(false);
+  const [bio, setBio] = useState("");
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -28,16 +28,16 @@ const BecomeAuthor = () => {
     setIsLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const id    = localStorage.getItem("id");
-      const res   = await axios.post(
-        `${import.meta.env.VITE_API_URL}/become-author`,
+      const id = localStorage.getItem("id");
+      const res = await axios.put(
+        `${import.meta.env.VITE_API_URL}/become_author`,
         { authorName, bio },
         { headers: { Authorization: `Bearer ${token}`, id } }
       );
       setSuccess(res.data.message);
-      localStorage.setItem("role", "admin");
-      dispatch(authActions.setRole("admin"));
-      setTimeout(() => navigate("/author-profile"), 2000);
+      localStorage.setItem("role", "author");
+      dispatch(authActions.setRole("author"));
+      setTimeout(() => navigate("/profile"), 2000);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to become author. Please try again.");
     } finally {

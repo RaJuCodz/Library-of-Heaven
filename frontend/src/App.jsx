@@ -7,13 +7,13 @@ import Footer from "./components/Footer";
 import AllBooks from "./pages/AllBooks";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import Carts from "./pages/Carts";
 import Profile from "./pages/Profile";
 import ViewBook from "./components/ViewBook";
 import { useDispatch } from "react-redux";
 import { authActions } from "./store/auth";
 import Favourites from "./pages/Favourites";
-import OrderHistory from "./pages/OrderHistory";
+import Wallet from "./pages/Wallet";
+import NovelReader from "./pages/NovelReader";
 import Settings from "./pages/Settings";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -21,6 +21,7 @@ import ContactUs from "./pages/ContactUs";
 import FloatingContact from "./components/FloatingContact";
 import BecomeAuthor from "./pages/BecomeAuthor";
 import AuthorProfile from "./pages/AuthorProfile";
+import TransactionHistory from "./pages/TransactionHistory";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -58,13 +59,14 @@ const App = () => {
         <Route path="/books" element={<AllBooks />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/cart" element={<Carts />} />
+        <Route path="/wallet" element={<Wallet />} />
+        <Route path="/read/:novel_id/:chapter_id" element={<NovelReader />} />
 
         {/* Profile route with nested routes */}
         <Route path="/profile" element={<Profile />}>
           <Route index element={<Favourites />} /> {/* Default route */}
-          <Route path="favourites" element={<Favourites />} />
-          <Route path="orderhistory" element={<OrderHistory />} />
+          <Route path="library" element={<Favourites />} />
+          <Route path="orderhistory" element={<TransactionHistory />} />
           <Route path="settings" element={<Settings />} />
         </Route>
 

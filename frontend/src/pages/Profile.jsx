@@ -3,7 +3,7 @@ import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { motion } from "framer-motion";
 import {
-  FaHeart,
+  FaBookmark,
   FaHistory,
   FaCog,
   FaUser,
@@ -19,20 +19,20 @@ import { authActions } from "../store/auth";
 import AuthorProfile from "./AuthorProfile";
 
 const NAV_ITEMS = [
-  { to: "/profile/favourites",    icon: FaHeart,   label: "Favourites",    desc: "Your saved books"  },
-  { to: "/profile/orderhistory",  icon: FaHistory, label: "Order History", desc: "Past purchases"    },
-  { to: "/profile/settings",      icon: FaCog,     label: "Settings",      desc: "Manage account"    },
+  { to: "/profile/library", icon: FaBookmark, label: "Library", desc: "Your saved novels" },
+  { to: "/profile/orderhistory", icon: FaHistory, label: "Order History", desc: "Past token purchases" },
+  { to: "/profile/settings", icon: FaCog, label: "Settings", desc: "Manage account" },
 ];
 
 const Profile = () => {
-  const [user, setUser]       = useState(null);
-  const [error, setError]     = useState(null);
+  const [user, setUser] = useState(null);
+  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const navigate  = useNavigate();
-  const location  = useLocation();
-  const dispatch  = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const dispatch = useDispatch();
 
-  const token  = localStorage.getItem("token");
+  const token = localStorage.getItem("token");
   const userId = localStorage.getItem("id");
 
   useEffect(() => {

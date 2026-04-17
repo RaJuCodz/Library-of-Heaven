@@ -15,10 +15,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    address: {
-      type: String,
-      // required: true,
-    },
     avatar: {
       type: String,
       default:
@@ -26,25 +22,13 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      default: "user",
-      enum: ["user", "admin"],
+      default: "reader",
+      enum: ["reader", "author", "admin"],
     },
-    fav: [
+    library: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Book",
-      },
-    ],
-    cart: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Book",
-      },
-    ],
-    orders: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Order",
+        ref: "Book", // Note we still use Book schema internally to avoid huge refactors everywhere immediately
       },
     ],
     authorName: {
@@ -54,6 +38,18 @@ const userSchema = new mongoose.Schema(
     bio: {
       type: String,
       trim: true,
+    },
+    penName: {
+      type: String,
+    },
+    socialLinks: {
+      twitter: String,
+      instagram: String,
+      website: String,
+    },
+    isVerifiedAuthor: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }

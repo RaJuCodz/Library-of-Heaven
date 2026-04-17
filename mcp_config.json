@@ -1,0 +1,25 @@
+{
+    "mcpServers": {
+        "playwright": {
+            "type": "stdio",
+            "command": "npx",
+            "args": [
+                "-y",
+                "@playwright/mcp@latest"
+            ],
+            "disabled": false
+        },
+        "mongodb": {
+            "type": "stdio",
+            "command": "npx",
+            "args": [
+                "-y",
+                "mongodb-mcp-server@latest",
+                "--readOnly"
+            ],
+            "env": {
+                "MDB_MCP_CONNECTION_STRING": "mongodb+srv://user:itsraajjjuuuu@bookstore.ksmpr.mongodb.net/BookStore"
+            }
+        }
+    }
+}

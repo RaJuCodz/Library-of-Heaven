@@ -5,18 +5,18 @@ import { toast } from "react-toastify";
 import { FaBook } from "react-icons/fa";
 
 const RecentlyAdded = () => {
-  const [data, setData]       = useState([]);
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError]     = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     axios
-      .get(`${import.meta.env.VITE_API_URL}/get_recent_books`)
+      .get(`${import.meta.env.VITE_API_URL}/get_recent_novels`)
       .then((res) => { setData(res.data.data); setLoading(false); })
       .catch(() => {
-        setError("Failed to fetch recently added books. Please try again later.");
+        setError("Failed to fetch recently added novels. Please try again later.");
         setLoading(false);
-        toast.error("Failed to fetch recently added books");
+        toast.error("Failed to fetch recently added novels");
       });
   }, []);
 
@@ -24,7 +24,7 @@ const RecentlyAdded = () => {
     return (
       <div className="flex flex-col items-center justify-center h-64 gap-4">
         <div className="w-10 h-10 rounded-full border-2 border-wine-600 border-t-transparent animate-spin" />
-        <p className="font-sans text-sm text-toffee-600 dark:text-toffee-400">Loading books…</p>
+        <p className="font-sans text-sm text-toffee-600 dark:text-toffee-400">Loading novels…</p>
       </div>
     );
   }
@@ -41,7 +41,7 @@ const RecentlyAdded = () => {
     return (
       <div className="flex flex-col items-center justify-center h-64 gap-3">
         <FaBook className="w-10 h-10 text-parchment-400 dark:text-navy-500" />
-        <p className="font-sans text-sm text-toffee-500 dark:text-parchment-500">No recently added books found.</p>
+        <p className="font-sans text-sm text-toffee-500 dark:text-parchment-500">No recently added novels found.</p>
       </div>
     );
   }
@@ -51,7 +51,7 @@ const RecentlyAdded = () => {
       {/* Section header */}
       <div className="flex flex-col items-center text-center mb-12">
         <p className="section-subheading mb-3">Fresh Arrivals</p>
-        <h2 className="section-heading mb-4">Recently Added Books</h2>
+        <h2 className="section-heading mb-4">Recently Added Novels</h2>
         <div className="flex items-center gap-3">
           <div className="h-px w-16 bg-wine-600/30 dark:bg-wine-500/30" />
           <div className="w-2 h-2 rounded-full bg-wine-600 dark:bg-wine-500" />

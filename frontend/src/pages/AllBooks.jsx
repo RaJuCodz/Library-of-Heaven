@@ -6,26 +6,26 @@ import { toast } from "react-toastify";
 import Button from "../components/ui/Button";
 
 const AllBooks = () => {
-  const [books, setBooks]               = useState([]);
+  const [books, setBooks] = useState([]);
   const [filteredBooks, setFilteredBooks] = useState([]);
-  const [isLoading, setIsLoading]       = useState(true);
-  const [sortBy, setSortBy]             = useState("price-low");
-  const [favorites, setFavorites]       = useState([]);
-  const [searchQuery, setSearchQuery]   = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [sortBy, setSortBy] = useState("price-low");
+  const [favorites, setFavorites] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchBooks = async () => {
       setIsLoading(true);
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}/get_all_books`);
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/get_all_novels`);
         setBooks(res.data.data);
         setFilteredBooks(res.data.data);
 
         if (localStorage.getItem("token")) {
           try {
-            const favRes = await axios.get(`${import.meta.env.VITE_API_URL}/get_fav_books`, {
+            const favRes = await axios.get(`${import.meta.env.VITE_API_URL}/get_library`, {
               headers: {
-                id:            localStorage.getItem("id"),
+                id: localStorage.getItem("id"),
                 authorization: `Bearer ${localStorage.getItem("token")}`,
               },
             });
@@ -54,19 +54,19 @@ const AllBooks = () => {
   const toggleFavorite = async (bookId) => {
     if (!localStorage.getItem("token")) { toast.info("Please login to add favourites"); return; }
     const headers = {
-      id:            localStorage.getItem("id"),
+      id: localStorage.getItem("id"),
       authorization: `Bearer ${localStorage.getItem("token")}`,
-      book_id:       bookId,
+      book_id: bookId,
     };
     try {
       if (favorites.includes(bookId)) {
-        await axios.delete(`${import.meta.env.VITE_API_URL}/remove_from_fav`, { headers });
+        await axios.delete(`${import.meta.env.VITE_API_URL}/remove_from_library`, { headers });
         setFavorites(favorites.filter((id) => id !== bookId));
-        toast.success("Removed from favourites");
+        toast.success("Removed from Library");
       } else {
-        await axios.post(`${import.meta.env.VITE_API_URL}/add_to_fav`, {}, { headers });
+        await axios.post(`${import.meta.env.VITE_API_URL}/add_to_library`, {}, { headers });
         setFavorites([...favorites, bookId]);
-        toast.success("Added to favourites!");
+        toast.success("Added to Library!");
       }
     } catch {
       toast.error("Failed to update favourites");
@@ -125,7 +125,7 @@ const AllBooks = () => {
               <p className="field-label mb-2">Sort by Price</p>
               <div className="flex gap-2">
                 {[
-                  { id: "price-low",  label: "Low → High", icon: FaSortAmountUp   },
+                  { id: "price-low", label: "Low → High", icon: FaSortAmountUp },
                   { id: "price-high", label: "High → Low", icon: FaSortAmountDown },
                 ].map(({ id, label, icon: Icon }) => (
                   <button

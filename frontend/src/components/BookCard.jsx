@@ -11,46 +11,7 @@ const BookCard = ({ book, onFavoriteClick, small }) => {
   const rating = parseFloat((4 + Math.random()).toFixed(1));
   const navigate = useNavigate();
 
-  const handleBuyNow = async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    try {
-      const token = localStorage.getItem("token");
-      const id    = localStorage.getItem("id");
-      await axios.post(
-        `${import.meta.env.VITE_API_URL}/place_order`,
-        { order: [{ book_id: book._id }] },
-        { headers: { Authorization: `Bearer ${token}`, id } }
-      );
-      toast.success("Order placed successfully!");
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to place order.");
-    }
-  };
-
-  const handleAddToCart = async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    try {
-      const token = localStorage.getItem("token");
-      const id    = localStorage.getItem("id");
-      if (!token || !id) { toast.error("Please login to add to cart"); return; }
-
-      const response = await axios.put(
-        `${import.meta.env.VITE_API_URL}/add_to_cart`,
-        {},
-        { headers: { Authorization: `Bearer ${token}`, id, book_id: book._id } }
-      );
-      if (response.data.message === "Book already added to cart") {
-        toast.error("Book is already in cart");
-      } else {
-        toast.success("Added to cart!");
-      }
-      setTimeout(() => navigate("/cart"), 1500);
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to add to cart.");
-    }
-  };
+  // Removed old ecommerce flows
 
   if (small) {
     return (
@@ -71,7 +32,7 @@ const BookCard = ({ book, onFavoriteClick, small }) => {
               {book.title}
             </h3>
             <p className="font-sans text-xs text-toffee-600 dark:text-toffee-300 mt-0.5">by {book.author}</p>
-            <p className="font-sans font-bold text-sm text-wine-600 dark:text-wine-400 mt-1">${book.price}</p>
+            <p className="font-sans font-bold text-sm text-wine-600 dark:text-wine-400 mt-1">{book.totalChapters || 0} Chs</p>
           </div>
         </Link>
       </div>
@@ -120,20 +81,13 @@ const BookCard = ({ book, onFavoriteClick, small }) => {
             ].join(" ")}
           >
             <button
-              onClick={handleAddToCart}
-              className="p-3 bg-parchment-50 rounded-full text-wine-600 hover:bg-wine-600 hover:text-white shadow-lg transition-all duration-250 hover:scale-110"
-              aria-label="Add to cart"
-            >
-              <FaShoppingCart className="w-5 h-5" />
-            </button>
-            <button
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 navigate(`/view_detail/${book._id}`);
               }}
               className="p-3 bg-parchment-50 rounded-full text-toffee-600 hover:bg-toffee-500 hover:text-white shadow-lg transition-all duration-250 hover:scale-110"
-              aria-label="Quick view"
+              aria-label="Read Now"
             >
               <FaEye className="w-5 h-5" />
             </button>
@@ -170,16 +124,16 @@ const BookCard = ({ book, onFavoriteClick, small }) => {
           {/* Price row */}
           <div className="flex items-center justify-between mb-3">
             <p className="font-sans font-bold text-2xl text-wine-600 dark:text-wine-400">
-              ${book.price}
+              {book.totalChapters || 0} Chapters
             </p>
             <span className="text-xs text-toffee-500 dark:text-toffee-400 font-sans flex items-center gap-1">
-              <span className="w-1.5 h-1.5 bg-green-500 rounded-full inline-block" />
-              Free Shipping
+              <span className={`w-1.5 h-1.5 rounded-full inline-block ${book.status === 'Completed' ? 'bg-green-500' : 'bg-yellow-500'}`} />
+              {book.status || 'Ongoing'}
             </span>
           </div>
 
           <p className="font-sans text-xs text-toffee-700 dark:text-parchment-400 line-clamp-2 leading-relaxed mb-5">
-            {book.description}
+            {book.synopsis || book.description}
           </p>
 
           {/* Action buttons */}
@@ -188,23 +142,14 @@ const BookCard = ({ book, onFavoriteClick, small }) => {
               variant="primary"
               fullWidth
               size="sm"
-              onClick={handleAddToCart}
-            >
-              <FaShoppingCart className="w-3.5 h-3.5" />
-              Add to Cart
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 navigate(`/view_detail/${book._id}`);
               }}
-              className="shrink-0 !px-3"
-              aria-label="Quick view"
             >
               <FaEye className="w-3.5 h-3.5" />
+              Read Now
             </Button>
           </div>
         </div>
