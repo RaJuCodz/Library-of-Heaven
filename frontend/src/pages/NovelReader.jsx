@@ -214,7 +214,7 @@ const Reader = () => {
                 chapterNumber: chapter.chapterNumber,
                 scrollPosition: document.documentElement.scrollTop,
             }, { headers: authH() });
-        } catch { }
+        } catch { /* ignore */ }
     }, [chapter, token]);
 
     const restoreProgress = async () => {
@@ -225,7 +225,7 @@ const Reader = () => {
             if (p?.lastChapterId === chapter_id && p?.scrollPosition > 0) {
                 window.scrollTo({ top: p.scrollPosition, behavior: "smooth" });
             }
-        } catch { }
+        } catch { /* ignore */ }
     };
 
     useEffect(() => {

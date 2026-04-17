@@ -135,7 +135,7 @@ const Footer = () => {
             <p className="section-subheading mb-5">Words of Wisdom</p>
             <blockquote className="relative pl-4 border-l-2 border-wine-600 dark:border-wine-500 mb-6">
               <p className="font-serif text-lg italic text-toffee-800 dark:text-parchment-300 leading-relaxed mb-2">
-                "A room without books is like a body without a soul."
+                &quot;A room without books is like a body without a soul.&quot;
               </p>
               <cite className="font-sans text-xs text-toffee-500 dark:text-toffee-400 not-italic tracking-wide">
                 — Marcus Tullius Cicero
@@ -143,7 +143,7 @@ const Footer = () => {
             </blockquote>
             <blockquote className="relative pl-4 border-l-2 border-toffee-500 dark:border-toffee-600">
               <p className="font-serif text-base italic text-toffee-700 dark:text-parchment-400 leading-relaxed mb-2">
-                "There is no friend as loyal as a book."
+                &quot;There is no friend as loyal as a book.&quot;
               </p>
               <cite className="font-sans text-xs text-toffee-500 dark:text-toffee-400 not-italic">
                 — Ernest Hemingway

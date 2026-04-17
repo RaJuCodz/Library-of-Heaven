@@ -267,7 +267,7 @@ const CreateNovel = ({ authorName, onBack, onCreated }) => {
           Publish a New Novel
         </h2>
         <p className="font-sans text-sm text-toffee-500 mt-1">
-          Fill in details. You'll add chapters after creating it.
+          Fill in details. You&apos;ll add chapters after creating it.
         </p>
       </div>
       <form

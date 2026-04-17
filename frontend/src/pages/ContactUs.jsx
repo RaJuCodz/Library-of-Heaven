@@ -84,7 +84,7 @@ const ContactUs = () => {
             className="font-serif text-5xl md:text-6xl font-bold text-parchment-900 dark:text-parchment-100 mb-6 leading-tight"
             {...fadeUp(0.1)}
           >
-            We'd Love to{" "}
+            We&apos;d Love to{" "}
             <span className="italic text-wine-600 dark:text-wine-400">Hear</span>{" "}
             from You
           </motion.h1>
@@ -158,7 +158,7 @@ const ContactUs = () => {
             {/* Quote card */}
             <div className="bg-gradient-wine rounded-2xl p-7 shadow-glow-wine">
               <blockquote className="font-serif text-xl italic text-parchment-100 leading-relaxed mb-4">
-                "Not all those who wander are lost… but they do find the best books."
+                &quot;Not all those who wander are lost… but they do find the best books.&quot;
               </blockquote>
               <p className="font-sans text-xs text-wine-200 tracking-wide">— Library of Heaven Team</p>
             </div>
@@ -171,7 +171,7 @@ const ContactUs = () => {
                 Send a Message
               </h2>
               <p className="font-sans text-sm text-toffee-600 dark:text-toffee-400 mb-8">
-                Fill out the form and we'll respond within 24 hours.
+                Fill out the form and we&apos;ll respond within 24 hours.
               </p>
 
               <form onSubmit={handleSubmit} className="space-y-5" noValidate>
