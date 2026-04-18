@@ -3,56 +3,42 @@ import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { motion } from "framer-motion";
 import {
-  FaBookmark,
-  FaHistory,
-  FaCog,
-  FaUser,
-  FaSignOutAlt,
-  FaEnvelope,
-  FaCalendarAlt,
-  FaMapMarkerAlt,
-  FaBook,
+  FaBookmark, FaHistory, FaCog, FaUser,
+  FaSignOutAlt, FaEnvelope, FaCalendarAlt,
 } from "react-icons/fa";
-import Button from "../components/ui/Button";
 import { useDispatch } from "react-redux";
 import { authActions } from "../store/auth";
 import AuthorProfile from "./AuthorProfile";
 
 const NAV_ITEMS = [
-  { to: "/profile/library", icon: FaBookmark, label: "Library", desc: "Your saved novels" },
-  { to: "/profile/orderhistory", icon: FaHistory, label: "Order History", desc: "Past token purchases" },
-  { to: "/profile/settings", icon: FaCog, label: "Settings", desc: "Manage account" },
+  { to: "/profile/library",      icon: FaBookmark, label: "My Library",     desc: "Saved novels"       },
+  { to: "/profile/orderhistory", icon: FaHistory,  label: "Order History",  desc: "Token purchases"    },
+  { to: "/profile/settings",     icon: FaCog,      label: "Settings",       desc: "Account preferences"},
 ];
 
 const Profile = () => {
-  const [user, setUser] = useState(null);
-  const [error, setError] = useState(null);
+  const [user, setUser]       = useState(null);
+  const [error, setError]     = useState(null);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
-  const location = useLocation();
-  const dispatch = useDispatch();
+  const navigate  = useNavigate();
+  const location  = useLocation();
+  const dispatch  = useDispatch();
 
-  const token = localStorage.getItem("token");
+  const token  = localStorage.getItem("token");
   const userId = localStorage.getItem("id");
 
   useEffect(() => {
-    if (!token || !userId) {
-      dispatch(authActions.logout());
-      navigate("/login");
-      return;
-    }
+    if (!token || !userId) { dispatch(authActions.logout()); navigate("/login"); return; }
     axios
       .get(`${import.meta.env.VITE_API_URL}/get_user_info`, {
         headers: { id: userId, authorization: `Bearer ${token}` },
       })
-      .then((res) => { setUser(res.data); })
+      .then((res) => setUser(res.data))
       .catch((err) => {
         setError(err.response?.data?.message || "Failed to load profile");
         if (err.response?.status === 401) {
           dispatch(authActions.logout());
-          localStorage.removeItem("token");
-          localStorage.removeItem("id");
-          localStorage.removeItem("role");
+          ["token","id","role"].forEach((k) => localStorage.removeItem(k));
           navigate("/login");
         }
       })
@@ -61,166 +47,193 @@ const Profile = () => {
 
   const handleLogout = () => {
     dispatch(authActions.logout());
-    localStorage.removeItem("token");
-    localStorage.removeItem("id");
-    localStorage.removeItem("role");
+    ["token","id","role"].forEach((k) => localStorage.removeItem(k));
     navigate("/login");
   };
 
+  /* ── Loading ──────────────────────────────────────── */
   if (loading) {
     return (
-      <div className="min-h-screen bg-parchment-200 dark:bg-navy-900 pt-24 flex justify-center items-center transition-colors duration-300">
+      <div className="min-h-screen bg-parchment-200 dark:bg-navy-900 pt-24 flex justify-center items-center">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 border-2 border-wine-600 border-t-transparent rounded-full animate-spin" />
+          <div className="w-10 h-10 border-2 border-gilt-500 border-t-transparent rounded-full animate-spin" />
           <p className="font-sans text-sm text-toffee-600 dark:text-toffee-400">Loading your profile…</p>
         </div>
       </div>
     );
   }
 
+  /* ── Error ────────────────────────────────────────── */
   if (error) {
     return (
-      <div className="min-h-screen bg-parchment-200 dark:bg-navy-900 pt-24 flex justify-center items-center transition-colors duration-300">
+      <div className="min-h-screen bg-parchment-200 dark:bg-navy-900 pt-24 flex justify-center items-center">
         <div className="text-center">
           <p className="font-sans text-wine-600 dark:text-wine-400 mb-4">{error}</p>
-          <Button onClick={() => navigate("/login")}>Go to Login</Button>
+          <button onClick={() => navigate("/login")}
+            className="px-4 py-2 rounded-lg bg-gilt-500 text-navy-950 font-sans font-semibold text-sm">
+            Go to Login
+          </button>
         </div>
       </div>
     );
   }
 
   if (!user) return null;
-
   if (user.role === "admin") return <AuthorProfile />;
 
   const isActive = (path) => location.pathname === path || location.pathname.startsWith(path + "/");
 
-  return (
-    <div className="min-h-screen bg-parchment-200 dark:bg-navy-900 pt-24 pb-16 transition-colors duration-300">
+  const memberSince = user.createdAt
+    ? new Date(user.createdAt).toLocaleDateString("en-US", { month: "long", year: "numeric" })
+    : null;
 
-      {/* ── Profile banner ─────────────────────── */}
-      <div className="relative overflow-hidden bg-gradient-wine dark:bg-gradient-navy mb-0">
-        {/* Decorative background pattern */}
-        <div
-          className="absolute inset-0 opacity-[0.07]"
+  /* ── Initials avatar ──────────────────────────────── */
+  const initials = user.username
+    ? user.username.slice(0, 2).toUpperCase()
+    : "??";
+
+  return (
+    <div className="min-h-screen bg-parchment-200 dark:bg-navy-900 pt-20 pb-16 transition-colors duration-300">
+
+      {/* ── Top banner ──────────────────────────────── */}
+      <div className="relative overflow-hidden"
+        style={{ background: 'linear-gradient(135deg, #3D0C02 0%, #801818 40%, #5A4610 100%)' }}
+      >
+        {/* Star grid overlay */}
+        <div className="absolute inset-0 opacity-[0.06] pointer-events-none"
           style={{
-            backgroundImage: 'url("/images/spidy.png")',
-            backgroundSize: "cover",
-            backgroundPosition: "center",
+            backgroundImage: 'radial-gradient(circle, #F0DE9A 1px, transparent 1px)',
+            backgroundSize: '40px 40px',
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-wine-900/60 via-transparent to-transparent" />
 
         <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           <motion.div
-            className="flex flex-col md:flex-row items-center md:items-end gap-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            className="flex flex-col sm:flex-row items-center sm:items-end gap-6"
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
           >
             {/* Avatar */}
             <div className="relative shrink-0">
-              <div className="w-24 h-24 rounded-2xl bg-parchment-50/15 backdrop-blur-sm border-2 border-parchment-100/30 flex items-center justify-center shadow-glass">
-                <FaUser className="w-12 h-12 text-parchment-100/80" />
+              <div className="w-20 h-20 rounded-2xl flex items-center justify-center
+                border-2 border-gilt-400/50 shadow-glow-gilt"
+                style={{ background: 'linear-gradient(135deg, rgba(201,168,76,0.2), rgba(201,168,76,0.06))' }}
+              >
+                <span className="font-cinzel font-bold text-2xl text-gilt-300">{initials}</span>
               </div>
-              <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-green-400 border-2 border-white dark:border-navy-700" />
+              <div className="absolute -bottom-1 -right-1 w-4.5 h-4.5 rounded-full bg-green-400 border-2 border-white dark:border-navy-900" />
             </div>
 
-            {/* User info */}
-            <div className="flex-1 text-center md:text-left">
-              <p className="font-sans text-xs text-wine-200 uppercase tracking-widest mb-1" style={{ letterSpacing: "0.14em" }}>
-                Reader Account
-              </p>
+            {/* Info */}
+            <div className="flex-1 text-center sm:text-left">
+              <p className="badge-cinzel text-gilt-300 mb-1 block">Reader Account</p>
               <h1 className="font-serif text-3xl font-bold text-parchment-50 mb-2">{user.username}</h1>
-              <div className="flex flex-wrap justify-center md:justify-start gap-x-5 gap-y-1.5">
-                <span className="flex items-center gap-1.5 font-sans text-xs text-wine-200">
-                  <FaEnvelope className="w-3 h-3" /> {user.email}
+              <div className="flex flex-wrap justify-center sm:justify-start gap-x-5 gap-y-1.5">
+                <span className="flex items-center gap-1.5 font-sans text-xs text-parchment-300">
+                  <FaEnvelope className="w-3 h-3 text-gilt-400" /> {user.email}
                 </span>
-                {user.address && (
-                  <span className="flex items-center gap-1.5 font-sans text-xs text-wine-200">
-                    <FaMapMarkerAlt className="w-3 h-3" /> {user.address}
-                  </span>
-                )}
-                {user.createdAt && (
-                  <span className="flex items-center gap-1.5 font-sans text-xs text-wine-200">
-                    <FaCalendarAlt className="w-3 h-3" />
-                    Member since {new Date(user.createdAt).toLocaleDateString("en-US", { month: "short", year: "numeric" })}
+                {memberSince && (
+                  <span className="flex items-center gap-1.5 font-sans text-xs text-parchment-300">
+                    <FaCalendarAlt className="w-3 h-3 text-gilt-400" /> Member since {memberSince}
                   </span>
                 )}
               </div>
             </div>
 
             {/* Sign out */}
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-parchment-50/15 backdrop-blur-sm border border-parchment-100/20 text-parchment-100 hover:bg-parchment-50/25 font-sans text-sm font-medium transition-all duration-200 shrink-0"
+            <button onClick={handleLogout}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl
+                border border-parchment-100/20 bg-parchment-50/10 backdrop-blur-sm
+                text-parchment-200 hover:bg-parchment-50/20
+                font-sans text-sm font-medium transition-all duration-200 shrink-0"
             >
-              <FaSignOutAlt className="w-4 h-4" />
-              Sign Out
+              <FaSignOutAlt className="w-3.5 h-3.5" /> Sign Out
             </button>
           </motion.div>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* ── Main layout: sidebar + content ──────────── */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+        <div className="flex flex-col lg:flex-row gap-7">
 
-        {/* ── Quick nav cards ───────────────────── */}
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 mb-8"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.15 }}
-        >
-          {NAV_ITEMS.map(({ to, icon: Icon, label, desc }) => (
-            <Link
-              key={to}
-              to={to}
-              className={[
-                "group flex items-center gap-4 p-5 rounded-2xl border shadow-card transition-all duration-250 hover:-translate-y-0.5 hover:shadow-card-hover",
-                isActive(to)
-                  ? "bg-wine-600 border-wine-700 shadow-glow-wine"
-                  : "bg-parchment-50 dark:bg-navy-800 border-parchment-300 dark:border-navy-600 hover:border-wine-400 dark:hover:border-wine-700",
-              ].join(" ")}
-            >
-              <div className={[
-                "w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-colors duration-250",
-                isActive(to)
-                  ? "bg-wine-700/50"
-                  : "bg-wine-600/10 dark:bg-wine-500/15 group-hover:bg-wine-600/20",
-              ].join(" ")}>
-                <Icon className={[
-                  "w-5 h-5",
-                  isActive(to) ? "text-parchment-100" : "text-wine-600 dark:text-wine-400",
-                ].join(" ")} />
+          {/* ── Sidebar ─────────────────────────────── */}
+          <motion.aside
+            className="lg:w-64 shrink-0"
+            initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            <div className="bg-parchment-50 dark:bg-navy-800 rounded-2xl border border-parchment-300 dark:border-navy-600 shadow-card dark:shadow-card-dark p-4 sticky top-24">
+
+              {/* User summary */}
+              <div className="flex items-center gap-3 p-3 mb-4 rounded-xl bg-parchment-100 dark:bg-navy-700/60">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                  style={{ background: 'linear-gradient(135deg, rgba(201,168,76,0.2), rgba(201,168,76,0.06))' }}
+                >
+                  <span className="font-cinzel font-bold text-sm text-gilt-600 dark:text-gilt-400">
+                    {initials}
+                  </span>
+                </div>
+                <div className="min-w-0">
+                  <p className="font-sans font-semibold text-sm text-parchment-900 dark:text-parchment-100 truncate">
+                    {user.username}
+                  </p>
+                  <p className="font-sans text-xs text-toffee-600 dark:text-toffee-400 truncate">{user.email}</p>
+                </div>
               </div>
-              <div>
-                <h3 className={[
-                  "font-sans font-semibold text-sm",
-                  isActive(to) ? "text-parchment-50" : "text-parchment-900 dark:text-parchment-100",
-                ].join(" ")}>
-                  {label}
-                </h3>
-                <p className={[
-                  "font-sans text-xs mt-0.5",
-                  isActive(to) ? "text-wine-200" : "text-toffee-600 dark:text-toffee-400",
-                ].join(" ")}>
-                  {desc}
-                </p>
-              </div>
-            </Link>
-          ))}
-        </motion.div>
 
-        {/* ── Content outlet ────────────────────── */}
-        <motion.div
-          className="bg-parchment-50 dark:bg-navy-800 rounded-2xl border border-parchment-300 dark:border-navy-600 shadow-card dark:shadow-card-dark p-6 md:p-8"
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.25 }}
-        >
-          <Outlet />
-        </motion.div>
+              {/* Gilt divider */}
+              <div className="divider-gilt mb-4" />
 
+              {/* Navigation */}
+              <nav className="space-y-1.5">
+                {NAV_ITEMS.map(({ to, icon: Icon, label, desc }) => {
+                  const active = isActive(to);
+                  return (
+                    <Link key={to} to={to}
+                      className={`sidebar-nav-item ${active ? 'active' : ''}`}
+                    >
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors duration-200
+                        ${active ? 'bg-navy-950/20' : 'bg-parchment-200 dark:bg-navy-700'}`}
+                      >
+                        <Icon className={`w-3.5 h-3.5 ${active ? 'text-navy-950' : 'text-gilt-600 dark:text-gilt-400'}`} />
+                      </div>
+                      <div>
+                        <p className={`font-sans font-semibold text-sm ${active ? 'text-navy-950' : 'text-parchment-900 dark:text-parchment-100'}`}>
+                          {label}
+                        </p>
+                        <p className={`font-sans text-xs mt-0.5 ${active ? 'text-navy-900/70' : 'text-toffee-600 dark:text-toffee-400'}`}>
+                          {desc}
+                        </p>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </nav>
+
+              {/* Logout */}
+              <div className="divider-gilt my-4" />
+              <button onClick={handleLogout}
+                className="sidebar-nav-item w-full text-wine-600 dark:text-wine-400
+                  hover:bg-wine-50 dark:hover:bg-wine-900/20"
+              >
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-wine-50 dark:bg-wine-900/20">
+                  <FaSignOutAlt className="w-3.5 h-3.5 text-wine-600 dark:text-wine-400" />
+                </div>
+                <span>Sign Out</span>
+              </button>
+            </div>
+          </motion.aside>
+
+          {/* ── Content area ────────────────────────── */}
+          <motion.main
+            className="flex-1 min-w-0"
+            initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <div className="bg-parchment-50 dark:bg-navy-800 rounded-2xl border border-parchment-300 dark:border-navy-600 shadow-card dark:shadow-card-dark p-6 md:p-8">
+              <Outlet />
+            </div>
+          </motion.main>
+
+        </div>
       </div>
     </div>
   );

@@ -1,8 +1,44 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
-import { FaMapMarkerAlt, FaCheckCircle, FaShieldAlt, FaBell } from "react-icons/fa";
+import { FaMapMarkerAlt, FaCheckCircle, FaShieldAlt, FaBell, FaLock } from "react-icons/fa";
+
+const SettingCard = ({ icon: Icon, iconColor, title, description, badge, children, delay = 0 }) => (
+  <motion.div
+    className="rounded-2xl border border-parchment-300 dark:border-navy-500
+      bg-parchment-100 dark:bg-navy-700 overflow-hidden"
+    initial={{ opacity: 0, y: 14 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.4, delay }}
+  >
+    {/* Card header */}
+    <div className="flex items-center justify-between px-6 py-4 border-b border-parchment-200 dark:border-navy-600">
+      <div className="flex items-center gap-3">
+        <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${iconColor}`}>
+          <Icon className="w-4 h-4" />
+        </div>
+        <div>
+          <h3 className="font-sans font-semibold text-sm text-parchment-900 dark:text-parchment-100">
+            {title}
+          </h3>
+          <p className="font-sans text-xs text-toffee-500 dark:text-toffee-500 mt-0.5">{description}</p>
+        </div>
+      </div>
+      {badge && (
+        <span className="font-cinzel text-[10px] px-2.5 py-1 rounded-full tracking-widest uppercase
+          bg-parchment-200 dark:bg-navy-600 text-toffee-500 dark:text-toffee-400
+          border border-parchment-300 dark:border-navy-500"
+        >
+          {badge}
+        </span>
+      )}
+    </div>
+
+    {/* Card body */}
+    {children && <div className="px-6 py-5">{children}</div>}
+  </motion.div>
+);
 
 const Settings = () => {
   const [address, setAddress]   = useState("");
@@ -42,37 +78,38 @@ const Settings = () => {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      {/* Page header */}
+      <div className="flex items-center gap-3 mb-7">
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+          style={{ background: 'linear-gradient(135deg, rgba(201,168,76,0.15), rgba(201,168,76,0.05))' }}
+        >
+          <FaLock className="w-4 h-4 text-gilt-600 dark:text-gilt-400" />
+        </div>
         <div>
           <h2 className="font-serif text-2xl font-bold text-parchment-900 dark:text-parchment-100">Settings</h2>
-          <p className="font-sans text-xs text-toffee-600 dark:text-toffee-400 mt-0.5">Manage your account preferences</p>
+          <p className="font-sans text-xs text-toffee-600 dark:text-toffee-400 mt-0.5">
+            Manage your account preferences
+          </p>
         </div>
       </div>
 
-      <div className="space-y-5 max-w-xl">
+      <div className="space-y-4 max-w-xl">
 
         {/* Delivery address */}
-        <motion.div
-          className="bg-parchment-100 dark:bg-navy-700 rounded-xl border border-parchment-300 dark:border-navy-500 p-6"
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
+        <SettingCard
+          icon={FaMapMarkerAlt}
+          iconColor="bg-gilt-500/12 dark:bg-gilt-500/15 text-gilt-600 dark:text-gilt-400"
+          title="Delivery Address"
+          description="Used for order deliveries"
+          delay={0}
         >
-          <div className="flex items-center gap-3 mb-5">
-            <div className="w-9 h-9 rounded-lg bg-wine-600/10 dark:bg-wine-500/15 flex items-center justify-center">
-              <FaMapMarkerAlt className="w-4 h-4 text-wine-600 dark:text-wine-400" />
-            </div>
+          <form onSubmit={handleUpdateAddress} noValidate className="space-y-4">
             <div>
-              <h3 className="font-sans font-semibold text-sm text-parchment-900 dark:text-parchment-100">Delivery Address</h3>
-              <p className="font-sans text-xs text-toffee-500 dark:text-toffee-500">Used for order deliveries</p>
-            </div>
-          </div>
-
-          <form onSubmit={handleUpdateAddress} className="space-y-4" noValidate>
-            <div>
-              <label className="field-label" htmlFor="address">Address</label>
+              <label className="field-label" htmlFor="address">Your Address</label>
               {fetching ? (
-                <div className="input-field animate-pulse bg-parchment-200 dark:bg-navy-600 text-transparent">Loading…</div>
+                <div className="input-field animate-pulse bg-parchment-200 dark:bg-navy-600 text-transparent select-none">
+                  Loading…
+                </div>
               ) : (
                 <input
                   type="text"
@@ -85,72 +122,50 @@ const Settings = () => {
                 />
               )}
             </div>
-            <motion.button
+            <button
               type="submit"
               disabled={loading || fetching}
-              className={[
-                "flex items-center gap-2 px-5 py-2.5 rounded-lg font-sans font-semibold text-sm text-parchment-50 transition-all duration-250",
-                loading || fetching
-                  ? "bg-wine-400 cursor-not-allowed"
-                  : "bg-wine-600 hover:bg-wine-700 shadow-sm hover:shadow-glow-wine",
-              ].join(" ")}
-              whileHover={!loading ? { scale: 1.01 } : {}}
-              whileTap={!loading ? { scale: 0.99 } : {}}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl
+                font-sans font-semibold text-sm text-navy-950
+                shadow-sm hover:shadow-glow-gilt transition-all duration-250
+                disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+              style={!loading && !fetching
+                ? { background: 'linear-gradient(135deg, #F0DE9A, #C9A84C, #B8922A)' }
+                : { background: '#C4B5A0' }
+              }
             >
               {loading
                 ? <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
                 : <FaCheckCircle className="w-4 h-4" />
               }
               {loading ? "Saving…" : "Save Address"}
-            </motion.button>
+            </button>
           </form>
-        </motion.div>
+        </SettingCard>
 
-        {/* Privacy card (decorative, non-functional) */}
-        <motion.div
-          className="bg-parchment-100 dark:bg-navy-700 rounded-xl border border-parchment-300 dark:border-navy-500 p-6 opacity-60 cursor-not-allowed select-none"
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 0.6, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.1 }}
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-navy-400/10 dark:bg-navy-500/30 flex items-center justify-center">
-                <FaShieldAlt className="w-4 h-4 text-navy-400 dark:text-navy-300" />
-              </div>
-              <div>
-                <h3 className="font-sans font-semibold text-sm text-parchment-900 dark:text-parchment-100">Privacy & Security</h3>
-                <p className="font-sans text-xs text-toffee-500 dark:text-toffee-500">Password, 2FA, sessions</p>
-              </div>
-            </div>
-            <span className="font-sans text-xs px-2.5 py-1 rounded-full bg-parchment-200 dark:bg-navy-600 text-toffee-500 dark:text-toffee-400 border border-parchment-300 dark:border-navy-500">
-              Coming soon
-            </span>
-          </div>
-        </motion.div>
+        {/* Privacy */}
+        <div className="opacity-55 cursor-not-allowed select-none">
+          <SettingCard
+            icon={FaShieldAlt}
+            iconColor="bg-navy-100/20 dark:bg-navy-500/30 text-navy-400 dark:text-navy-300"
+            title="Privacy & Security"
+            description="Password, 2FA, active sessions"
+            badge="Coming Soon"
+            delay={0.1}
+          />
+        </div>
 
-        {/* Notifications card (decorative) */}
-        <motion.div
-          className="bg-parchment-100 dark:bg-navy-700 rounded-xl border border-parchment-300 dark:border-navy-500 p-6 opacity-60 cursor-not-allowed select-none"
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 0.6, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.15 }}
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-toffee-100 dark:bg-toffee-900/20 flex items-center justify-center">
-                <FaBell className="w-4 h-4 text-toffee-600 dark:text-toffee-400" />
-              </div>
-              <div>
-                <h3 className="font-sans font-semibold text-sm text-parchment-900 dark:text-parchment-100">Notifications</h3>
-                <p className="font-sans text-xs text-toffee-500 dark:text-toffee-500">Email & push preferences</p>
-              </div>
-            </div>
-            <span className="font-sans text-xs px-2.5 py-1 rounded-full bg-parchment-200 dark:bg-navy-600 text-toffee-500 dark:text-toffee-400 border border-parchment-300 dark:border-navy-500">
-              Coming soon
-            </span>
-          </div>
-        </motion.div>
+        {/* Notifications */}
+        <div className="opacity-55 cursor-not-allowed select-none">
+          <SettingCard
+            icon={FaBell}
+            iconColor="bg-toffee-100 dark:bg-toffee-900/20 text-toffee-600 dark:text-toffee-400"
+            title="Notifications"
+            description="Email & push preferences"
+            badge="Coming Soon"
+            delay={0.15}
+          />
+        </div>
 
       </div>
     </div>

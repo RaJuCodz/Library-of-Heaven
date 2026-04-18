@@ -1,16 +1,19 @@
-/* ─────────────── Google Fonts ─────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Inter:wght@300;400;500;600;700&display=swap');
+/* ── Google Fonts: Cinzel · Cormorant Garamond · DM Sans ── */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600;1,700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ─────────────── Base Styles ─────────────── */
+/* ── Base ─────────────────────────────────────────────── */
 @layer base {
   :root {
     --color-accent:        #801818;
     --color-accent-light:  #B52A2A;
     --color-accent-warm:   #926644;
+    --color-gilt:          #C9A84C;
+    --color-gilt-light:    #D4A843;
+    --color-gilt-dark:     #9A7A1F;
     --color-bg:            #F4F0EC;
     --color-bg-card:       #FDFCFB;
     --color-bg-secondary:  #EDE8E1;
@@ -24,6 +27,9 @@
     --color-accent:        #C94040;
     --color-accent-light:  #E06060;
     --color-accent-warm:   #B08052;
+    --color-gilt:          #D4A843;
+    --color-gilt-light:    #E4C965;
+    --color-gilt-dark:     #C9A84C;
     --color-bg:            #080F1A;
     --color-bg-card:       #0D1B2A;
     --color-bg-secondary:  #112136;
@@ -33,20 +39,18 @@
     --color-text-muted:    #6B8099;
   }
 
-  html {
-    scroll-behavior: smooth;
-  }
+  html { scroll-behavior: smooth; }
 
   body {
     @apply bg-parchment-200 text-parchment-900 dark:bg-navy-900 dark:text-parchment-200;
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'DM Sans', 'Inter', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
     letter-spacing: -0.01em;
   }
 
@@ -56,108 +60,115 @@
   h4 { @apply text-xl font-semibold; }
 
   ::selection {
-    background-color: rgba(128, 24, 24, 0.20);
+    background-color: rgba(201, 168, 76, 0.22);
     color: inherit;
   }
 }
 
-/* ─────────────── Component Utilities ─────────────── */
+/* ── Components ───────────────────────────────────────── */
 @layer components {
-  /* Section heading style */
+  /* Section headings */
   .section-heading {
     @apply font-serif text-4xl font-bold text-parchment-900 dark:text-parchment-100;
   }
-
   .section-subheading {
-    @apply font-sans text-lg text-toffee-600 dark:text-toffee-300 font-medium tracking-wide uppercase;
-    letter-spacing: 0.12em;
-    font-size: 0.78rem;
+    font-family: 'Cinzel', serif;
+    @apply text-gilt-600 dark:text-gilt-400 font-medium uppercase;
+    font-size: 0.68rem;
+    letter-spacing: 0.20em;
   }
 
-  /* Premium glass card */
+  /* Glass cards */
   .glass-card {
     @apply bg-white/80 dark:bg-navy-700/80 backdrop-blur-md border border-parchment-300 dark:border-navy-500;
-    box-shadow: var(--shadow-glass, 0 8px 32px rgba(0,0,0,0.10));
+    box-shadow: 0 8px 32px rgba(0,0,0,0.10);
   }
 
-  /* Gradient text — wine */
+  /* Gradient text */
   .gradient-text-wine {
     background: linear-gradient(135deg, #801818 0%, #B52A2A 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
-
-  .dark .gradient-text-wine {
-    background: linear-gradient(135deg, #E06060 0%, #C94040 100%);
+  .gradient-text-gilt {
+    background: linear-gradient(135deg, #C9A84C 0%, #F0DE9A 50%, #C9A84C 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
 
-  /* Decorative divider */
-  .divider-wine {
-    @apply h-px bg-gradient-to-r from-transparent via-wine-600 to-transparent dark:via-wine-400 opacity-40;
-  }
+  /* Dividers */
+  .divider-gilt  { @apply h-px bg-gradient-to-r from-transparent via-gilt-500 to-transparent opacity-50; }
+  .divider-wine  { @apply h-px bg-gradient-to-r from-transparent via-wine-600 to-transparent dark:via-wine-400 opacity-40; }
 
-  /* Input base style */
+  /* Form inputs */
   .input-field {
-    @apply w-full px-4 py-3 rounded-lg font-sans text-sm;
+    @apply w-full px-4 py-3 rounded-xl font-sans text-sm;
     @apply bg-parchment-100 dark:bg-navy-700;
     @apply border border-parchment-400 dark:border-navy-500;
     @apply text-parchment-900 dark:text-parchment-100;
     @apply placeholder-toffee-500/60 dark:placeholder-navy-300/60;
-    @apply focus:outline-none focus:ring-2 focus:ring-wine-600 dark:focus:ring-wine-400 focus:border-transparent;
+    @apply focus:outline-none focus:ring-2 focus:ring-gilt-500/60 dark:focus:ring-gilt-400/60 focus:border-transparent;
     @apply transition-all duration-200;
   }
-
-  /* Label style */
   .field-label {
-    @apply block text-xs font-semibold uppercase tracking-wider mb-1.5;
+    font-family: 'Cinzel', serif;
+    @apply block text-xs font-medium uppercase tracking-widest mb-2;
     @apply text-toffee-700 dark:text-toffee-300;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.14em;
   }
 
-  /* Book card */
+  /* Book cards */
   .book-card {
     transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
   }
-
   .book-card:hover {
     transform: translateY(-6px);
   }
+
+  /* Gilt accent border — left spine on cards */
+  .gilt-spine {
+    border-left: 3px solid;
+    border-image: linear-gradient(to bottom, #F0DE9A, #C9A84C, #9A7A1F) 1;
+  }
+
+  /* Cinzel badge */
+  .badge-cinzel {
+    font-family: 'Cinzel', serif;
+    @apply text-xs font-medium uppercase tracking-widest;
+    letter-spacing: 0.18em;
+  }
+
+  /* Profile sidebar nav item */
+  .sidebar-nav-item {
+    @apply flex items-center gap-3 px-4 py-3 rounded-xl font-sans text-sm font-medium transition-all duration-200;
+  }
+  .sidebar-nav-item.active {
+    @apply bg-gilt-500 text-navy-950;
+    box-shadow: 0 4px 16px rgba(201,168,76,0.25);
+  }
+  .sidebar-nav-item:not(.active) {
+    @apply text-toffee-700 dark:text-parchment-300 hover:bg-parchment-300/60 dark:hover:bg-navy-700;
+  }
 }
 
-/* ─────────────── Animations ─────────────── */
+/* ── Utilities ────────────────────────────────────────── */
 @layer utilities {
-  .animate-fade-in {
-    animation: fadeIn 0.6s ease-in-out both;
-  }
-
-  .animate-fade-in-up {
-    animation: fadeInUp 0.7s ease-out both;
-  }
-
-  .animate-fade-in-up-delay {
-    animation: fadeInUp 0.7s ease-out 0.2s both;
-  }
+  .animate-fade-in       { animation: fadeIn 0.6s ease-in-out both; }
+  .animate-fade-in-up    { animation: fadeInUp 0.7s ease-out both; }
+  .animate-fade-in-up-delay { animation: fadeInUp 0.7s ease-out 0.2s both; }
+  .text-balance          { text-wrap: balance; }
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
+@keyframes fadeIn    { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeInUp  { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
 
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ─────────────── Scrollbar ─────────────── */
-::-webkit-scrollbar       { width: 6px; height: 6px; }
+/* ── Scrollbar ────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: rgba(128, 24, 24, 0.35);
-  border-radius: 3px;
+  background: rgba(201, 168, 76, 0.30);
+  border-radius: 4px;
 }
-::-webkit-scrollbar-thumb:hover { background: rgba(128, 24, 24, 0.6); }
+::-webkit-scrollbar-thumb:hover { background: rgba(201, 168, 76, 0.55); }
