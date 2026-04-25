@@ -4,6 +4,8 @@ import BookCard from "../components/BookCard";
 import { toast } from "react-toastify";
 import { FaSearch, FaBook, FaSortAmountUp, FaSortAmountDown, FaFilter } from "react-icons/fa";
 
+const GENRES = ["All", "Fantasy", "Romance", "Thriller", "Sci-Fi", "Historical", "Action", "Horror", "Mystery", "Drama"];
+
 const AllBooks = () => {
   const [books, setBooks]               = useState([]);
   const [filteredBooks, setFilteredBooks] = useState([]);
@@ -11,6 +13,7 @@ const AllBooks = () => {
   const [sortBy, setSortBy]             = useState("price-low");
   const [favorites, setFavorites]       = useState([]);
   const [searchQuery, setSearchQuery]   = useState("");
+  const [activeGenre, setActiveGenre]   = useState("All");
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -42,12 +45,7 @@ const AllBooks = () => {
 
   const handleSort = (type) => {
     setSortBy(type);
-    const sorted = [...filteredBooks].sort((a, b) =>
-      type === "price-low"
-        ? parseFloat(a.price) - parseFloat(b.price)
-        : parseFloat(b.price) - parseFloat(a.price)
-    );
-    setFilteredBooks(sorted);
+    applyFilters(searchQuery, activeGenre, type);
   };
 
   const toggleFavorite = async (bookId) => {
@@ -70,20 +68,34 @@ const AllBooks = () => {
     } catch { toast.error("Failed to update favourites"); }
   };
 
-  const handleSearch = (q) => {
-    setSearchQuery(q);
-    const filtered = books.filter((b) => b.title.toLowerCase().includes(q.toLowerCase()));
-    const sorted = [...filtered].sort((a, b) =>
-      sortBy === "price-low"
+  const applyFilters = (query, genre, sort, source = books) => {
+    let filtered = source.filter((b) => {
+      const matchesSearch = b.title.toLowerCase().includes(query.toLowerCase());
+      const matchesGenre  = genre === "All" || (b.genres || []).some(g => g.toLowerCase() === genre.toLowerCase());
+      return matchesSearch && matchesGenre;
+    });
+    filtered = [...filtered].sort((a, b) =>
+      sort === "price-low"
         ? parseFloat(a.price) - parseFloat(b.price)
         : parseFloat(b.price) - parseFloat(a.price)
     );
-    setFilteredBooks(sorted);
+    setFilteredBooks(filtered);
+  };
+
+  const handleSearch = (q) => {
+    setSearchQuery(q);
+    applyFilters(q, activeGenre, sortBy);
+  };
+
+  const handleGenre = (genre) => {
+    setActiveGenre(genre);
+    applyFilters(searchQuery, genre, sortBy);
   };
 
   const resetFilters = () => {
     setSearchQuery("");
     setSortBy("price-low");
+    setActiveGenre("All");
     setFilteredBooks(books);
   };
 
@@ -173,6 +185,29 @@ const AllBooks = () => {
               </button>
             )}
           </div>
+        </div>
+
+        {/* ── Genre chips ─────────────────────────────── */}
+        <div className="flex flex-wrap gap-2 mb-8">
+          {GENRES.map((genre) => (
+            <button
+              key={genre}
+              onClick={() => handleGenre(genre)}
+              className="font-sans text-xs font-medium px-4 py-2 rounded-full border transition-all duration-200"
+              style={activeGenre === genre ? {
+                color: '#F9F6F2',
+                background: '#801818',
+                borderColor: '#801818',
+                fontWeight: 600,
+              } : {
+                color: '#6B5C42',
+                background: '#FDFCFB',
+                borderColor: '#DDD3C5',
+              }}
+            >
+              {genre}
+            </button>
+          ))}
         </div>
 
         {/* ── Books grid ──────────────────────────────── */}

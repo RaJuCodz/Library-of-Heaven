@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Library of Heaven — Wireframes</title>
+<style>
+  /* ── Design tokens ─────────────────────────────────── */
+  :root {
+    --wine-600: #801818; --wine-400: #D95555; --wine-50: #FDF2F2;
+    --parchment-50: #FDFCFB; --parchment-100: #F9F6F2; --parchment-200: #F4F0EC;
+    --parchment-300: #EDE8E1; --parchment-400: #DDD3C5; --parchment-500: #C4B5A0;
+    --parchment-600: #A89880; --parchment-700: #8C7A60; --parchment-900: #463D2B;
+    --navy-600: #002147; --navy-700: #001A38; --navy-800: #001228; --navy-900: #000A18;
+    --toffee-300: #C09365; --toffee-500: #926644; --toffee-600: #79553A; --toffee-700: #61442E;
+    --gilt-300: #E4C965; --gilt-400: #D4A843; --gilt-500: #C9A84C; --gilt-600: #B8922A; --gilt-700: #9A7A1F;
+    --bg: #F4F0EC; --surface: #FDFCFB; --border: #DDD3C5;
+    --text: #463D2B; --text-sub: #79553A; --text-muted: #A89880;
+    --accent: #C9A84C; --accent-dark: #9A7A1F;
+    --radius: 14px; --radius-sm: 8px;
+    --shadow: 0 4px 24px -4px rgba(0,0,0,0.10),0 1px 4px -1px rgba(0,0,0,0.06);
+    --shadow-lg: 0 16px 40px -8px rgba(0,0,0,0.16),0 4px 12px -4px rgba(0,0,0,0.08);
+  }
+  .dark-mode {
+    --bg: #000A18; --surface: #001228; --border: #002147;
+    --text: #F9F6F2; --text-sub: #C09365; --text-muted: #79553A;
+  }
+
+  /* ── Reset ─────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', 'Inter', system-ui, sans-serif; background: #1a1a1a; color: #eee; min-height: 100vh; }
+
+  /* ── Shell ─────────────────────────────────────────── */
+  .shell { display: flex; height: 100vh; overflow: hidden; }
+
+  /* ── Left sidebar ──────────────────────────────────── */
+  .sidebar {
+    width: 220px; min-width: 220px; background: #111; border-right: 1px solid #2a2a2a;
+    display: flex; flex-direction: column; overflow-y: auto;
+  }
+  .sidebar-header { padding: 18px 16px 12px; border-bottom: 1px solid #2a2a2a; }
+  .sidebar-header h1 { font-size: 13px; font-weight: 700; color: var(--gilt-400); letter-spacing: .05em; text-transform: uppercase; }
+  .sidebar-header p  { font-size: 11px; color: #666; margin-top: 2px; }
+  .sidebar-group { padding: 10px 8px 4px; font-size: 10px; font-weight: 700; color: #444; text-transform: uppercase; letter-spacing: .08em; }
+  .sidebar-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 10px; margin: 1px 4px; border-radius: 7px;
+    font-size: 12px; color: #aaa; cursor: pointer; transition: all .15s;
+    border: none; background: none; text-align: left; width: calc(100% - 8px);
+  }
+  .sidebar-item:hover { background: #1e1e1e; color: #ddd; }
+  .sidebar-item.active { background: rgba(201,168,76,.15); color: var(--gilt-400); font-weight: 600; }
+  .sidebar-item .dot { width: 6px; height: 6px; border-radius: 50%; background: #444; flex-shrink: 0; }
+  .sidebar-item.active .dot { background: var(--gilt-500); }
+
+  /* ── Theme toggle ──────────────────────────────────── */
+  .theme-row { padding: 12px 12px 16px; margin-top: auto; border-top: 1px solid #2a2a2a; }
+  .theme-btn {
+    width: 100%; padding: 8px; border-radius: 7px; border: 1px solid #2a2a2a;
+    background: #1a1a1a; color: #aaa; font-size: 11px; cursor: pointer; transition: all .15s;
+  }
+  .theme-btn:hover { border-color: var(--gilt-600); color: var(--gilt-400); }
+
+  /* ── Main canvas ───────────────────────────────────── */
+  .canvas { flex: 1; overflow-y: auto; background: #141414; padding: 32px; }
+
+  /* ── Frame wrapper ─────────────────────────────────── */
+  .frame-label { font-size: 11px; color: #555; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 8px; }
+  .frame {
+    background: var(--bg); width: 100%; max-width: 1100px;
+    border-radius: 12px; overflow: hidden;
+    box-shadow: 0 0 0 1px rgba(255,255,255,.06), 0 24px 64px -12px rgba(0,0,0,.5);
+    transition: background .3s, color .3s;
+    color: var(--text);
+  }
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── Annotation ────────────────────────────────────── */
+  .anno {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 10px; color: #888; padding: 3px 7px; background: rgba(255,255,255,.04);
+    border: 1px dashed #333; border-radius: 4px; margin: 2px;
+    pointer-events: none; position: absolute; z-index: 20;
+  }
+
+  /* ════════════════════════════════════════════════════
+     SHARED COMPONENTS
+  ════════════════════════════════════════════════════ */
+
+  /* Gilt top line */
+  .gilt-line { height: 2px; background: linear-gradient(90deg, transparent, #C9A84C 30%, #F0DE9A 50%, #C9A84C 70%, transparent); }
+
+  /* Navbar */
+  .navbar {
+    height: 60px; display: flex; align-items: center; justify-content: space-between;
+    padding: 0 28px; background: rgba(249,246,242,.95); border-bottom: 1px solid rgba(221,211,197,.4);
+    position: sticky; top: 0; z-index: 50;
+  }
+  .dark-mode .navbar { background: rgba(0,18,40,.95); border-bottom-color: rgba(0,33,71,.6); }
+  .nav-logo { display: flex; align-items: center; gap: 8px; }
+  .nav-logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg,#C9A84C,#9A7A1F); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .nav-logo-text .line1 { font-size: 13px; font-weight: 700; color: var(--gilt-600); letter-spacing: .04em; font-family: 'Cinzel', serif; }
+  .nav-logo-text .line2 { font-size: 9px; color: var(--toffee-500); text-transform: uppercase; letter-spacing: .2em; }
+  .dark-mode .nav-logo-text .line1 { color: var(--gilt-400); }
+  .nav-links { display: flex; align-items: center; gap: 2px; }
+  .nav-link { padding: 6px 10px; border-radius: 8px; font-size: 12px; color: var(--toffee-600); cursor: pointer; transition: all .15s; white-space: nowrap; }
+  .dark-mode .nav-link { color: var(--parchment-500); }
+  .nav-link:hover, .nav-link.active { color: var(--gilt-600); }
+  .dark-mode .nav-link:hover, .dark-mode .nav-link.active { color: var(--gilt-400); }
+  .nav-link.active::after { content: ''; display: block; width: 4px; height: 4px; background: var(--gilt-500); border-radius: 50%; margin: 2px auto 0; }
+  .nav-actions { display: flex; align-items: center; gap: 8px; }
+  .btn-signin { padding: 6px 14px; border-radius: 8px; font-size: 12px; color: var(--toffee-600); border: none; background: none; cursor: pointer; }
+  .dark-mode .btn-signin { color: var(--parchment-500); }
+  .btn-signup { padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; background: linear-gradient(135deg,#F0DE9A,#C9A84C,#B8922A); color: #000A18; border: none; cursor: pointer; }
+  .btn-icon { width: 34px; height: 34px; border-radius: 8px; border: none; background: none; cursor: pointer; font-size: 14px; color: var(--toffee-500); display: flex; align-items: center; justify-content: center; }
+
+  /* Footer */
+  .footer { background: #3D0C02; padding: 48px 28px 24px; }
+  .dark-mode .footer { background: #000A18; border-top: 1px solid #001228; }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; margin-bottom: 32px; }
+  .footer-col h4 { font-size: 11px; font-weight: 700; color: var(--gilt-400); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 12px; }
+  .footer-col p, .footer-col a { font-size: 12px; color: rgba(249,246,242,.5); display: block; margin-bottom: 6px; text-decoration: none; }
+  .footer-bottom { border-top: 1px solid rgba(249,246,242,.1); padding-top: 16px; display: flex; justify-content: space-between; }
+  .footer-bottom span { font-size: 11px; color: rgba(249,246,242,.35); }
+
+  /* Section heading */
+  .section-sub { font-size: 11px; font-weight: 700; color: var(--gilt-600); text-transform: uppercase; letter-spacing: .12em; margin-bottom: 6px; }
+  .dark-mode .section-sub { color: var(--gilt-400); }
+  .section-title { font-family: Georgia, 'Times New Roman', serif; font-size: 36px; font-weight: 700; color: var(--text); line-height: 1.1; }
+  .divider-gilt { height: 1px; background: linear-gradient(90deg, transparent, var(--gilt-500), transparent); margin: 16px 0; }
+
+  /* Card */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); }
+  .dark-mode .card { background: #001228; border-color: #002147; }
+
+  /* Input */
+  .input { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 13px; outline: none; }
+  .dark-mode .input { background: #001A38; border-color: #002147; color: var(--parchment-200); }
+  .input:focus { border-color: var(--gilt-500); }
+  .label { font-size: 11px; font-weight: 600; color: var(--toffee-600); margin-bottom: 5px; display: block; text-transform: uppercase; letter-spacing: .06em; }
+  .dark-mode .label { color: var(--toffee-300); }
+
+  /* Buttons */
+  .btn-gilt { padding: 10px 20px; border-radius: 10px; background: linear-gradient(135deg,#F0DE9A,#C9A84C,#B8922A); color: #000A18; font-size: 13px; font-weight: 600; border: none; cursor: pointer; }
+  .btn-outline { padding: 10px 20px; border-radius: 10px; border: 1px solid rgba(201,168,76,.45); color: var(--gilt-600); background: none; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .dark-mode .btn-outline { color: var(--gilt-400); border-color: rgba(201,168,76,.55); }
+  .btn-wine { padding: 10px 20px; border-radius: 10px; background: var(--wine-600); color: #F9F6F2; font-size: 13px; font-weight: 600; border: none; cursor: pointer; }
+  .btn-ghost { padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border); background: none; color: var(--text-muted); font-size: 12px; cursor: pointer; }
+
+  /* Badge */
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; border: 1px solid rgba(201,168,76,.3); background: rgba(201,168,76,.08); font-size: 10px; font-weight: 700; color: var(--gilt-600); text-transform: uppercase; letter-spacing: .1em; }
+  .dark-mode .badge { color: var(--gilt-400); }
+  .badge::before { content: ''; display: block; width: 5px; height: 5px; border-radius: 50%; background: var(--gilt-500); }
+
+  /* Book card */
+  .book-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); position: relative; }
+  .dark-mode .book-card { background: #001A38; border-color: #002147; }
+  .book-card .spine { position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: linear-gradient(to bottom,#F0DE9A,#C9A84C,#9A7A1F); }
+  .book-cover { height: 200px; background: linear-gradient(135deg, var(--parchment-300), var(--toffee-300)); display: flex; align-items: center; justify-content: center; font-size: 40px; position: relative; }
+  .dark-mode .book-cover { background: linear-gradient(135deg,#001A38,#002147); }
+  .book-cover .rating-badge { position: absolute; top: 8px; left: 8px; background: rgba(0,10,24,.65); backdrop-filter: blur(4px); border-radius: 999px; padding: 3px 8px; font-size: 10px; color: var(--parchment-200); display: flex; align-items: center; gap: 3px; }
+  .book-cover .status-badge { position: absolute; bottom: 8px; left: 8px; display: flex; align-items: center; gap: 4px; font-size: 10px; color: var(--parchment-200); }
+  .book-cover .status-dot { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; }
+  .book-info { padding: 16px 16px 16px 20px; }
+  .book-info .stars { display: flex; gap: 2px; margin-bottom: 8px; font-size: 10px; color: var(--gilt-500); }
+  .book-info h3 { font-family: Georgia, serif; font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+  .book-info .author { font-size: 11px; color: var(--text-sub); margin-bottom: 8px; }
+  .book-info .synopsis { font-size: 11px; color: var(--text-muted); line-height: 1.5; margin-bottom: 12px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .book-footer { display: flex; align-items: center; justify-content: space-between; }
+  .book-chapters { font-family: Georgia, serif; font-size: 16px; font-weight: 700; color: var(--gilt-600); }
+  .dark-mode .book-chapters { color: var(--gilt-400); }
+  .btn-read { padding: 7px 14px; border-radius: 8px; background: var(--gilt-500); color: #000A18; font-size: 11px; font-weight: 600; border: none; cursor: pointer; }
+
+  /* Stat card */
+  .stat-card { background: rgba(249,246,242,.75); border: 1px solid rgba(221,211,197,.5); border-radius: 16px; backdrop-filter: blur(12px); padding: 16px 20px; display: flex; align-items: center; gap: 14px; }
+  .dark-mode .stat-card { background: rgba(0,18,40,.75); border-color: rgba(0,33,71,.7); }
+  .stat-icon { width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg,rgba(201,168,76,.18),rgba(201,168,76,.05)); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .stat-val { font-family: Georgia, serif; font-size: 28px; font-weight: 700; color: var(--text); line-height: 1; }
+  .stat-label { font-size: 11px; font-weight: 600; color: var(--text-sub); margin-top: 3px; }
+  .stat-sub { font-size: 10px; color: var(--text-muted); margin-top: 1px; }
+
+  /* Sidebar nav item */
+  .snav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; cursor: pointer; transition: all .15s; margin-bottom: 2px; }
+  .snav-item:hover { background: rgba(0,0,0,.03); }
+  .dark-mode .snav-item:hover { background: rgba(255,255,255,.03); }
+  .snav-item.active { background: linear-gradient(135deg,#F0DE9A,#C9A84C); }
+  .snav-icon { width: 32px; height: 32px; border-radius: 8px; background: var(--parchment-200); display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+  .dark-mode .snav-icon { background: #001A38; }
+  .snav-item.active .snav-icon { background: rgba(0,10,24,.2); }
+  .snav-label { font-size: 13px; font-weight: 600; color: var(--text); }
+  .snav-desc { font-size: 10px; color: var(--text-muted); margin-top: 1px; }
+  .snav-item.active .snav-label, .snav-item.active .snav-desc { color: #000A18; }
+
+  /* Progress bar */
+  .progress-track { height: 3px; background: var(--border); border-radius: 999px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg,#C9A84C,#F0DE9A); border-radius: 999px; }
+
+  /* Toast */
+  .toast { position: fixed; top: 72px; right: 20px; padding: 12px 18px; border-radius: 10px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-lg); font-size: 12px; color: var(--text); display: flex; align-items: center; gap: 8px; z-index: 100; }
+  .toast::before { content: '✓'; width: 18px; height: 18px; border-radius: 50%; background: #4ade80; color: #000; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+  /* Floating contact */
+  .floating-btn { position: fixed; bottom: 24px; right: 24px; width: 48px; height: 48px; border-radius: 50%; background: var(--wine-600); color: #fff; font-size: 18px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(128,24,24,.4); z-index: 50; cursor: pointer; }
+
+  /* Skeleton shimmer */
+  .skeleton { background: linear-gradient(90deg, var(--parchment-300) 25%, var(--parchment-200) 50%, var(--parchment-300) 75%); background-size: 200% 100%; animation: shimmer 1.8s infinite; border-radius: 6px; }
+  @keyframes shimmer { 0%{ background-position:-200% 0 } 100%{ background-position:200% 0 } }
+
+  /* Modal */
+  .modal-backdrop { background: rgba(0,10,24,.7); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .modal-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; max-width: 380px; width: 100%; box-shadow: var(--shadow-lg); }
+  .dark-mode .modal-box { background: #001228; border-color: #002147; }
+
+  /* Responsive grid helpers */
+  .grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+  .grid-2 { display: grid; grid-template-columns: repeat(2,1fr); gap: 20px; }
+
+  /* Misc */
+  .tag { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 999px; font-size: 10px; font-weight: 600; border: 1px solid var(--border); color: var(--text-sub); background: var(--parchment-100); }
+  .dark-mode .tag { background: #001A38; border-color: #002147; color: var(--toffee-300); }
+
+  /* ── Scrollbar ──────────────────────────────────────── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 3px; }
+  .frame ::-webkit-scrollbar-thumb { background: var(--parchment-400); }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ══════════════════════════════════════════════════
+       LEFT SIDEBAR — page navigator
+  ══════════════════════════════════════════════════ -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h1>Library of Heaven</h1>
+      <p>Wireframes · 11 screens</p>
+    </div>
+
+    <div class="sidebar-group">Public</div>
+    <button class="sidebar-item active" onclick="show('home',this)"><span class="dot"></span>Home</button>
+    <button class="sidebar-item" onclick="show('books',this)"><span class="dot"></span>All Books</button>
+    <button class="sidebar-item" onclick="show('viewbook',this)"><span class="dot"></span>View Book</button>
+    <button class="sidebar-item" onclick="show('contact',this)"><span class="dot"></span>Contact Us</button>
+
+    <div class="sidebar-group">Auth</div>
+    <button class="sidebar-item" onclick="show('login',this)"><span class="dot"></span>Sign In</button>
+    <button class="sidebar-item" onclick="show('signup',this)"><span class="dot"></span>Sign Up</button>
+
+    <div class="sidebar-group">Reader</div>
+    <button class="sidebar-item" onclick="show('profile',this)"><span class="dot"></span>Profile</button>
+    <button class="sidebar-item" onclick="show('reader',this)"><span class="dot"></span>Novel Reader</button>
+    <button class="sidebar-item" onclick="show('wallet',this)"><span class="dot"></span>Wallet</button>
+
+    <div class="sidebar-group">Author</div>
+    <button class="sidebar-item" onclick="show('become',this)"><span class="dot"></span>Become Author</button>
+    <button class="sidebar-item" onclick="show('author',this)"><span class="dot"></span>Author Dashboard</button>
+
+    <div class="theme-row">
+      <button class="theme-btn" onclick="toggleDark()">⬤ Toggle Light / Dark</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       CANVAS
+  ══════════════════════════════════════════════════ -->
+  <div class="canvas" id="canvas">
+
+    <!-- ════════════════════════ 1. HOME ════════════════════════ -->
+    <div id="page-home" class="page active">
+      <div class="frame-label">1 · Home</div>
+      <div class="frame" id="frame">
+
+        <div class="gilt-line"></div>
+        <!-- NAVBAR -->
+        <div class="navbar">
+          <div class="nav-logo">
+            <div class="nav-logo-icon">📖</div>
+            <div class="nav-logo-text">
+              <div class="line1">Library</div>
+              <div class="line2">of Heaven</div>
+            </div>
+          </div>
+          <div class="nav-links">
+            <div class="nav-link active">🏠 Home</div>
+            <div class="nav-link">📚 Books</div>
+            <div class="nav-link">✉️ Contact</div>
+            <div class="nav-link">💰 Wallet</div>
+            <div class="nav-link">✒️ Become Author</div>
+          </div>
+          <div class="nav-actions">
+            <div class="btn-icon">🌙</div>
+            <button class="btn-signin">Sign In</button>
+            <button class="btn-signup">Sign Up</button>
+          </div>
+        </div>
+
+        <!-- HERO -->
+        <div style="position:relative;min-height:540px;overflow:hidden;display:flex;align-items:center;padding:60px 48px;">
+          <!-- Background -->
+          <div style="position:absolute;inset:0;background:linear-gradient(135deg,var(--parchment-200) 0%,rgba(237,232,225,.8) 60%,rgba(237,232,225,.3) 100%);"></div>
+          <div style="position:absolute;inset:0;background-image:radial-gradient(circle,rgba(201,168,76,.06) 1px,transparent 1px);background-size:55px 55px;pointer-events:none;"></div>
+          <!-- Fake photo -->
+          <div style="position:absolute;right:0;top:0;bottom:0;width:45%;background:linear-gradient(135deg,#DDD3C5,#C4B5A0);opacity:.4;"></div>
+          <div style="position:absolute;inset:0;background:linear-gradient(to right,var(--parchment-200) 40%,transparent 75%);"></div>
+
+          <div style="position:relative;z-index:10;flex:1;max-width:600px;">
+            <div class="badge" style="margin-bottom:28px;">Premium Novel Library</div>
+            <h1 style="font-family:Georgia,serif;font-size:72px;font-weight:300;color:var(--text);line-height:.94;margin-bottom:8px;">Lose Yourself</h1>
+            <h1 style="font-family:Georgia,serif;font-size:72px;font-weight:700;font-style:italic;background:linear-gradient(135deg,#C9A84C,#F0DE9A,#9A7A1F);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:.94;margin-bottom:20px;">In a Story</h1>
+            <div style="display:flex;align-items:center;gap:14px;margin-bottom:24px;">
+              <div style="height:1px;width:56px;background:rgba(201,168,76,.55);"></div>
+              <span style="font-size:12px;font-style:italic;color:var(--gilt-600);">Library of Heaven</span>
+              <div style="height:1px;width:56px;background:rgba(201,168,76,.55);"></div>
+            </div>
+            <p style="font-size:15px;color:var(--text-sub);line-height:1.7;max-width:480px;margin-bottom:36px;">Discover thousands of novels across every genre — from timeless classics to gripping new releases. Read anywhere, track your progress, and share your own stories.</p>
+            <div style="display:flex;gap:14px;flex-wrap:wrap;">
+              <button class="btn-gilt" style="padding:14px 28px;font-size:14px;display:flex;align-items:center;gap:8px;">Explore Library →</button>
+              <button class="btn-outline" style="padding:14px 28px;font-size:14px;display:flex;align-items:center;gap:8px;">✒️ Start Writing</button>
+            </div>
+          </div>
+
+          <!-- Stat cards (desktop right panel) -->
+          <div style="position:relative;z-index:10;margin-left:auto;display:flex;flex-direction:column;gap:14px;width:280px;flex-shrink:0;">
+            <div class="stat-card"><div class="stat-icon">📚</div><div><div class="stat-val">10,000+</div><div class="stat-label">Novels Available</div><div class="stat-sub">Across all genres</div></div></div>
+            <div class="stat-card"><div class="stat-icon">⭐</div><div><div class="stat-val">4.9 ★</div><div class="stat-label">Average Rating</div><div class="stat-sub">Community score</div></div></div>
+            <div class="stat-card"><div class="stat-icon">👥</div><div><div class="stat-val">50,000+</div><div class="stat-label">Active Readers</div><div class="stat-sub">Growing every day</div></div></div>
+            <div style="padding:14px 18px;border-radius:14px;border:1px solid rgba(201,168,76,.2);background:rgba(201,168,76,.06);">
+              <p style="font-family:Georgia,serif;font-size:13px;font-style:italic;color:var(--text-sub);line-height:1.55;margin-bottom:6px;">"A reader lives a thousand lives before he dies."</p>
+              <p style="font-size:10px;color:var(--text-muted);">— George R.R. Martin</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- RECENTLY ADDED -->
+        <div style="background:var(--parchment-100);padding:64px 48px;">
+          <div style="max-width:1040px;margin:0 auto;">
+            <div class="section-sub">Just Arrived</div>
+            <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:8px;">
+              <div class="section-title">Recently Added</div>
+              <a style="font-size:12px;color:var(--gilt-600);text-decoration:none;font-weight:600;">View All →</a>
+            </div>
+            <div class="divider-gilt" style="margin-bottom:28px;"></div>
+            <div class="grid-4">
+              <!-- 4 Book Cards -->
+              <div class="book-card">
+                <div class="spine"></div>
+                <div class="book-cover" style="height:180px;">📖<div class="rating-badge">⭐ 4.8</div><div class="status-badge"><span class="status-dot"></span>Ongoing</div></div>
+                <div class="book-info"><div class="stars">★★★★★</div><h3>The Eternal Scribe</h3><div class="author">by Zhang Wei</div><div class="synopsis">A young scholar discovers he can appraise any technique…</div><div class="book-footer"><span class="book-chapters">142 Ch</span><button class="btn-read">Read Now</button></div></div>
+              </div>
+              <div class="book-card">
+                <div class="spine"></div>
+                <div class="book-cover" style="height:180px;">🗡️<div class="rating-badge">⭐ 4.6</div><div class="status-badge"><span class="status-dot" style="background:#fbbf24;"></span>Ongoing</div></div>
+                <div class="book-info"><div class="stars">★★★★☆</div><h3>Sovereign of Blades</h3><div class="author">by Lin Feng</div><div class="synopsis">In a world where swords speak, one blade remains silent…</div><div class="book-footer"><span class="book-chapters">88 Ch</span><button class="btn-read">Read Now</button></div></div>
+              </div>
+              <div class="book-card">
+                <div class="spine"></div>
+                <div class="book-cover" style="height:180px;">🌸<div class="rating-badge">⭐ 4.9</div><div class="status-badge"><span class="status-dot"></span>Completed</div></div>
+                <div class="book-info"><div class="stars">★★★★★</div><h3>Petal of a Thousand Suns</h3><div class="author">by Mei Hua</div><div class="synopsis">Love, sacrifice, and celestial politics in the heavenly realm…</div><div class="book-footer"><span class="book-chapters">320 Ch</span><button class="btn-read">Read Now</button></div></div>
+              </div>
+              <div class="book-card">
+                <div class="spine"></div>
+                <div class="book-cover" style="height:180px;">⚡<div class="rating-badge">⭐ 4.7</div><div class="status-badge"><span class="status-dot" style="background:#fbbf24;"></span>Ongoing</div></div>
+                <div class="book-info"><div class="stars">★★★★☆</div><h3>Thunder Domain</h3><div class="author">by Xiao Chen</div><div class="synopsis">When lightning strikes, destiny rewrites itself forever…</div><div class="book-footer"><span class="book-chapters">57 Ch</span><button class="btn-read">Read Now</button></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AUTHOR BANNER -->
+        <div style="background:linear-gradient(135deg,#3D0C02 0%,#801818 40%,#5A4610 100%);padding:56px 48px;text-align:center;position:relative;overflow:hidden;">
+          <div style="position:absolute;inset:0;background-image:radial-gradient(circle,rgba(240,222,154,.06) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;"></div>
+          <div style="position:relative;z-index:10;max-width:640px;margin:0 auto;">
+            <div class="badge" style="margin:0 auto 20px;display:inline-flex;">Share Your Story</div>
+            <h2 style="font-family:Georgia,serif;font-size:40px;font-weight:700;color:#F9F6F2;margin-bottom:14px;">Become an Author</h2>
+            <p style="font-size:14px;color:rgba(249,246,242,.7);line-height:1.7;margin-bottom:28px;">Join our community of storytellers. Upload your novels, build your readership, and earn tokens from your craft.</p>
+            <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+              <button class="btn-gilt" style="padding:12px 28px;">Start Writing Today</button>
+              <button style="padding:12px 28px;border-radius:10px;border:1px solid rgba(249,246,242,.25);color:rgba(249,246,242,.8);background:none;font-size:13px;font-weight:600;cursor:pointer;">Learn More</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+          <div class="footer-grid">
+            <div class="footer-col">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;"><div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#C9A84C,#9A7A1F);display:flex;align-items:center;justify-content:center;font-size:14px;">📖</div><span style="font-family:Georgia,serif;font-size:14px;color:var(--gilt-400);font-weight:700;">Library of Heaven</span></div>
+              <p style="line-height:1.6;">Your gateway to thousands of premium novels. Discover, read, and share stories that matter.</p>
+            </div>
+            <div class="footer-col"><h4>Explore</h4><a>All Books</a><a>New Releases</a><a>Top Rated</a><a>Genres</a></div>
+            <div class="footer-col"><h4>Authors</h4><a>Become Author</a><a>Author Dashboard</a><a>Upload Novel</a><a>Earn Tokens</a></div>
+            <div class="footer-col"><h4>Support</h4><a>Contact Us</a><a>FAQ</a><a>Privacy Policy</a><a>Terms of Service</a></div>
+          </div>
+          <div class="footer-bottom"><span>© 2026 Library of Heaven. All rights reserved.</span><span>Made with ❤️ for readers</span></div>
+        </div>
+
+      </div>
+    </div><!-- /home -->
+
+    <!-- ════════════════════════ 2. ALL BOOKS ════════════════════════ -->
+    <div id="page-books" class="page">
+      <div class="frame-label">2 · All Books</div>
+      <div class="frame">
+        <div class="gilt-line"></div>
+        <div class="navbar">
+          <div class="nav-logo"><div class="nav-logo-icon">📖</div><div class="nav-logo-text"><div class="line1">Library</div><div class="line2">of Heaven</div></div></div>
+          <div class="nav-links"><div class="nav-link">🏠 Home</div><div class="nav-link active">📚 Books</div><div class="nav-link">✉️ Contact</div><div class="nav-link">💰 Wallet</div></div>
+          <div class="nav-actions"><div class="btn-icon">🌙</div><button class="btn-signin">Sign In</button><button class="btn-signup">Sign Up</button></div>
+        </div>
+
+        <div style="padding:64px 48px;min-height:600px;">
+          <!-- Header -->
+          <div style="margin-bottom:40px;">
+            <div class="section-sub">Our Collection</div>
+            <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;">
+              <h1 style="font-family:Georgia,serif;font-size:52px;font-weight:700;color:var(--text);line-height:1.1;">Explore the <em style="font-weight:300;background:linear-gradient(135deg,#C9A84C,#F0DE9A,#9A7A1F);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Library</em></h1>
+              <span style="font-size:12px;color:var(--text-muted);">24 books</span>
+            </div>
+            <div class="divider-gilt"></div>
+          </div>
+
+          <!-- Filter bar -->
+          <div class="card" style="padding:20px;margin-bottom:32px;">
+            <div style="display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap;">
+              <div style="flex:1;min-width:200px;">
+                <label class="label">Search Novels</label>
+                <div style="position:relative;">
+                  <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--text-muted);">🔍</span>
+                  <input class="input" style="padding-left:34px;" placeholder="Search by title…" />
+                </div>
+              </div>
+              <div>
+                <label class="label">Sort by Price</label>
+                <div style="display:flex;gap:8px;">
+                  <button class="btn-gilt" style="padding:10px 14px;font-size:11px;display:flex;align-items:center;gap:6px;">↑ Low → High</button>
+                  <button class="btn-ghost" style="padding:10px 14px;font-size:11px;display:flex;align-items:center;gap:6px;">↓ High → Low</button>
+                </div>
+              </div>
+              <button class="btn-ghost" style="font-size:11px;">Reset</button>
+            </div>
+          </div>
+
+          <!-- Books grid -->
+          <div class="grid-4">
+            <div class="book-card"><div class="spine"></div><div class="book-cover">📖<div class="rating-badge">⭐ 4.8</div><div class="status-badge"><span class="status-dot"></span>Ongoing</div></div><div class="book-info"><div class="stars">★★★★★</div><h3>The Eternal Scribe</h3><div class="author">by Zhang Wei</div><div class="synopsis">A young scholar discovers the power of Heaven's Appraisal…</div><div class="book-footer"><span class="book-chapters">142 Ch</span><button class="btn-read">Read Now</button></div></div></div>
+            <div class="book-card"><div class="spine"></div><div class="book-cover">🗡️<div class="rating-badge">⭐ 4.6</div><div class="status-badge"><span class="status-dot" style="background:#fbbf24;"></span>Ongoing</div></div><div class="book-info"><div class="stars">★★★★☆</div><h3>Sovereign of Blades</h3><div class="author">by Lin Feng</div><div class="synopsis">In a world where swords speak, one blade remains silent…</div><div class="book-footer"><span class="book-chapters">88 Ch</span><button class="btn-read">Read Now</button></div></div></div>
+            <div class="book-card"><div class="spine"></div><div class="book-cover">🌸<div class="rating-badge">⭐ 4.9</div><div class="status-badge"><span class="status-dot"></span>Completed</div></div><div class="book-info"><div class="stars">★★★★★</div><h3>Petal of a Thousand Suns</h3><div class="author">by Mei Hua</div><div class="synopsis">Love, sacrifice, and celestial politics in the heavenly realm…</div><div class="book-footer"><span class="book-chapters">320 Ch</span><button class="btn-read">Read Now</button></div></div></div>
+            <div class="book-card"><div class="spine"></div><div class="book-cover">⚡<div class="rating-badge">⭐ 4.7</div><div class="status-badge"><span class="status-dot" style="background:#fbbf24;"></span>Ongoing</div></div><div class="book-info"><div class="stars">★★★★☆</div><h3>Thunder Domain</h3><div class="author">by Xiao Chen</div><div class="synopsis">When lightning strikes, destiny rewrites itself forever…</div><div class="book-footer"><span class="book-chapters">57 Ch</span><button class="btn-read">Read Now</button></div></div></div>
+            <div class="book-card"><div class="spine"></div><div class="book-cover">🐉<div class="rating-badge">⭐ 4.5</div><div class="status-badge"><span class="status-dot"></span>Ongoing</div></div><div class="book-info"><div class="stars">★★★★☆</div><h3>Dragon Emperor</h3><div class="author">by Long Ba</div><div class="synopsis">Reborn into a noble family, he awakens a dragon bloodline…</div><div class="book-footer"><span class="book-chapters">210 Ch</span><button class="btn-read">Read Now</button></div></div></div>
+            <div class="book-card"><div class="spine"></div><div class="book-cover">🌙<div class="rating-badge">⭐ 4.4</div><div class="status-badge"><span class="status-dot" style="background:#fbbf24;"></span>Ongoing</div></div><div class="book-info"><div class="stars">★★★★☆</div><h3>Moonlit Cultivation</h3><div class="author">by Yue Xiu</div><div class="synopsis">Under the silver moon, a young woman seeks immortality…</div><div class="book-footer"><span class="book-chapters">44 Ch</span><button class="btn-read">Read Now</button></div></div></div>
+            <div class="book-card"><div class="spine"></div><div class="book-cover">🔥<div class="rating-badge">⭐ 4.8</div><div class="status-badge"><span class="status-dot"></span>Completed</div></div><div class="book-info"><div class="stars">★★★★★</div><h3>Flame Sovereign</h3><div class="author">by Huo Lie</div><div class="synopsis">He who controls fire controls fate itself…</div><div class="book-footer"><span class="book-chapters">500 Ch</span><button class="btn-read">Read Now</button></div></div></div>
+            <div class="book-card"><div class="spine"></div><div class="book-cover">🌿<div class="rating-badge">⭐ 4.3</div><div class="status-badge"><span class="status-dot" style="background:#fbbf24;"></span>Ongoing</div></div><div class="book-info"><div class="stars">★★★★☆</div><h3>Verdant Qi</h3><div class="author">by Mu Sen</div><div class="synopsis">Ancient forest spirits grant forbidden cultivation arts…</div><div class="book-footer"><span class="book-chapters">31 Ch</span><button class="btn-read">Read Now</button></div></div></div>
+          </div>
+        </div>
+
+        <div class="footer">
+          <div class="footer-bottom"><span>© 2026 Library of Heaven.</span><span>24 novels and counting</span></div>
+        </div>
+      </div>
+    </div><!-- /books -->
+
+    <!-- ════════════════════════ 3. VIEW BOOK ════════════════════════ -->
+    <div id="page-viewbook" class="page">
+      <div class="frame-label">3 · View Book Detail</div>
+      <div class="frame">
+        <div class="gilt-line"></div>
+        <div class="navbar">
+          <div class="nav-logo"><div class="nav-logo-icon">📖</div><div class="nav-logo-text"><div class="line1">Library</div><div class="line2">of Heaven</div></div></div>
+          <div class="nav-links"><div class="nav-link">🏠 Home</div><div class="nav-link active">📚 Books</div><div class="nav-link">✉️ Contact</div><div class="nav-link">💰 Wallet</div></div>
+          <div class="nav-actions"><div class="btn-icon">🌙</div><button class="btn-signin">Sign In</button><button class="btn-signup">Sign Up</button></div>
+        </div>
+
+        <div style="padding:48px;min-height:700px;">
+          <!-- Breadcrumb -->
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:32px;">Books / <span style="color:var(--gilt-600);">The Eternal Scribe</span></div>
+
+          <!-- Top section -->
+          <div style="display:flex;gap:40px;margin-bottom:48px;">
+            <!-- Cover -->
+            <div style="flex-shrink:0;width:220px;">
+              <div style="width:220px;height:300px;border-radius:12px;background:linear-gradient(135deg,var(--parchment-400),var(--toffee-500));display:flex;align-items:center;justify-content:center;font-size:64px;box-shadow:var(--shadow-lg);border:1px solid var(--border);"></div>
+              <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px;">
+                <button class="btn-gilt" style="width:100%;padding:12px;font-size:13px;">📖 Start Reading</button>
+                <button class="btn-outline" style="width:100%;padding:10px;font-size:12px;">♡ Add to Library</button>
+              </div>
+            </div>
+
+            <!-- Info -->
+            <div style="flex:1;">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+                <span class="tag">Xianxia</span>
+                <span class="tag">Action</span>
+                <span class="tag">Adventure</span>
+              </div>
+              <h1 style="font-family:Georgia,serif;font-size:36px;font-weight:700;color:var(--text);margin-bottom:6px;">The Eternal Scribe</h1>
+              <p style="font-size:13px;color:var(--text-sub);margin-bottom:16px;">by <strong>Zhang Wei</strong> · Published 2024</p>
+              <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
+                <div style="display:flex;gap:3px;font-size:14px;color:var(--gilt-500);">★★★★★</div>
+                <span style="font-size:13px;color:var(--text-sub);">4.8 / 5.0</span>
+                <span style="font-size:12px;color:var(--text-muted);">· 1,247 reviews</span>
+                <div style="display:flex;align-items:center;gap:4px;"><span class="status-dot" style="width:7px;height:7px;border-radius:50%;background:#4ade80;display:inline-block;"></span><span style="font-size:12px;color:var(--text-sub);">Ongoing</span></div>
+              </div>
+              <div class="divider-gilt"></div>
+              <div style="margin:16px 0;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">
+                <div class="card" style="padding:14px;text-align:center;"><div style="font-size:20px;font-family:Georgia,serif;font-weight:700;color:var(--gilt-600);">142</div><div style="font-size:11px;color:var(--text-muted);">Chapters</div></div>
+                <div class="card" style="padding:14px;text-align:center;"><div style="font-size:20px;font-family:Georgia,serif;font-weight:700;color:var(--gilt-600);">5</div><div style="font-size:11px;color:var(--text-muted);">Tokens/Ch</div></div>
+                <div class="card" style="padding:14px;text-align:center;"><div style="font-size:20px;font-family:Georgia,serif;font-weight:700;color:var(--gilt-600);">98k</div><div style="font-size:11px;color:var(--text-muted);">Total Views</div></div>
+              </div>
+              <div class="divider-gilt"></div>
+              <h3 style="font-family:Georgia,serif;font-size:15px;font-weight:700;color:var(--text);margin:16px 0 10px;">Synopsis</h3>
+              <p style="font-size:13px;color:var(--text-sub);line-height:1.7;">A young scholar stumbles upon the fabled Library of Heaven's Path, granting him the ability to appraise the flaws in any cultivation technique, skill, or item. Armed with this peerless knowledge, he rises from a mere teaching assistant to the greatest sage the world has ever known. Every flaw he perceives is an opportunity. Every weakness in his enemies is a stepping stone to immortality.</p>
+            </div>
+          </div>
+
+          <!-- Chapter list -->
+          <div class="card" style="padding:24px;">
+            <h3 style="font-family:Georgia,serif;font-size:18px;font-weight:700;color:var(--text);margin-bottom:20px;">Chapters (142)</h3>
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:10px;border:1px solid var(--border);cursor:pointer;">
+                <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:11px;font-weight:700;color:var(--gilt-600);">Ch 1</span><span style="font-size:12px;color:var(--text);">The Immortal Library</span></div>
+                <span style="font-size:11px;color:var(--text-muted);">Free</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:10px;border:1px solid var(--border);cursor:pointer;">
+                <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:11px;font-weight:700;color:var(--gilt-600);">Ch 2</span><span style="font-size:12px;color:var(--text);">First Appraisal</span></div>
+                <span style="font-size:11px;color:var(--text-muted);">Free</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:10px;border:1px solid rgba(201,168,76,.2);background:rgba(201,168,76,.04);cursor:pointer;">
+                <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:11px;font-weight:700;color:var(--gilt-600);">Ch 3</span><span style="font-size:12px;color:var(--text);">Teacher Zhang's Secret</span></div>
+                <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--gilt-600);">🔓 5 tokens</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:10px;border:1px solid rgba(128,24,24,.2);background:rgba(128,24,24,.03);cursor:pointer;">
+                <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:11px;font-weight:700;color:var(--wine-600);">Ch 4</span><span style="font-size:12px;color:var(--text);">The Nine-Star Meridian</span></div>
+                <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--wine-600);">🔒 5 tokens</span>
+              </div>
+            </div>
+            <div style="margin-top:14px;text-align:center;"><button class="btn-ghost">Show all 142 chapters ↓</button></div>
+          </div>
+
+          <!-- Reviews -->
+          <div style="margin-top:32px;">
+            <h3 style="font-family:Georgia,serif;font-size:20px;font-weight:700;color:var(--text);margin-bottom:20px;">Reviews</h3>
+            <div style="display:flex;flex-direction:column;gap:14px;">
+              <div class="card" style="padding:16px;">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,rgba(201,168,76,.2),rgba(201,168,76,.06));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--gilt-600);">JD</div><div><div style="font-size:13px;font-weight:600;color:var(--text);">JohnDoe</div><div style="font-size:10px;color:var(--text-muted);">★★★★★ · 2 days ago</div></div></div>
+                <p style="font-size:12px;color:var(--text-sub);line-height:1.6;">Absolutely hooked from chapter 1. The appraisal system is genius and the MC's growth feels earned. Can't wait for more!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer"><div class="footer-bottom"><span>© 2026 Library of Heaven.</span></div></div>
+      </div>
+    </div><!-- /viewbook -->
+
+    <!-- ════════════════════════ 4. LOGIN ════════════════════════ -->
+    <div id="page-login" class="page">
+      <div class="frame-label">4 · Sign In</div>
+      <div class="frame">
+        <div class="gilt-line"></div>
+        <div class="navbar">
+          <div class="nav-logo"><div class="nav-logo-icon">📖</div><div class="nav-logo-text"><div class="line1">Library</div><div class="line2">of Heaven</div></div></div>
+          <div class="nav-links"><div class="nav-link">🏠 Home</div><div class="nav-link">📚 Books</div></div>
+          <div class="nav-actions"><div class="btn-icon">🌙</div></div>
+        </div>
+
+        <div style="min-height:600px;display:flex;align-items:center;justify-content:center;padding:60px 20px;background:var(--parchment-200);">
+          <div style="width:100%;max-width:420px;">
+            <!-- Logo -->
+            <div style="text-align:center;margin-bottom:32px;">
+              <div style="width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,#C9A84C,#9A7A1F);display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 14px;">📖</div>
+              <h1 style="font-family:Georgia,serif;font-size:26px;font-weight:700;color:var(--text);">Welcome Back</h1>
+              <p style="font-size:13px;color:var(--text-muted);margin-top:4px;">Sign in to continue reading</p>
+            </div>
+
+            <div class="card" style="padding:28px;">
+              <div style="margin-bottom:18px;">
+                <label class="label">Email Address</label>
+                <input class="input" placeholder="your@email.com" />
+              </div>
+              <div style="margin-bottom:24px;">
+                <label class="label">Password</label>
+                <input class="input" type="password" placeholder="••••••••" />
+                <div style="text-align:right;margin-top:6px;"><a style="font-size:11px;color:var(--gilt-600);text-decoration:none;cursor:pointer;">Forgot password?</a></div>
+              </div>
+              <button class="btn-gilt" style="width:100%;padding:13px;font-size:14px;">Sign In</button>
+              <div style="text-align:center;margin-top:18px;font-size:12px;color:var(--text-muted);">Don't have an account? <a style="color:var(--gilt-600);font-weight:600;cursor:pointer;">Sign Up</a></div>
+            </div>
+          </div>
+        </div>
+        <div class="footer"><div class="footer-bottom"><span>© 2026 Library of Heaven.</span></div></div>
+      </div>
+    </div><!-- /login -->
+
+    <!-- ════════════════════════ 5. SIGNUP ════════════════════════ -->
+    <div id="page-signup" class="page">
+      <div class="frame-label">5 · Sign Up</div>
+      <div class="frame">
+        <div class="gilt-line"></div>
+        <div class="navbar">
+          <div class="nav-logo"><div class="nav-logo-icon">📖</div><div class="nav-logo-text"><div class="line1">Library</div><div class="line2">of Heaven</div></div></div>
+          <div class="nav-links"><div class="nav-link">🏠 Home</div><div class="nav-link">📚 Books</div></div>
+          <div class="nav-actions"><div class="btn-icon">🌙</div></div>
+        </div>
+
+        <div style="min-height:640px;display:flex;align-items:center;justify-content:center;padding:60px 20px;background:var(--parchment-200);">
+          <div style="width:100%;max-width:440px;">
+            <div style="text-align:center;margin-bottom:28px;">
+              <div style="width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,#C9A84C,#9A7A1F);display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 14px;">📖</div>
+              <h1 style="font-family:Georgia,serif;font-size:26px;font-weight:700;color:var(--text);">Create Account</h1>
+              <p style="font-size:13px;color:var(--text-muted);margin-top:4px;">Join thousands of readers today</p>
+            </div>
+
+            <div class="card" style="padding:28px;">
+              <div style="margin-bottom:16px;">
+                <label class="label">Username</label>
+                <input class="input" placeholder="CultivationMaster" />
+              </div>
+              <div style="margin-bottom:16px;">
+                <label class="label">Email Address</label>
+                <input class="input" placeholder="your@email.com" />
+              </div>
+              <div style="margin-bottom:16px;">
+                <label class="label">Password</label>
+                <input class="input" type="password" placeholder="••••••••" />
+              </div>
+              <div style="margin-bottom:24px;">
+                <label class="label">Confirm Password</label>
+                <input class="input" type="password" placeholder="••••••••" />
+              </div>
+              <button class="btn-gilt" style="width:100%;padding:13px;font-size:14px;">Create Account</button>
+              <div style="text-align:center;margin-top:18px;font-size:12px;color:var(--text-muted);">Already have an account? <a style="color:var(--gilt-600);font-weight:600;cursor:pointer;">Sign In</a></div>
+            </div>
+          </div>
+        </div>
+        <div class="footer"><div class="footer-bottom"><span>© 2026 Library of Heaven.</span></div></div>
+      </div>
+    </div><!-- /signup -->
+
+    <!-- ════════════════════════ 6. PROFILE ════════════════════════ -->
+    <div id="page-profile" class="page">
+      <div class="frame-label">6 · Profile — My Library</div>
+      <div class="frame">
+        <div class="gilt-line"></div>
+        <div class="navbar">
+          <div class="nav-logo"><div class="nav-logo-icon">📖</div><div class="nav-logo-text"><div class="line1">Library</div><div class="line2">of Heaven</div></div></div>
+          <div class="nav-links"><div class="nav-link">🏠 Home</div><div class="nav-link">📚 Books</div><div class="nav-link">✉️ Contact</div><div class="nav-link">💰 Wallet</div><div class="nav-link">✒️ Become Author</div><div class="nav-link active">👤 Profile</div></div>
+          <div class="nav-actions"><div class="btn-icon">🌙</div><button class="btn-wine" style="padding:6px 12px;font-size:11px;">Sign Out</button></div>
+        </div>
+
+        <!-- Profile banner -->
+        <div style="background:linear-gradient(135deg,#3D0C02 0%,#801818 40%,#5A4610 100%);padding:36px 48px;position:relative;overflow:hidden;">
+          <div style="position:absolute;inset:0;background-image:radial-gradient(circle,rgba(240,222,154,.06) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;"></div>
+          <div style="position:relative;z-index:10;display:flex;align-items:center;gap:20px;">
+            <div style="width:72px;height:72px;border-radius:14px;border:2px solid rgba(201,168,76,.5);background:rgba(201,168,76,.15);display:flex;align-items:center;justify-content:center;position:relative;">
+              <span style="font-family:Cinzel,serif;font-size:22px;font-weight:700;color:var(--gilt-300);">RJ</span>
+              <div style="position:absolute;bottom:-3px;right:-3px;width:14px;height:14px;border-radius:50%;background:#4ade80;border:2px solid white;"></div>
+            </div>
+            <div style="flex:1;">
+              <div style="font-size:10px;font-weight:700;color:var(--gilt-300);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;">Reader Account</div>
+              <h2 style="font-family:Georgia,serif;font-size:26px;font-weight:700;color:#F9F6F2;margin-bottom:6px;">RajuCodz</h2>
+              <div style="display:flex;gap:16px;">
+                <span style="font-size:11px;color:rgba(249,246,242,.7);">✉️ raju@email.com</span>
+                <span style="font-size:11px;color:rgba(249,246,242,.7);">📅 Member since April 2024</span>
+              </div>
+            </div>
+            <button style="padding:8px 16px;border-radius:10px;border:1px solid rgba(249,246,242,.2);background:rgba(249,246,242,.1);color:rgba(249,246,242,.8);font-size:12px;cursor:pointer;">← Sign Out</button>
+          </div>
+        </div>
+
+        <!-- Layout -->
+        <div style="padding:28px 48px;display:flex;gap:24px;min-height:500px;">
+          <!-- Sidebar -->
+          <div style="width:220px;flex-shrink:0;">
+            <div class="card" style="padding:14px;position:sticky;top:80px;">
+              <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:var(--parchment-100);margin-bottom:12px;">
+                <div style="width:36px;height:36px;border-radius:8px;background:rgba(201,168,76,.15);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--gilt-600);">RJ</div>
+                <div><div style="font-size:12px;font-weight:600;color:var(--text);">RajuCodz</div><div style="font-size:10px;color:var(--text-muted);">raju@email.com</div></div>
+              </div>
+              <div class="divider-gilt"></div>
+              <div class="snav-item active"><div class="snav-icon">🔖</div><div><div class="snav-label">My Library</div><div class="snav-desc">Saved novels</div></div></div>
+              <div class="snav-item"><div class="snav-icon">📋</div><div><div class="snav-label">Order History</div><div class="snav-desc">Token purchases</div></div></div>
+              <div class="snav-item"><div class="snav-icon">⚙️</div><div><div class="snav-label">Settings</div><div class="snav-desc">Account preferences</div></div></div>
+              <div class="divider-gilt"></div>
+              <div class="snav-item" style="color:var(--wine-600);"><div class="snav-icon" style="background:rgba(128,24,24,.08);">🚪</div><span style="font-size:13px;font-weight:600;color:var(--wine-600);">Sign Out</span></div>
+            </div>
+          </div>
+
+          <!-- Content -->
+          <div style="flex:1;">
+            <div class="card" style="padding:28px;">
+              <h3 style="font-family:Georgia,serif;font-size:20px;font-weight:700;color:var(--text);margin-bottom:6px;">My Library</h3>
+              <p style="font-size:12px;color:var(--text-muted);margin-bottom:20px;">Books you've saved for later</p>
+              <div class="divider-gilt" style="margin-bottom:20px;"></div>
+              <div class="grid-3" style="grid-template-columns:repeat(3,1fr);">
+                <div class="book-card"><div class="spine"></div><div class="book-cover" style="height:140px;">📖<div class="rating-badge">⭐ 4.8</div></div><div class="book-info" style="padding:12px 12px 12px 16px;"><h3 style="font-size:13px;">The Eternal Scribe</h3><div class="author">by Zhang Wei</div><div class="book-footer"><span class="book-chapters">142 Ch</span><button class="btn-read">Read</button></div></div></div>
+                <div class="book-card"><div class="spine"></div><div class="book-cover" style="height:140px;">🗡️<div class="rating-badge">⭐ 4.6</div></div><div class="book-info" style="padding:12px 12px 12px 16px;"><h3 style="font-size:13px;">Sovereign of Blades</h3><div class="author">by Lin Feng</div><div class="book-footer"><span class="book-chapters">88 Ch</span><button class="btn-read">Read</button></div></div></div>
+                <div class="book-card"><div class="spine"></div><div class="book-cover" style="height:140px;">🌸<div class="rating-badge">⭐ 4.9</div></div><div class="book-info" style="padding:12px 12px 12px 16px;"><h3 style="font-size:13px;">Petal of Thousand Suns</h3><div class="author">by Mei Hua</div><div class="book-footer"><span class="book-chapters">320 Ch</span><button class="btn-read">Read</button></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer"><div class="footer-bottom"><span>© 2026 Library of Heaven.</span></div></div>
+      </div>
+    </div><!-- /profile -->
+
+    <!-- ════════════════════════ 7. NOVEL READER ════════════════════════ -->
+    <div id="page-reader" class="page">
+      <div class="frame-label">7 · Novel Reader</div>
+      <div class="frame" style="background:var(--navy-900);">
+        <!-- Dark bg for reader -->
+        <div style="background:#000A18;min-height:700px;">
+          <div class="gilt-line"></div>
+          <!-- Reader navbar -->
+          <div style="height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:rgba(0,18,40,.95);border-bottom:1px solid rgba(0,33,71,.6);position:sticky;top:0;z-index:40;">
+            <button style="display:flex;align-items:center;gap:6px;font-size:12px;color:rgba(249,246,242,.6);border:none;background:none;cursor:pointer;">← Back to Book</button>
+            <div style="text-align:center;">
+              <div style="font-family:Georgia,serif;font-size:13px;font-weight:700;color:#F9F6F2;">The Eternal Scribe</div>
+              <div style="font-size:10px;color:rgba(249,246,242,.5);">Chapter 3 · Teacher Zhang's Secret</div>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <button style="padding:5px 10px;border-radius:7px;border:1px solid rgba(201,168,76,.3);background:none;font-size:11px;color:var(--gilt-400);cursor:pointer;">⚙️ Settings</button>
+              <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(249,246,242,.5);">🪙 120 tokens</div>
+            </div>
+          </div>
+
+          <!-- Progress bar -->
+          <div style="height:3px;background:rgba(0,33,71,.8);">
+            <div style="width:42%;height:100%;background:linear-gradient(90deg,#C9A84C,#F0DE9A);border-radius:999px;"></div>
+          </div>
+
+          <!-- Chapter content -->
+          <div style="max-width:760px;margin:0 auto;padding:48px 32px;">
+            <div style="font-size:11px;font-weight:700;color:var(--gilt-500);text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px;">Chapter 3</div>
+            <h2 style="font-family:Georgia,serif;font-size:28px;font-weight:700;color:#F9F6F2;margin-bottom:32px;">Teacher Zhang's Secret</h2>
+            <div style="font-size:15px;color:rgba(249,246,242,.82);line-height:1.85;letter-spacing:.01em;">
+              <p style="margin-bottom:20px;">The morning sun cast long shadows across the Academy courtyard as Zhang Xuan made his way to the teaching hall. Three years he had spent here, yet today felt different — the air itself seemed to hum with invisible potential.</p>
+              <p style="margin-bottom:20px;">He paused before the carved doors, noticing the faint golden script that had never been visible before. His new ability — the Library of Heaven's Path — pulsed like a heartbeat in his chest, eager to uncover the secrets woven into every stone of this ancient place.</p>
+              <p style="margin-bottom:20px;">"The heavens reveal their truths only to those who seek without agenda," whispered the inscription. Zhang Xuan smiled. For the first time in his failed scholar's life, he understood what that meant.</p>
+              <p style="margin-bottom:20px;">The library shimmered at the edge of his consciousness: a vast, luminous palace with shelves that reached into infinity. Every technique ever practiced within these walls had left its imprint, and all their flaws lay bare to his gaze.</p>
+              <p style="margin-bottom:20px;">He entered the teaching hall and faced his students — noble-born children who had mocked him endlessly. Today, that would change.</p>
+              <p>Today, the Library of Heaven would speak through him.</p>
+            </div>
+
+            <!-- Navigation -->
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:56px;padding-top:32px;border-top:1px solid rgba(0,33,71,.8);">
+              <button style="display:flex;align-items:center;gap:8px;padding:12px 20px;border-radius:10px;border:1px solid rgba(0,33,71,.8);background:rgba(0,18,40,.5);color:rgba(249,246,242,.6);font-size:13px;cursor:pointer;">← Ch 2: First Appraisal</button>
+              <div style="text-align:center;">
+                <div style="font-size:11px;color:rgba(249,246,242,.4);">3 / 142</div>
+                <div class="progress-track" style="width:120px;margin:6px 0;background:rgba(0,33,71,.8);"><div class="progress-fill" style="width:2%;"></div></div>
+              </div>
+              <button style="display:flex;align-items:center;gap:8px;padding:12px 20px;border-radius:10px;background:linear-gradient(135deg,#C9A84C,#9A7A1F);color:#000A18;font-size:13px;font-weight:600;border:none;cursor:pointer;">Ch 4: Nine-Star Meridian →</button>
+            </div>
+          </div>
+
+          <!-- Unlock modal overlay (shown inline) -->
+          <div style="margin:0 48px 40px;border-radius:var(--radius);overflow:hidden;">
+            <div class="card" style="border:2px dashed rgba(201,168,76,.3);background:rgba(0,18,40,.6);padding:0;">
+              <div style="padding:12px 18px;background:rgba(201,168,76,.06);border-bottom:1px dashed rgba(201,168,76,.2);font-size:11px;color:var(--gilt-400);text-transform:uppercase;letter-spacing:.1em;font-weight:700;">🔒 Unlock Modal — triggers before locked chapter</div>
+              <div style="padding:28px;display:flex;gap:32px;align-items:center;">
+                <div style="width:56px;height:56px;border-radius:14px;background:rgba(234,88,12,.2);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">🔒</div>
+                <div style="flex:1;">
+                  <h3 style="font-family:Georgia,serif;font-size:18px;font-weight:700;color:#F9F6F2;margin-bottom:4px;">Unlock Chapter 4</h3>
+                  <p style="font-size:12px;color:rgba(249,246,242,.5);margin-bottom:16px;">Nine-Star Meridian</p>
+                  <div style="background:rgba(0,10,24,.5);border-radius:10px;padding:14px;margin-bottom:16px;">
+                    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:8px;"><span style="color:rgba(249,246,242,.5);">Unlock cost</span><span style="color:#fb923c;font-weight:700;">🪙 5 tokens</span></div>
+                    <div style="display:flex;justify-content:space-between;font-size:12px;"><span style="color:rgba(249,246,242,.5);">Your balance</span><span style="color:#4ade80;font-weight:700;">🪙 120 tokens</span></div>
+                  </div>
+                  <div style="display:flex;gap:10px;">
+                    <button style="flex:1;padding:10px;border-radius:10px;border:1px solid rgba(0,33,71,.8);background:none;color:rgba(249,246,242,.6);font-size:12px;cursor:pointer;">Cancel</button>
+                    <button class="btn-wine" style="flex:1;padding:10px;font-size:12px;display:flex;align-items:center;justify-content:center;gap:6px;">🪙 Spend & Read</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /reader -->
+
+    <!-- ════════════════════════ 8. WALLET ════════════════════════ -->
+    <div id="page-wallet" class="page">
+      <div class="frame-label">8 · Wallet</div>
+      <div class="frame">
+        <div class="gilt-line"></div>
+        <div class="navbar">
+          <div class="nav-logo"><div class="nav-logo-icon">📖</div><div class="nav-logo-text"><div class="line1">Library</div><div class="line2">of Heaven</div></div></div>
+          <div class="nav-links"><div class="nav-link">🏠 Home</div><div class="nav-link">📚 Books</div><div class="nav-link active">💰 Wallet</div></div>
+          <div class="nav-actions"><div class="btn-icon">🌙</div></div>
+        </div>
+
+        <div style="padding:48px;min-height:600px;">
+          <div style="margin-bottom:32px;">
+            <div class="section-sub">My Tokens</div>
+            <h1 class="section-title">Wallet</h1>
+            <div class="divider-gilt"></div>
+          </div>
+
+          <!-- Balance card -->
+          <div style="background:linear-gradient(135deg,#3D0C02,#801818,#5A4610);border-radius:18px;padding:28px 32px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden;">
+            <div style="position:absolute;inset:0;background-image:radial-gradient(circle,rgba(240,222,154,.06) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;"></div>
+            <div style="position:relative;z-index:10;">
+              <div style="font-size:11px;color:rgba(249,246,242,.6);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;">Current Balance</div>
+              <div style="font-family:Georgia,serif;font-size:52px;font-weight:700;color:#F0DE9A;line-height:1;margin-bottom:4px;">🪙 120</div>
+              <div style="font-size:12px;color:rgba(249,246,242,.5);">tokens available</div>
+            </div>
+            <div style="position:relative;z-index:10;text-align:right;">
+              <div style="font-size:11px;color:rgba(249,246,242,.5);margin-bottom:6px;">Unlock chapters at</div>
+              <div style="font-size:24px;font-weight:700;color:rgba(249,246,242,.9);">~5 tokens each</div>
+            </div>
+          </div>
+
+          <!-- Buy tokens -->
+          <div class="card" style="padding:24px;margin-bottom:28px;">
+            <h3 style="font-family:Georgia,serif;font-size:18px;font-weight:700;color:var(--text);margin-bottom:6px;">Buy Tokens</h3>
+            <p style="font-size:12px;color:var(--text-muted);margin-bottom:20px;">Choose a token package to top up</p>
+            <div class="grid-4" style="grid-template-columns:repeat(4,1fr);">
+              <div class="card" style="padding:20px;text-align:center;cursor:pointer;border-color:rgba(201,168,76,.3);">
+                <div style="font-size:28px;margin-bottom:8px;">🪙</div>
+                <div style="font-family:Georgia,serif;font-size:22px;font-weight:700;color:var(--gilt-600);">50</div>
+                <div style="font-size:11px;color:var(--text-muted);margin-bottom:12px;">tokens</div>
+                <button class="btn-gilt" style="width:100%;padding:8px;font-size:12px;">$1.99</button>
+              </div>
+              <div class="card" style="padding:20px;text-align:center;cursor:pointer;border-color:var(--gilt-500);background:rgba(201,168,76,.04);position:relative;">
+                <div style="position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:var(--gilt-500);color:#000A18;font-size:9px;font-weight:700;padding:2px 8px;border-radius:999px;text-transform:uppercase;letter-spacing:.05em;">Popular</div>
+                <div style="font-size:28px;margin-bottom:8px;">🪙🪙</div>
+                <div style="font-family:Georgia,serif;font-size:22px;font-weight:700;color:var(--gilt-600);">150</div>
+                <div style="font-size:11px;color:var(--text-muted);margin-bottom:12px;">tokens</div>
+                <button class="btn-gilt" style="width:100%;padding:8px;font-size:12px;">$4.99</button>
+              </div>
+              <div class="card" style="padding:20px;text-align:center;cursor:pointer;">
+                <div style="font-size:28px;margin-bottom:8px;">🪙🪙🪙</div>
+                <div style="font-family:Georgia,serif;font-size:22px;font-weight:700;color:var(--gilt-600);">500</div>
+                <div style="font-size:11px;color:var(--text-muted);margin-bottom:12px;">tokens</div>
+                <button class="btn-gilt" style="width:100%;padding:8px;font-size:12px;">$9.99</button>
+              </div>
+              <div class="card" style="padding:20px;text-align:center;cursor:pointer;">
+                <div style="font-size:28px;margin-bottom:8px;">💎</div>
+                <div style="font-family:Georgia,serif;font-size:22px;font-weight:700;color:var(--gilt-600);">1200</div>
+                <div style="font-size:11px;color:var(--text-muted);margin-bottom:12px;">tokens</div>
+                <button class="btn-gilt" style="width:100%;padding:8px;font-size:12px;">$19.99</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Transaction history -->
+          <div class="card" style="padding:24px;">
+            <h3 style="font-family:Georgia,serif;font-size:18px;font-weight:700;color:var(--text);margin-bottom:20px;">Recent Transactions</h3>
+            <div style="display:flex;flex-direction:column;gap:1px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border);">
+                <div style="display:flex;align-items:center;gap:12px;"><div style="width:36px;height:36px;border-radius:10px;background:rgba(74,222,128,.1);display:flex;align-items:center;justify-content:center;font-size:14px;">+</div><div><div style="font-size:13px;font-weight:600;color:var(--text);">Token Purchase</div><div style="font-size:11px;color:var(--text-muted);">150 tokens · $4.99</div></div></div>
+                <div style="text-align:right;"><div style="font-size:13px;font-weight:700;color:#4ade80;">+150</div><div style="font-size:10px;color:var(--text-muted);">Apr 22, 2026</div></div>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border);">
+                <div style="display:flex;align-items:center;gap:12px;"><div style="width:36px;height:36px;border-radius:10px;background:rgba(128,24,24,.1);display:flex;align-items:center;justify-content:center;font-size:14px;">🔓</div><div><div style="font-size:13px;font-weight:600;color:var(--text);">Chapter Unlock</div><div style="font-size:11px;color:var(--text-muted);">The Eternal Scribe · Ch 3</div></div></div>
+                <div style="text-align:right;"><div style="font-size:13px;font-weight:700;color:var(--wine-600);">-5</div><div style="font-size:10px;color:var(--text-muted);">Apr 23, 2026</div></div>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;">
+                <div style="display:flex;align-items:center;gap:12px;"><div style="width:36px;height:36px;border-radius:10px;background:rgba(201,168,76,.15);display:flex;align-items:center;justify-content:center;font-size:14px;">🎁</div><div><div style="font-size:13px;font-weight:600;color:var(--text);">Daily Reward</div><div style="font-size:11px;color:var(--text-muted);">Login bonus</div></div></div>
+                <div style="text-align:right;"><div style="font-size:13px;font-weight:700;color:#4ade80;">+10</div><div style="font-size:10px;color:var(--text-muted);">Apr 24, 2026</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer"><div class="footer-bottom"><span>© 2026 Library of Heaven.</span></div></div>
+      </div>
+    </div><!-- /wallet -->
+
+    <!-- ════════════════════════ 9. CONTACT ════════════════════════ -->
+    <div id="page-contact" class="page">
+      <div class="frame-label">9 · Contact Us</div>
+      <div class="frame">
+        <div class="gilt-line"></div>
+        <div class="navbar">
+          <div class="nav-logo"><div class="nav-logo-icon">📖</div><div class="nav-logo-text"><div class="line1">Library</div><div class="line2">of Heaven</div></div></div>
+          <div class="nav-links"><div class="nav-link">🏠 Home</div><div class="nav-link">📚 Books</div><div class="nav-link active">✉️ Contact</div></div>
+          <div class="nav-actions"><div class="btn-icon">🌙</div></div>
+        </div>
+
+        <div style="padding:64px 48px;min-height:600px;">
+          <div style="text-align:center;max-width:560px;margin:0 auto 48px;">
+            <div class="section-sub" style="text-align:center;">Get in Touch</div>
+            <h1 class="section-title" style="font-size:44px;">Contact Us</h1>
+            <div class="divider-gilt"></div>
+            <p style="font-size:14px;color:var(--text-sub);line-height:1.7;margin-top:16px;">Have a question, found an issue, or want to collaborate? We'd love to hear from you.</p>
+          </div>
+
+          <div style="display:flex;gap:32px;max-width:900px;margin:0 auto;">
+            <!-- Form -->
+            <div class="card" style="flex:1;padding:28px;">
+              <div style="margin-bottom:18px;"><label class="label">Your Name</label><input class="input" placeholder="Zhang Xuan" /></div>
+              <div style="margin-bottom:18px;"><label class="label">Email Address</label><input class="input" placeholder="your@email.com" /></div>
+              <div style="margin-bottom:18px;"><label class="label">Subject</label><input class="input" placeholder="How can we help?" /></div>
+              <div style="margin-bottom:24px;"><label class="label">Message</label><textarea class="input" rows="5" placeholder="Describe your question or issue…" style="resize:none;height:auto;"></textarea></div>
+              <button class="btn-gilt" style="width:100%;padding:13px;font-size:14px;">Send Message</button>
+            </div>
+            <!-- Info cards -->
+            <div style="width:240px;flex-shrink:0;display:flex;flex-direction:column;gap:14px;">
+              <div class="card" style="padding:18px;"><div style="font-size:24px;margin-bottom:8px;">📧</div><h4 style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">Email Support</h4><p style="font-size:12px;color:var(--text-muted);">support@libraryofheaven.com</p></div>
+              <div class="card" style="padding:18px;"><div style="font-size:24px;margin-bottom:8px;">💬</div><h4 style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">Discord</h4><p style="font-size:12px;color:var(--text-muted);">Join our community server for live help</p></div>
+              <div class="card" style="padding:18px;"><div style="font-size:24px;margin-bottom:8px;">⏱️</div><h4 style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">Response Time</h4><p style="font-size:12px;color:var(--text-muted);">Usually within 24 hours</p></div>
+            </div>
+          </div>
+        </div>
+        <div class="footer"><div class="footer-bottom"><span>© 2026 Library of Heaven.</span></div></div>
+      </div>
+    </div><!-- /contact -->
+
+    <!-- ════════════════════════ 10. BECOME AUTHOR ════════════════════════ -->
+    <div id="page-become" class="page">
+      <div class="frame-label">10 · Become an Author</div>
+      <div class="frame">
+        <div class="gilt-line"></div>
+        <div class="navbar">
+          <div class="nav-logo"><div class="nav-logo-icon">📖</div><div class="nav-logo-text"><div class="line1">Library</div><div class="line2">of Heaven</div></div></div>
+          <div class="nav-links"><div class="nav-link">🏠 Home</div><div class="nav-link">📚 Books</div><div class="nav-link active">✒️ Become Author</div></div>
+          <div class="nav-actions"><div class="btn-icon">🌙</div></div>
+        </div>
+
+        <!-- Hero strip -->
+        <div style="background:linear-gradient(135deg,#3D0C02 0%,#801818 40%,#5A4610 100%);padding:56px 48px;text-align:center;position:relative;overflow:hidden;">
+          <div style="position:absolute;inset:0;background-image:radial-gradient(circle,rgba(240,222,154,.06) 1px,transparent 1px);background-size:40px 40px;"></div>
+          <div style="position:relative;z-index:10;max-width:560px;margin:0 auto;">
+            <div style="font-size:40px;margin-bottom:16px;">✒️</div>
+            <h1 style="font-family:Georgia,serif;font-size:40px;font-weight:700;color:#F9F6F2;margin-bottom:12px;">Share Your Story</h1>
+            <p style="font-size:14px;color:rgba(249,246,242,.7);line-height:1.7;">Apply to become an author. Upload novels, earn tokens, and build a readership on Library of Heaven.</p>
+          </div>
+        </div>
+
+        <div style="padding:48px;max-width:640px;margin:0 auto;">
+          <!-- Benefits -->
+          <div class="grid-3" style="margin-bottom:36px;grid-template-columns:repeat(3,1fr);">
+            <div class="card" style="padding:16px;text-align:center;"><div style="font-size:28px;margin-bottom:8px;">📤</div><h4 style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">Upload Novels</h4><p style="font-size:11px;color:var(--text-muted);">Publish your work in chapters</p></div>
+            <div class="card" style="padding:16px;text-align:center;"><div style="font-size:28px;margin-bottom:8px;">🪙</div><h4 style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">Earn Tokens</h4><p style="font-size:11px;color:var(--text-muted);">Get paid for locked chapters</p></div>
+            <div class="card" style="padding:16px;text-align:center;"><div style="font-size:28px;margin-bottom:8px;">👥</div><h4 style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">Build Audience</h4><p style="font-size:11px;color:var(--text-muted);">Grow your readership daily</p></div>
+          </div>
+
+          <!-- Application form -->
+          <div class="card" style="padding:28px;">
+            <h3 style="font-family:Georgia,serif;font-size:20px;font-weight:700;color:var(--text);margin-bottom:20px;">Author Application</h3>
+            <div style="margin-bottom:18px;"><label class="label">Pen Name</label><input class="input" placeholder="Your author name" /></div>
+            <div style="margin-bottom:18px;"><label class="label">Genre Specialty</label><select class="input"><option>Xianxia / Cultivation</option><option>Romance</option><option>Fantasy</option><option>Sci-Fi</option><option>Mystery</option></select></div>
+            <div style="margin-bottom:18px;"><label class="label">About You</label><textarea class="input" rows="4" placeholder="Tell us about yourself and your writing experience…" style="resize:none;height:auto;"></textarea></div>
+            <div style="margin-bottom:24px;"><label class="label">Sample Chapter URL (optional)</label><input class="input" placeholder="Link to a writing sample" /></div>
+            <button class="btn-gilt" style="width:100%;padding:13px;font-size:14px;">Submit Application</button>
+          </div>
+        </div>
+        <div class="footer"><div class="footer-bottom"><span>© 2026 Library of Heaven.</span></div></div>
+      </div>
+    </div><!-- /become -->
+
+    <!-- ════════════════════════ 11. AUTHOR DASHBOARD ════════════════════════ -->
+    <div id="page-author" class="page">
+      <div class="frame-label">11 · Author Dashboard</div>
+      <div class="frame">
+        <div class="gilt-line"></div>
+        <div class="navbar">
+          <div class="nav-logo"><div class="nav-logo-icon">📖</div><div class="nav-logo-text"><div class="line1">Library</div><div class="line2">of Heaven</div></div></div>
+          <div class="nav-links"><div class="nav-link">🏠 Home</div><div class="nav-link">📚 Books</div><div class="nav-link active">✒️ Author Dashboard</div><div class="nav-link">👤 Profile</div></div>
+          <div class="nav-actions"><div class="btn-icon">🌙</div><button class="btn-wine" style="padding:6px 12px;font-size:11px;">Sign Out</button></div>
+        </div>
+
+        <!-- Author banner -->
+        <div style="background:linear-gradient(135deg,#3D0C02,#801818,#5A4610);padding:32px 48px;position:relative;overflow:hidden;">
+          <div style="position:absolute;inset:0;background-image:radial-gradient(circle,rgba(240,222,154,.06) 1px,transparent 1px);background-size:40px 40px;"></div>
+          <div style="position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;">
+            <div style="display:flex;align-items:center;gap:20px;">
+              <div style="width:64px;height:64px;border-radius:14px;border:2px solid rgba(201,168,76,.5);background:rgba(201,168,76,.15);display:flex;align-items:center;justify-content:center;">
+                <span style="font-size:22px;font-weight:700;color:var(--gilt-300);">ZW</span>
+              </div>
+              <div>
+                <div style="font-size:10px;font-weight:700;color:var(--gilt-300);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px;">Author Account</div>
+                <h2 style="font-family:Georgia,serif;font-size:24px;font-weight:700;color:#F9F6F2;margin-bottom:4px;">Zhang Wei</h2>
+                <span style="font-size:11px;color:rgba(249,246,242,.6);">✒️ Joined April 2024 · Xianxia Specialist</span>
+              </div>
+            </div>
+            <button class="btn-gilt" style="padding:10px 20px;font-size:12px;">+ Upload New Novel</button>
+          </div>
+        </div>
+
+        <div style="padding:32px 48px;min-height:600px;">
+          <!-- Stats row -->
+          <div class="grid-4" style="margin-bottom:28px;">
+            <div class="card" style="padding:18px;"><div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Total Novels</div><div style="font-family:Georgia,serif;font-size:32px;font-weight:700;color:var(--gilt-600);">3</div></div>
+            <div class="card" style="padding:18px;"><div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Total Chapters</div><div style="font-family:Georgia,serif;font-size:32px;font-weight:700;color:var(--gilt-600);">370</div></div>
+            <div class="card" style="padding:18px;"><div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Total Views</div><div style="font-family:Georgia,serif;font-size:32px;font-weight:700;color:var(--gilt-600);">98k</div></div>
+            <div class="card" style="padding:18px;"><div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Tokens Earned</div><div style="font-family:Georgia,serif;font-size:32px;font-weight:700;color:var(--gilt-600);">2,450</div></div>
+          </div>
+
+          <!-- My novels -->
+          <div class="card" style="padding:24px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+              <h3 style="font-family:Georgia,serif;font-size:18px;font-weight:700;color:var(--text);">My Novels</h3>
+              <button class="btn-gilt" style="padding:8px 16px;font-size:12px;">+ Add Novel</button>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:14px;">
+              <!-- Novel row -->
+              <div style="display:flex;gap:16px;align-items:center;padding:16px;border-radius:12px;border:1px solid var(--border);">
+                <div style="width:56px;height:72px;border-radius:8px;background:linear-gradient(135deg,var(--parchment-400),var(--toffee-300));display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">📖</div>
+                <div style="flex:1;">
+                  <h4 style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px;">The Eternal Scribe</h4>
+                  <p style="font-size:11px;color:var(--text-muted);">142 chapters · Xianxia · Ongoing</p>
+                  <div class="progress-track" style="margin-top:8px;width:200px;"><div class="progress-fill" style="width:71%;"></div></div>
+                </div>
+                <div style="display:flex;gap:8px;">
+                  <div style="text-align:center;padding:10px 14px;border-radius:10px;background:var(--parchment-100);"><div style="font-size:14px;font-weight:700;color:var(--gilt-600);">68k</div><div style="font-size:10px;color:var(--text-muted);">views</div></div>
+                  <div style="text-align:center;padding:10px 14px;border-radius:10px;background:var(--parchment-100);"><div style="font-size:14px;font-weight:700;color:var(--gilt-600);">4.8★</div><div style="font-size:10px;color:var(--text-muted);">rating</div></div>
+                </div>
+                <div style="display:flex;gap:6px;flex-shrink:0;">
+                  <button class="btn-ghost" style="font-size:11px;padding:7px 12px;">✏️ Edit</button>
+                  <button class="btn-gilt" style="padding:7px 12px;font-size:11px;">+ Chapter</button>
+                </div>
+              </div>
+              <div style="display:flex;gap:16px;align-items:center;padding:16px;border-radius:12px;border:1px solid var(--border);">
+                <div style="width:56px;height:72px;border-radius:8px;background:linear-gradient(135deg,#001A38,#002147);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🗡️</div>
+                <div style="flex:1;">
+                  <h4 style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px;">Sovereign of Blades</h4>
+                  <p style="font-size:11px;color:var(--text-muted);">88 chapters · Action · Ongoing</p>
+                  <div class="progress-track" style="margin-top:8px;width:200px;"><div class="progress-fill" style="width:44%;"></div></div>
+                </div>
+                <div style="display:flex;gap:8px;">
+                  <div style="text-align:center;padding:10px 14px;border-radius:10px;background:var(--parchment-100);"><div style="font-size:14px;font-weight:700;color:var(--gilt-600);">21k</div><div style="font-size:10px;color:var(--text-muted);">views</div></div>
+                  <div style="text-align:center;padding:10px 14px;border-radius:10px;background:var(--parchment-100);"><div style="font-size:14px;font-weight:700;color:var(--gilt-600);">4.6★</div><div style="font-size:10px;color:var(--text-muted);">rating</div></div>
+                </div>
+                <div style="display:flex;gap:6px;flex-shrink:0;">
+                  <button class="btn-ghost" style="font-size:11px;padding:7px 12px;">✏️ Edit</button>
+                  <button class="btn-gilt" style="padding:7px 12px;font-size:11px;">+ Chapter</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer"><div class="footer-bottom"><span>© 2026 Library of Heaven.</span></div></div>
+      </div>
+    </div><!-- /author -->
+
+  </div><!-- /canvas -->
+</div><!-- /shell -->
+
+<!-- Floating contact (always visible on frame) -->
+<div class="floating-btn" title="Floating Contact Button">✉</div>
+
+<script>
+  const pages = document.querySelectorAll('.page');
+  const items  = document.querySelectorAll('.sidebar-item');
+
+  function show(id, btn) {
+    pages.forEach(p => p.classList.remove('active'));
+    items.forEach(i => i.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    btn.classList.add('active');
+    document.getElementById('canvas').scrollTop = 0;
+  }
+
+  let dark = false;
+  function toggleDark() {
+    dark = !dark;
+    document.querySelectorAll('.frame').forEach(f => f.classList.toggle('dark-mode', dark));
+    document.querySelector('.theme-btn').textContent = dark ? '☀ Toggle Light / Dark' : '⬤ Toggle Light / Dark';
+  }
+</script>
+</body>
+</html>

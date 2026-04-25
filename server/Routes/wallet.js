@@ -204,4 +204,84 @@ router.get("/get_unlocked_chapters/:novelId", auth, async (req, res) => {
     }
 });
 
+// ── Daily Reward ────────────────────────────────────────────────────────────
+
+const DAILY_REWARD_TOKENS = 10;
+const REWARD_COOLDOWN_MS  = 24 * 60 * 60 * 1000; // 24 hours
+
+// Check if user can claim today's reward (no side effects)
+router.get("/check_daily_reward", auth, async (req, res) => {
+    try {
+        const userId = req.headers.id;
+        const user   = await User.findById(userId).select("lastDailyReward");
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        const now       = Date.now();
+        const lastClaim = user.lastDailyReward ? new Date(user.lastDailyReward).getTime() : 0;
+        const eligible  = now - lastClaim >= REWARD_COOLDOWN_MS;
+        const nextRewardAt = eligible ? null : new Date(lastClaim + REWARD_COOLDOWN_MS);
+
+        res.status(200).json({ eligible, nextRewardAt, amount: DAILY_REWARD_TOKENS });
+    } catch (err) {
+        console.error("Error checking daily reward:", err);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+// Claim daily reward
+router.post("/claim_daily_reward", auth, async (req, res) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try {
+        const userId = req.headers.id;
+        const user   = await User.findById(userId).session(session);
+        if (!user) throw new Error("User not found");
+
+        const now       = Date.now();
+        const lastClaim = user.lastDailyReward ? new Date(user.lastDailyReward).getTime() : 0;
+
+        if (now - lastClaim < REWARD_COOLDOWN_MS) {
+            await session.abortTransaction();
+            session.endSession();
+            const nextRewardAt = new Date(lastClaim + REWARD_COOLDOWN_MS);
+            return res.status(429).json({ message: "Already claimed today", nextRewardAt });
+        }
+
+        // Credit wallet
+        let wallet = await Wallet.findOne({ userId }).session(session);
+        if (!wallet) {
+            wallet = new Wallet({ userId, balance: 0, totalEarned: 0, totalSpent: 0 });
+        }
+        wallet.balance += DAILY_REWARD_TOKENS;
+        await wallet.save({ session });
+
+        // Record transaction
+        const tx = new TokenTransaction({
+            userId,
+            type:        "bonus",
+            amount:      DAILY_REWARD_TOKENS,
+            description: "Daily login reward — 10 tokens",
+        });
+        await tx.save({ session });
+
+        // Update last claim timestamp
+        user.lastDailyReward = new Date();
+        await user.save({ session });
+
+        await session.commitTransaction();
+        session.endSession();
+
+        res.status(200).json({
+            message: "Daily reward claimed!",
+            amount:  DAILY_REWARD_TOKENS,
+            balance: wallet.balance,
+        });
+    } catch (err) {
+        await session.abortTransaction();
+        session.endSession();
+        console.error("Error claiming daily reward:", err);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
 module.exports = router;

@@ -164,6 +164,12 @@
 @keyframes fadeIn    { from { opacity: 0; } to { opacity: 1; } }
 @keyframes fadeInUp  { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
 
+/* ── Reader drop-cap clearfix ─────────────────────────── */
+.reader-drop-cap::after { content: ''; display: table; clear: both; }
+
+/* ── Chapter row dark-mode bg ─────────────────────────── */
+.dark [style*="--chapter-bg"] { --chapter-bg: rgba(0,26,56,0.6); }
+
 /* ── Scrollbar ────────────────────────────────────────── */
 ::-webkit-scrollbar       { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }

@@ -237,79 +237,105 @@ const Reader = () => {
 
     /* ── Nav bar (reusable) ── */
     const NavBar = () => (
-        <div className="sticky top-0 z-40 bg-[#fdfbf7]/90 dark:bg-[#1a1b26]/90 backdrop-blur-md border-b border-parchment-300 dark:border-navy-700 transition-colors">
-            <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
-                <Link
-                    to={`/view_detail/${novel_id}`}
-                    className="flex items-center gap-2 text-toffee-600 dark:text-toffee-400 hover:text-wine-600 transition-colors font-sans text-sm font-semibold shrink-0"
-                >
-                    <FaArrowLeft className="w-3.5 h-3.5" /> Back
-                </Link>
-
-                <div className="text-center flex-1 truncate">
-                    <h2 className="text-sm font-bold text-parchment-900 dark:text-parchment-100 truncate font-serif">{novel?.title}</h2>
-                    <p className="text-xs text-toffee-500 font-sans">
-                        Chapter {chapter?.chapterNumber ?? lockedChapter?.chapterNumber}
-                        {allChapters.length > 0 && ` / ${allChapters.length}`}
-                    </p>
+        <div className="sticky top-0 z-40 backdrop-blur-md border-b"
+            style={{ background: 'rgba(0,6,15,0.95)', borderColor: 'rgba(192,147,101,0.10)' }}
+        >
+            <div className="max-w-3xl mx-auto px-5 h-[52px] flex items-center justify-between gap-4">
+                {/* Left: breadcrumb */}
+                <div className="flex items-center gap-3 shrink-0 min-w-0">
+                    <Link
+                        to={`/view_detail/${novel_id}`}
+                        className="font-sans text-xs font-medium transition-colors whitespace-nowrap"
+                        style={{ color: 'rgba(192,147,101,0.7)' }}
+                        onMouseEnter={e => e.currentTarget.style.color = 'rgba(192,147,101,1)'}
+                        onMouseLeave={e => e.currentTarget.style.color = 'rgba(192,147,101,0.7)'}
+                    >
+                        ← Library
+                    </Link>
+                    <div className="w-px h-4 hidden sm:block" style={{ background: 'rgba(192,147,101,0.2)' }} />
+                    <span className="font-serif text-sm hidden sm:block truncate max-w-[180px]"
+                        style={{ color: 'rgba(237,232,225,0.7)' }}
+                    >{novel?.title}</span>
                 </div>
 
-                <div className="flex items-center gap-1 shrink-0">
-                    <button
+                {/* Center: chapter label */}
+                <span className="font-serif italic text-sm shrink-0 hidden md:block"
+                    style={{ color: '#B52A2A' }}
+                >
+                    Chapter {chapter?.chapterNumber ?? lockedChapter?.chapterNumber}
+                    {chapter?.title ? ` — ${chapter.title}` : ''}
+                </span>
+
+                {/* Right: controls */}
+                <div className="flex items-center gap-3 shrink-0">
+                    <span className="font-sans text-xs cursor-pointer transition-colors"
+                        style={{ color: 'rgba(192,147,101,0.6)' }}
+                        title="Previous"
                         onClick={() => navigateTo(prevChapter)}
-                        disabled={!prevChapter}
-                        title="Previous Chapter"
-                        className="flex items-center gap-1 px-3 py-1.5 rounded-lg font-sans text-xs font-semibold transition-all disabled:opacity-30 disabled:cursor-not-allowed text-toffee-600 dark:text-toffee-400 hover:bg-parchment-200 dark:hover:bg-navy-700"
-                    >
-                        <FaArrowLeft className="w-3 h-3" /> Prev
-                    </button>
-                    <button
+                    >←</span>
+                    <span className="font-sans text-xs cursor-pointer"
+                        style={{ color: 'rgba(192,147,101,0.6)' }}
+                        title="Font size"
+                    >Aa</span>
+                    <span className="font-sans text-xs cursor-pointer"
+                        style={{ color: 'rgba(192,147,101,0.6)' }}
+                        title="Next"
                         onClick={() => navigateTo(nextChapter)}
-                        disabled={!nextChapter}
-                        title="Next Chapter"
-                        className="flex items-center gap-1 px-3 py-1.5 rounded-lg font-sans text-xs font-semibold transition-all disabled:opacity-30 disabled:cursor-not-allowed text-toffee-600 dark:text-toffee-400 hover:bg-parchment-200 dark:hover:bg-navy-700"
-                    >
-                        Next <FaArrowRight className="w-3 h-3" />
-                    </button>
+                    >→</span>
                 </div>
             </div>
         </div>
     );
 
     /* ── Bottom navigation bar ── */
-    const BottomNav = () => (
-        <div className="flex items-center justify-between gap-4 mt-20 pt-8 border-t border-parchment-300 dark:border-navy-700">
-            <button
-                onClick={() => navigateTo(prevChapter)}
-                disabled={!prevChapter}
-                className="flex items-center gap-2 px-6 py-3 rounded-full bg-parchment-200 dark:bg-navy-800 text-parchment-800 dark:text-parchment-200 font-sans font-bold text-sm hover:bg-parchment-300 dark:hover:bg-navy-700 transition-colors border border-parchment-300 dark:border-navy-600 disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-                <FaArrowLeft className="w-3.5 h-3.5" />
-                {prevChapter ? `Ch. ${prevChapter.chapterNumber}` : "No Previous"}
-            </button>
+    const BottomNav = () => {
+        const progress = allChapters.length > 0 && chapter
+            ? Math.round(((currentIndex + 1) / allChapters.length) * 100)
+            : 0;
+        return (
+            <div className="mt-20 pt-8 border-t" style={{ borderColor: 'rgba(192,147,101,0.12)' }}>
+                <div className="flex items-center justify-between gap-4">
+                    <button
+                        onClick={() => navigateTo(prevChapter)}
+                        disabled={!prevChapter}
+                        className="font-sans text-xs font-medium px-5 py-2.5 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                        style={{ color: 'rgba(192,147,101,0.7)', border: '1px solid rgba(192,147,101,0.2)' }}
+                    >
+                        ← {prevChapter ? `Ch. ${prevChapter.chapterNumber}` : "Start"}
+                    </button>
 
-            <Link
-                to={`/view_detail/${novel_id}`}
-                className="px-4 py-2 rounded-full text-xs font-sans font-semibold text-toffee-600 dark:text-toffee-400 hover:text-wine-600 transition-colors"
-            >
-                Chapter List
-            </Link>
+                    {/* Progress */}
+                    <div className="text-center flex-1">
+                        <div className="font-sans text-xs mb-2" style={{ color: 'rgba(192,147,101,0.5)' }}>
+                            {currentIndex + 1} / {allChapters.length} · Reading progress
+                        </div>
+                        <div className="h-0.5 rounded-full mx-auto" style={{ maxWidth: 160, background: 'rgba(192,147,101,0.12)' }}>
+                            <div className="h-full rounded-full transition-all duration-500"
+                                style={{ width: `${progress}%`, background: 'linear-gradient(90deg, #801818, #B52A2A)' }}
+                            />
+                        </div>
+                        <div className="font-sans text-xs mt-1.5" style={{ color: 'rgba(192,147,101,0.35)', fontSize: '10px' }}>
+                            {progress}% complete
+                        </div>
+                    </div>
 
-            <button
-                onClick={() => navigateTo(nextChapter)}
-                disabled={!nextChapter}
-                className="flex items-center gap-2 px-6 py-3 rounded-full bg-wine-600 hover:bg-wine-700 text-parchment-50 font-sans font-bold text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-md"
-            >
-                {nextChapter ? `Ch. ${nextChapter.chapterNumber}` : "No Next"}
-                <FaArrowRight className="w-3.5 h-3.5" />
-            </button>
-        </div>
-    );
+                    <button
+                        onClick={() => navigateTo(nextChapter)}
+                        disabled={!nextChapter}
+                        className="font-sans text-xs font-semibold px-5 py-2.5 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                        style={{ color: '#F9F6F2', background: '#801818' }}
+                    >
+                        {nextChapter ? `Ch. ${nextChapter.chapterNumber}` : "End"} →
+                    </button>
+                </div>
+            </div>
+        );
+    };
 
     /* ── Loading ── */
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#fdfbf7] dark:bg-[#1a1b26] pt-24 flex items-center justify-center">
+            <div className="min-h-screen flex items-center justify-center pt-24" style={{ background: '#000A18' }}>
                 <span className="w-12 h-12 border-4 border-wine-600 border-t-transparent rounded-full animate-spin" />
             </div>
         );
@@ -318,7 +344,7 @@ const Reader = () => {
     /* ── Locked Chapter — show modal immediately ── */
     if (lockedChapter) {
         return (
-            <div className="min-h-screen bg-[#fdfbf7] dark:bg-[#1a1b26] transition-colors">
+            <div className="min-h-screen transition-colors" style={{ background: '#000A18' }}>
                 <motion.div className="fixed top-0 left-0 right-0 h-0.5 bg-wine-600 z-50" style={{ scaleX }} />
                 <NavBar />
                 <UnlockModal
@@ -329,11 +355,10 @@ const Reader = () => {
                     onCancel={() => navigate(`/view_detail/${novel_id}`)}
                     loading={unlocking}
                 />
-                {/* blurred background preview */}
-                <div className="max-w-3xl mx-auto px-6 py-12 select-none pointer-events-none opacity-20 blur-sm">
-                    <div className="h-8 bg-parchment-600 dark:bg-navy-400 rounded w-3/4 mb-6" />
+                <div className="max-w-3xl mx-auto px-6 py-12 select-none pointer-events-none opacity-10 blur-sm">
+                    <div className="h-8 bg-navy-700 rounded w-3/4 mb-6" />
                     {[...Array(8)].map((_, i) => (
-                        <div key={i} className="h-4 bg-parchment-400 dark:bg-navy-500 rounded mb-3" style={{ width: `${70 + Math.random() * 30}%` }} />
+                        <div key={i} className="h-4 bg-navy-700 rounded mb-3" style={{ width: `${70 + Math.random() * 30}%` }} />
                     ))}
                 </div>
             </div>
@@ -343,52 +368,91 @@ const Reader = () => {
     /* ── Error ── */
     if (error) {
         return (
-            <div className="min-h-screen bg-[#fdfbf7] dark:bg-[#1a1b26] pt-24 flex flex-col items-center justify-center gap-4">
-                <p className="text-xl text-wine-600 font-bold">{error}</p>
-                <Link to={`/view_detail/${novel_id}`} className="px-6 py-2 bg-parchment-200 dark:bg-navy-800 rounded-lg font-sans text-sm">
+            <div className="min-h-screen pt-24 flex flex-col items-center justify-center gap-4" style={{ background: '#000A18' }}>
+                <p className="text-xl text-wine-400 font-bold">{error}</p>
+                <Link to={`/view_detail/${novel_id}`}
+                    className="px-6 py-2 rounded-lg font-sans text-sm"
+                    style={{ background: 'rgba(192,147,101,0.1)', color: 'rgba(192,147,101,0.8)', border: '1px solid rgba(192,147,101,0.2)' }}
+                >
                     Go Back
                 </Link>
             </div>
         );
     }
 
+    const paragraphs = chapter?.content?.split("\n").filter(p => p.trim()) || [];
+
     /* ── Full Reader ── */
     return (
-        <div className="min-h-screen bg-[#fdfbf7] dark:bg-[#1a1b26] transition-colors duration-300 font-serif">
-            <motion.div className="fixed top-0 left-0 right-0 h-1 bg-wine-600 transform origin-left z-50" style={{ scaleX }} />
+        <div className="min-h-screen transition-colors duration-300 font-serif" style={{ background: '#000A18' }}>
+            <motion.div className="fixed top-0 left-0 right-0 h-0.5 bg-wine-600 transform origin-left z-50" style={{ scaleX }} />
 
             <NavBar />
 
-            <div className="max-w-3xl mx-auto px-6 py-12 md:py-20">
-                <h1 className="text-3xl md:text-5xl font-bold text-parchment-900 dark:text-parchment-50 mb-12 leading-tight">
-                    Chapter {chapter?.chapterNumber}:<br className="hidden md:block" />
-                    <span className="text-2xl md:text-4xl font-normal text-toffee-800 dark:text-parchment-200 mt-2 block">
+            <div className="max-w-2xl mx-auto px-6 py-12 md:py-16">
+                {/* Chapter heading */}
+                <div className="text-center mb-8">
+                    <p className="font-sans font-semibold uppercase mb-3"
+                        style={{ fontSize: '10px', letterSpacing: '0.16em', color: '#926644' }}
+                    >
+                        Chapter {chapter?.chapterNumber}
+                    </p>
+                    <h1 className="font-serif italic font-bold text-3xl md:text-4xl leading-tight"
+                        style={{ color: 'rgba(237,232,225,0.95)' }}
+                    >
                         {chapter?.title}
-                    </span>
-                </h1>
-
-                <div className="prose prose-lg md:prose-xl dark:prose-invert prose-p:leading-loose prose-p:text-[#333] dark:prose-p:text-[#d1d5db] font-serif max-w-none">
-                    {chapter?.content?.split("\n").map((paragraph, idx) =>
-                        paragraph.trim() ? (
-                            <motion.p
-                                key={idx}
-                                initial={{ opacity: 0, y: 8 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.4, delay: Math.min(idx * 0.03, 1) }}
-                                className="mb-6 indent-8 tracking-wide"
-                            >
-                                {paragraph}
-                            </motion.p>
-                        ) : null
-                    )}
+                    </h1>
                 </div>
 
-                {/* End of chapter badge */}
+                {/* Decorative divider */}
+                <div className="h-px mb-10"
+                    style={{ background: 'linear-gradient(90deg, transparent, rgba(192,147,101,0.35), transparent)' }}
+                />
+
+                {/* Chapter content */}
+                <div>
+                    {paragraphs.map((paragraph, idx) => (
+                        <motion.p
+                            key={idx}
+                            initial={{ opacity: 0, y: 8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.4, delay: Math.min(idx * 0.025, 0.8) }}
+                            className="font-serif mb-6 tracking-wide"
+                            style={{
+                                fontSize: '15px',
+                                lineHeight: 1.85,
+                                color: idx === 0 ? 'rgba(237,232,225,0.82)' : 'rgba(237,232,225,0.78)',
+                                textAlign: 'justify',
+                            }}
+                        >
+                            {/* Drop cap on first paragraph */}
+                            {idx === 0 && paragraph.length > 0 ? (
+                                <>
+                                    <span className="float-left font-serif font-bold leading-none mr-1 mt-1"
+                                        style={{ fontSize: '4rem', color: '#B52A2A', lineHeight: 0.82 }}
+                                    >
+                                        {paragraph[0]}
+                                    </span>
+                                    {paragraph.slice(1)}
+                                </>
+                            ) : paragraph}
+                        </motion.p>
+                    ))}
+                </div>
+
+                {/* End of chapter */}
                 <div className="mt-16 flex flex-col items-center">
-                    <div className="w-12 h-12 rounded-full bg-parchment-200 dark:bg-navy-800 flex items-center justify-center text-toffee-500 mb-3">
-                        <FaCheck />
+                    <div className="h-px w-24 mb-6"
+                        style={{ background: 'linear-gradient(90deg, transparent, rgba(192,147,101,0.35), transparent)' }}
+                    />
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center mb-3"
+                        style={{ background: 'rgba(192,147,101,0.08)', border: '1px solid rgba(192,147,101,0.2)' }}
+                    >
+                        <FaCheck style={{ color: 'rgba(192,147,101,0.6)', width: 14, height: 14 }} />
                     </div>
-                    <p className="text-sm font-sans text-toffee-600 dark:text-toffee-400 uppercase tracking-widest">
+                    <p className="font-sans text-xs uppercase tracking-widest"
+                        style={{ color: 'rgba(192,147,101,0.5)', letterSpacing: '0.14em' }}
+                    >
                         End of Chapter {chapter?.chapterNumber}
                     </p>
                 </div>
