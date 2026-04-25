@@ -1,236 +1,240 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaArrowRight, FaBook, FaStar, FaUsers, FaFeatherAlt } from 'react-icons/fa';
+import { FaArrowRight, FaFeatherAlt, FaStar } from 'react-icons/fa';
+import axios from 'axios';
 import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import HeroThreeCanvas from './HeroThreeCanvas';
-
-gsap.registerPlugin(ScrollTrigger);
-
-const HERO_IMAGE = 'https://images.pexels.com/photos/590493/pexels-photo-590493.jpeg';
+import heroImg from '../assets/hero.png';
 
 const STATS = [
-  { display: '10,000+', label: 'Novels Available',  sub: 'Across all genres',     icon: FaBook  },
-  { display: '4.9 ★',  label: 'Average Rating',     sub: 'Community score',        icon: FaStar  },
-  { display: '50,000+', label: 'Active Readers',    sub: 'Growing every day',      icon: FaUsers },
+  { value: '12,400+', label: 'Novels'  },
+  { value: '3,200+',  label: 'Authors' },
+  { value: '980K+',   label: 'Readers' },
 ];
 
 const HeroSection = () => {
-  const sectionRef = useRef(null);
-  const badgeRef   = useRef(null);
-  const headRef    = useRef(null);
-  const ruleRef    = useRef(null);
-  const paraRef    = useRef(null);
+  const bgRef      = useRef(null);
+  const eyebrowRef = useRef(null);
+  const titleRef   = useRef(null);
+  const descRef    = useRef(null);
   const ctaRef     = useRef(null);
-  const panelRef   = useRef(null);
   const statsRef   = useRef(null);
+  const badgeRef   = useRef(null);
+
+  const [featured, setFeatured] = useState(null);
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ defaults: { ease: 'power3.out' }, delay: 0.12 });
+    axios.get(`${import.meta.env.VITE_API_URL}/get_recent_novels`)
+      .then(res => { if (res.data.data?.length) setFeatured(res.data.data[0]); })
+      .catch(() => {});
+  }, []);
 
-      tl.fromTo(badgeRef.current, { opacity: 0, x: -32 }, { opacity: 1, x: 0, duration: 0.7 })
-        .fromTo(headRef.current,  { opacity: 0, y: 64  }, { opacity: 1, y: 0, duration: 1.0 }, '-=0.4')
-        .fromTo(ruleRef.current,  { opacity: 0, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.6, transformOrigin: 'left center' }, '-=0.5')
-        .fromTo(paraRef.current,  { opacity: 0, y: 28  }, { opacity: 1, y: 0, duration: 0.7 }, '-=0.35')
-        .fromTo(ctaRef.current ? Array.from(ctaRef.current.children) : [],
-          { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, stagger: 0.14 }, '-=0.35')
-        .fromTo(panelRef.current ? Array.from(panelRef.current.children) : [],
-          { opacity: 0, x: 48 }, { opacity: 1, x: 0, duration: 0.65, stagger: 0.13 }, '-=0.9')
-        .fromTo(statsRef.current ? Array.from(statsRef.current.children) : [],
-          { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.5, stagger: 0.1 }, '-=0.15');
-    }, sectionRef);
+  useEffect(() => {
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out' }, delay: 0.1 });
 
-    return () => ctx.revert();
+    // Slow zoom on background
+    gsap.to(bgRef.current, {
+      scale: 1.12,
+      duration: 18,
+      ease: 'none',
+      repeat: -1,
+      yoyo: true,
+    });
+
+    tl.fromTo(eyebrowRef.current, { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.7 })
+      .fromTo(titleRef.current,   { opacity: 0, y: 40  }, { opacity: 1, y: 0, duration: 0.9 }, '-=0.4')
+      .fromTo(descRef.current,    { opacity: 0, y: 24  }, { opacity: 1, y: 0, duration: 0.7 }, '-=0.5')
+      .fromTo(
+        ctaRef.current ? Array.from(ctaRef.current.children) : [],
+        { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.55, stagger: 0.12 }, '-=0.4'
+      )
+      .fromTo(
+        statsRef.current ? Array.from(statsRef.current.children) : [],
+        { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.5, stagger: 0.1 }, '-=0.3'
+      )
+      .fromTo(badgeRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.7 }, '-=0.6');
+
+    return () => { tl.kill(); };
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative w-full min-h-screen overflow-hidden">
-
-      {/* ── Background ────────────────────────────────── */}
-      <div className="absolute inset-0 z-0">
-        <img
-          src={HERO_IMAGE}
-          alt="Warm library corridor"
-          className="w-full h-full object-cover object-center scale-110"
-          style={{ filter: 'brightness(0.88) saturate(0.75)' }}
-        />
-        {/* Left-to-right gradient */}
-        <div className="absolute inset-0 bg-gradient-to-r
-          from-parchment-200/97 via-parchment-200/80 to-parchment-200/20
-          dark:from-navy-950/97 dark:via-navy-950/82 dark:to-navy-950/18
-          transition-colors duration-300"
-        />
-        {/* Bottom fade */}
-        <div className="absolute inset-0 bg-gradient-to-t
-          from-parchment-200/75 via-transparent to-parchment-200/15
-          dark:from-navy-950/75 dark:to-navy-950/10
-          transition-colors duration-300"
-        />
-        {/* Star-chart dot grid */}
-        <div className="absolute inset-0 opacity-[0.035] dark:opacity-[0.07] pointer-events-none"
-          style={{
-            backgroundImage: 'radial-gradient(circle, #C9A84C 1px, transparent 1px)',
-            backgroundSize: '55px 55px',
-          }}
-        />
-      </div>
-
-      {/* ── Three.js particle canvas ───────────────────── */}
-      <HeroThreeCanvas />
-
-      {/* ── Decorative vertical rule (desktop) ────────── */}
-      <div className="hidden lg:block absolute left-[54%] top-1/2 -translate-y-1/2
-        w-px h-80 z-10 pointer-events-none"
-        style={{ background: 'linear-gradient(to bottom, transparent, rgba(201,168,76,0.20), transparent)' }}
+    <section className="relative w-full min-h-screen overflow-hidden flex items-center"
+      style={{ background: '#000A18' }}
+    >
+      {/* ── Background image ── */}
+      <div ref={bgRef} className="absolute inset-0 z-0"
+        style={{
+          backgroundImage:    `url(${heroImg})`,
+          backgroundSize:     'cover',
+          backgroundPosition: 'center 20%',
+          filter:             'brightness(0.75) saturate(0.85)',
+          transform:          'scale(1.04)',
+          willChange:         'transform',
+        }}
       />
 
-      {/* ── Hero content ──────────────────────────────── */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8
-        flex items-center min-h-screen pt-20 pb-24"
-      >
-        <div className="w-full flex flex-col lg:flex-row items-start lg:items-center gap-10 lg:gap-0">
+      {/* Left-to-right overlay */}
+      <div className="absolute inset-0 z-[1] pointer-events-none"
+        style={{
+          background: 'linear-gradient(100deg, rgba(0,6,15,0.92) 0%, rgba(0,10,24,0.82) 30%, rgba(0,10,24,0.55) 55%, rgba(0,10,24,0.10) 75%, transparent 100%)',
+        }}
+      />
+      {/* Top fade */}
+      <div className="absolute top-0 left-0 right-0 z-[2] pointer-events-none"
+        style={{ height: 160, background: 'linear-gradient(to bottom, rgba(0,6,15,0.55), transparent)' }}
+      />
+      {/* Bottom fade */}
+      <div className="absolute bottom-0 left-0 right-0 z-[2] pointer-events-none"
+        style={{ height: 180, background: 'linear-gradient(to top, rgba(0,6,15,0.9), transparent)' }}
+      />
 
-          {/* Left: Copy */}
-          <div className="flex-1 max-w-2xl">
+      {/* ── Content ── */}
+      <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-8 w-full pt-[68px]">
+        <div className="max-w-[560px] py-28">
 
-            {/* Badge */}
-            <div ref={badgeRef} style={{ opacity: 0 }}
-              className="inline-flex items-center gap-2.5 mb-9"
+          {/* Eyebrow */}
+          <div ref={eyebrowRef} className="flex items-center gap-3 mb-6" style={{ opacity: 0 }}>
+            <div className="h-px w-7 opacity-70" style={{ background: '#C09365' }} />
+            <span className="font-sans font-semibold uppercase"
+              style={{ fontSize: '0.72rem', letterSpacing: '0.14em', color: '#C09365' }}
             >
-              <div className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-gilt-500/30 dark:border-gilt-500/35 bg-gilt-500/8 dark:bg-gilt-500/10">
-                <span className="w-1.5 h-1.5 rounded-full bg-gilt-500 animate-gilt-pulse" />
-                <span className="badge-cinzel text-gilt-700 dark:text-gilt-400">
-                  Premium Novel Library
-                </span>
-              </div>
-            </div>
-
-            {/* Headline */}
-            <h1 ref={headRef} style={{ opacity: 0 }}
-              className="font-serif leading-[0.94] mb-6 text-parchment-900 dark:text-parchment-50"
-            >
-              <span className="block font-light text-6xl md:text-7xl lg:text-[5.5rem] tracking-tight">
-                Lose Yourself
-              </span>
-              <span className="block font-bold italic text-6xl md:text-7xl lg:text-[5.5rem] tracking-tight"
-                style={{
-                  background: 'linear-gradient(135deg, #C9A84C 0%, #F0DE9A 45%, #C9A84C 75%, #9A7A1F 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                }}
-              >
-                In a Story
-              </span>
-            </h1>
-
-            {/* Decorative rule */}
-            <div ref={ruleRef} style={{ opacity: 0 }} className="flex items-center gap-4 mb-7">
-              <div className="h-px w-14 bg-gilt-500/55" />
-              <span className="font-serif text-sm italic text-gilt-600 dark:text-gilt-400 whitespace-nowrap">
-                Library of Heaven
-              </span>
-              <div className="h-px w-14 bg-gilt-500/55" />
-            </div>
-
-            {/* Description */}
-            <p ref={paraRef} style={{ opacity: 0 }}
-              className="font-sans text-lg md:text-xl text-toffee-800 dark:text-parchment-300
-                leading-relaxed mb-11 max-w-xl"
-            >
-              Discover thousands of novels across every genre — from timeless classics to
-              gripping new releases. Read anywhere, track your progress, and share your own stories.
-            </p>
-
-            {/* CTAs */}
-            <div ref={ctaRef} className="flex flex-col sm:flex-row gap-4">
-              <Link to="/books"
-                className="inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl
-                  font-sans font-semibold text-sm tracking-wide text-navy-950
-                  shadow-lg hover:shadow-glow-gilt transition-all duration-300 hover:scale-[1.02]"
-                style={{ background: 'linear-gradient(135deg, #F0DE9A 0%, #C9A84C 45%, #B8922A 100%)' }}
-              >
-                Explore Library <FaArrowRight className="w-4 h-4" />
-              </Link>
-
-              <Link to="/become-author"
-                className="inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl
-                  border border-gilt-500/45 dark:border-gilt-500/55
-                  text-gilt-700 dark:text-gilt-400
-                  hover:border-gilt-500 dark:hover:border-gilt-400
-                  hover:bg-gilt-500/8 dark:hover:bg-gilt-500/10
-                  font-sans font-semibold text-sm tracking-wide
-                  transition-all duration-300 hover:scale-[1.02]"
-              >
-                <FaFeatherAlt className="w-4 h-4" />
-                Start Writing
-              </Link>
-            </div>
-
-            {/* Mobile stats row */}
-            <div ref={statsRef}
-              className="lg:hidden flex flex-wrap items-center gap-6 mt-14 pt-7
-                border-t border-parchment-400/40 dark:border-navy-600/50"
-            >
-              {STATS.map(({ display, label, icon: Icon }) => (
-                <div key={label} className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-lg flex items-center justify-center"
-                    style={{ background: 'rgba(201,168,76,0.12)' }}
-                  >
-                    <Icon className="w-4 h-4 text-gilt-600 dark:text-gilt-400" />
-                  </div>
-                  <div>
-                    <p className="font-serif font-bold text-lg text-parchment-900 dark:text-parchment-100 leading-none">
-                      {display}
-                    </p>
-                    <p className="font-sans text-xs text-toffee-600 dark:text-toffee-400 mt-0.5">{label}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+              Your Reading Journey Awaits
+            </span>
           </div>
 
-          {/* Right: Floating stat cards (desktop) */}
-          <div ref={panelRef}
-            className="hidden lg:flex flex-col gap-4 w-72 ml-auto shrink-0"
+          {/* Title */}
+          <h1 ref={titleRef} className="font-serif font-extrabold leading-[1.07] mb-6"
+            style={{ fontSize: 'clamp(2.6rem, 5vw, 4.2rem)', letterSpacing: '-0.02em', color: '#F9F6F2', opacity: 0 }}
           >
-            {STATS.map(({ display, label, sub, icon: Icon }) => (
-              <div key={label}
-                className="flex items-center gap-4 px-5 py-4 rounded-2xl
-                  border border-parchment-400/50 dark:border-navy-600/70
-                  bg-parchment-50/75 dark:bg-navy-800/75 backdrop-blur-md shadow-glass
-                  hover:border-gilt-500/40 dark:hover:border-gilt-500/40
-                  transition-all duration-300 group"
-              >
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
-                  style={{ background: 'linear-gradient(135deg, rgba(201,168,76,0.18), rgba(201,168,76,0.05))' }}
-                >
-                  <Icon className="w-5 h-5 text-gilt-600 dark:text-gilt-400 group-hover:scale-110 transition-transform duration-200" />
+            Lose Yourself<br />
+            In{' '}
+            <em style={{
+              fontStyle: 'italic',
+              background: 'linear-gradient(135deg, #E06060 0%, #C94040 100%)',
+              WebkitBackgroundClip: 'text',
+              backgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}>
+              A Great Story
+            </em>
+          </h1>
+
+          {/* Description */}
+          <p ref={descRef} className="font-sans leading-relaxed mb-10"
+            style={{ fontSize: '1.0625rem', color: 'rgba(237,232,225,0.72)', maxWidth: 440, opacity: 0 }}
+          >
+            Discover thousands of novels across every genre — from timeless classics to gripping
+            new releases. Read anywhere, track your progress, and share your own stories with the world.
+          </p>
+
+          {/* CTAs */}
+          <div ref={ctaRef} className="flex flex-wrap items-center gap-4 mb-14">
+            <Link to="/books"
+              className="inline-flex items-center gap-2 font-sans font-semibold rounded-[10px] transition-all duration-300"
+              style={{
+                fontSize: '0.9375rem',
+                color: '#F9F6F2',
+                background: '#801818',
+                padding: '0.8rem 1.9rem',
+                letterSpacing: '0.01em',
+                opacity: 0,
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = '#6B1414'; e.currentTarget.style.boxShadow = '0 0 28px rgba(128,24,24,0.45)'; e.currentTarget.style.transform = 'scale(1.03) translateY(-1px)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = '#801818'; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'none'; }}
+            >
+              Explore The Library
+              <FaArrowRight className="w-3.5 h-3.5" />
+            </Link>
+
+            <Link to="/become-author"
+              className="inline-flex items-center gap-2 font-sans font-medium rounded-[10px] transition-all duration-300"
+              style={{
+                fontSize: '0.9375rem',
+                color: 'rgba(237,232,225,0.85)',
+                background: 'rgba(255,255,255,0.07)',
+                border: '1px solid rgba(192,147,101,0.35)',
+                padding: '0.8rem 1.6rem',
+                letterSpacing: '0.01em',
+                opacity: 0,
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.11)'; e.currentTarget.style.borderColor = 'rgba(192,147,101,0.65)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.07)'; e.currentTarget.style.borderColor = 'rgba(192,147,101,0.35)'; }}
+            >
+              <FaFeatherAlt className="w-3.5 h-3.5" />
+              Become an Author
+            </Link>
+          </div>
+
+          {/* Stats row */}
+          <div ref={statsRef}
+            className="flex items-center gap-8 pt-7"
+            style={{ borderTop: '1px solid rgba(192,147,101,0.18)' }}
+          >
+            {STATS.map(({ value, label }, i) => (
+              <div key={label} className="flex items-center gap-8" style={{ opacity: 0 }}>
+                <div className="flex flex-col gap-1">
+                  <span className="font-serif font-bold"
+                    style={{ fontSize: '1.65rem', color: '#F9F6F2', letterSpacing: '-0.02em', lineHeight: 1 }}
+                  >{value}</span>
+                  <span className="font-sans font-medium uppercase"
+                    style={{ fontSize: '0.72rem', letterSpacing: '0.1em', color: '#C09365', opacity: 0.8 }}
+                  >{label}</span>
                 </div>
-                <div>
-                  <p className="font-serif font-bold text-3xl leading-none text-parchment-900 dark:text-parchment-50">
-                    {display}
-                  </p>
-                  <p className="font-sans font-semibold text-xs text-toffee-700 dark:text-toffee-200 mt-1">{label}</p>
-                  <p className="font-sans text-xs text-toffee-500 dark:text-toffee-500 mt-0.5">{sub}</p>
-                </div>
+                {i < STATS.length - 1 && (
+                  <div style={{ width: 1, height: 36, background: 'rgba(192,147,101,0.2)', flexShrink: 0 }} />
+                )}
               </div>
             ))}
-
-            {/* Decorative quote card */}
-            <div className="px-5 py-4 rounded-2xl border border-gilt-500/20 dark:border-gilt-500/15
-              bg-gilt-500/6 dark:bg-gilt-500/8 backdrop-blur-md"
-            >
-              <p className="font-serif text-base italic text-toffee-800 dark:text-parchment-300 leading-snug mb-2">
-                &ldquo;A reader lives a thousand lives before he dies.&rdquo;
-              </p>
-              <p className="font-sans text-xs text-toffee-500 dark:text-toffee-500">— George R.R. Martin</p>
-            </div>
           </div>
 
         </div>
       </div>
+
+      {/* ── Featured badge (bottom-right) ── */}
+      <div ref={badgeRef}
+        className="absolute bottom-10 right-6 sm:right-10 z-20 flex items-center gap-3 rounded-2xl"
+        style={{
+          background:    'rgba(0,10,24,0.75)',
+          backdropFilter:'blur(14px)',
+          WebkitBackdropFilter: 'blur(14px)',
+          border:        '1px solid rgba(192,147,101,0.25)',
+          padding:       '1rem 1.4rem',
+          maxWidth:      280,
+          opacity:       0,
+        }}
+      >
+        {/* Mini cover */}
+        <div className="rounded-md flex-shrink-0 flex items-center justify-center overflow-hidden"
+          style={{ width: 48, height: 64, background: 'linear-gradient(135deg, #801818 0%, #3D0C02 100%)' }}
+        >
+          {featured?.cover_image
+            ? <img src={featured.cover_image} alt={featured.title} className="w-full h-full object-cover" />
+            : <span className="font-serif italic text-xl" style={{ color: 'rgba(237,232,225,0.5)' }}>✦</span>
+          }
+        </div>
+
+        <div className="flex flex-col gap-0.5 min-w-0">
+          <span className="font-sans font-semibold uppercase"
+            style={{ fontSize: '0.65rem', letterSpacing: '0.1em', color: '#C09365' }}
+          >Featured Read</span>
+          <span className="font-serif font-semibold leading-tight truncate"
+            style={{ fontSize: '0.95rem', color: '#F9F6F2' }}
+          >
+            {featured?.title || 'The Saga of Iron & Ink'}
+          </span>
+          <span className="font-sans truncate"
+            style={{ fontSize: '0.72rem', color: 'rgba(237,232,225,0.5)', marginTop: 1 }}
+          >
+            {featured ? `by ${featured.author}` : 'by Eirik Valdsson · Fantasy'}
+          </span>
+          <div className="flex items-center gap-1 mt-1">
+            {[...Array(5)].map((_, i) => (
+              <FaStar key={i} className="w-2.5 h-2.5" style={{ color: '#C09365' }} />
+            ))}
+            <span className="font-sans ml-1" style={{ fontSize: '0.68rem', color: 'rgba(192,147,101,0.5)' }}>4.9</span>
+          </div>
+        </div>
+      </div>
+
     </section>
   );
 };
