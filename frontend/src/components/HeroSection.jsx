@@ -88,7 +88,7 @@ const HeroSection = () => {
       />
 
       {/* ── Content ── */}
-      <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-8 w-full pt-[68px]">
+      <div className="relative z-10 w-full pt-[68px] pl-[5%] sm:pl-[7%] lg:pl-[9%] 2xl:pl-[11%] pr-6">
         <div className="max-w-[560px] py-28">
 
           {/* Eyebrow */}
